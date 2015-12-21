@@ -1,6 +1,7 @@
 www/upload/*
 www/uploads/filestorage/*
 www/admin/assets/*
+www/assets/*
 app/config/settings.php
 upload
 app/runtime/*
