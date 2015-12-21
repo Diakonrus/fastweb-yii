@@ -1,0 +1,12 @@
+<?php
+$this->widget('ext.videojs.videojsWidget', array(
+    'options' => array(
+        'width' => 320,
+        'height' => 240,
+        'video' => $item['video_file'],
+        'controls' => true,
+        'preload' => false,
+        'autoplay' => false,
+    ),
+));
+?>

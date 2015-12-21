@@ -1,0 +1,8 @@
+www/upload/*
+www/uploads/*
+www/admin/assets/*
+app/config/settings.php
+upload
+app/runtime/*
+cgi-bin
+.idea/
