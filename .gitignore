@@ -1,5 +1,5 @@
 www/upload/*
-www/uploads/*
+www/uploads/filestorage/*
 www/admin/assets/*
 app/config/settings.php
 upload

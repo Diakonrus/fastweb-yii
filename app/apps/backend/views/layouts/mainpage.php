@@ -162,6 +162,7 @@
                             <li><a href="/admin/feedback" title=""><img src="/images/admin/strela2.gif" alt="" /> Список обращений  </a></li>
                         </ul>
                     </li>
+                    
 
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 13 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic22.gif" alt="" /></span> <a href="#" title="">Таблицы </a></li>
                     <li class="no">
