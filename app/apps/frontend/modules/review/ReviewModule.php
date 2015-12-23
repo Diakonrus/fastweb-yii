@@ -1,6 +1,6 @@
 <?php
 
-class UrllinkModule extends Module
+class ReviewModule extends Module
 {
 	public function init()
 	{
@@ -9,8 +9,8 @@ class UrllinkModule extends Module
 
 		// import the module-level models and components
 		$this->setImport(array(
-			'urllink.models.*',
-			'urllink.components.*',
+			'review.models.*',
+			'review.components.*',
 		));
 	}
 

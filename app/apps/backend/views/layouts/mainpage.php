@@ -62,6 +62,7 @@
                         <ul>
                             <li><a href="/admin/catalog/catalog/listgroup" title=""><img src="/images/admin/strela2.gif" alt="" />Каталоги</a></li>
                             <li><a href="/admin/catalog/catalog/listelement" title=""><img src="/images/admin/strela2.gif" alt="" />Товары</a></li>
+                            <li><a href="/admin/catalog/catalog/sharechars" title=""><img src="/images/admin/strela2.gif" alt="" />Общие характеристики</a></li>
                         </ul>
                     </li>
 
@@ -88,6 +89,15 @@
                             <li><a href="/admin/faq/faqrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список тем вопросов</a></li>
                             <li><a href="/admin/faq/faqauthor/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список авторов вопросов</a></li>
                             <li><a href="/admin/faq/faq/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список вопросов-ответов</a></li>
+                        </ul>
+                    </li>
+
+                    <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 7 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic31.png" alt="" /></span> <a href="#" title="">Отзывы  </a></li>
+                    <li class="no">
+                        <ul>
+                            <li><a href="/admin/review/reviewrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список категорий</a></li>
+                            <li><a href="/admin/review/reviewauthor/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список авторов отзывов</a></li>
+                            <li><a href="/admin/review/review/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список отзывов</a></li>
                         </ul>
                     </li>
 
@@ -145,7 +155,7 @@
                             <li><a href="/admin/beforeafter/beforeafterelements" title=""><img src="/images/admin/strela2.gif" alt="" /> Список элементов  </a></li>
                         </ul>
                     </li>
-                    
+
 
 
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 11 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic5.gif" alt="" /></span> <a href="#" title="">Фотоальбом </a></li>

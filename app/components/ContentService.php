@@ -11,6 +11,11 @@ class ContentService extends CApplicationComponent {
         $content = "<?php return array( ";
         foreach ($modelURL as $data){
 
+            if ($data->type_module == 8){
+                //Если ссылка (модуль URL-ссылка) - пропускаем
+                continue;
+            }
+
             if ($data->main_page == 1){
                 //Если главная страница
                 $data->url = '/';

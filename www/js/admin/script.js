@@ -19,8 +19,23 @@ $(document).ready(function(){
     }
 
     //Транслит текста
+    function name_translit(){// alert('dsdsd');
+        var a=new
+            Array('ы','й', 'г','ф','о','т','ю','ц','ш', 'и','л', 'ч','ь','у','щ',   'в','д','с','к','з','а','ж', 'м','е','х','п', 'э','и','н', 'р','я','б',' ','ъ','ё')
+        var b=new
+            Array('y','y','g','f','o','t','yu','ts','sh','i','l','ch','','u','shch','v','d','s','k','z','a','zh','m','e','kh','p','e','i','n','r','ya','b','-','','yo')
+        var x = document.getElementById('name').value;
+        var oldd = document.getElementById('name').value;
+        for(i=0;i<a.length;i++){
+            y=eval('/'+a[i]+'/ig')
+            x=x.replace(y,b[i])
+        }
+        document.getElementById('url').value = lCase(x);
+    }
+
+
     function translite(str){
-        var arr={'а':'a', 'б':'b', 'в':'v', 'г':'g', 'д':'d', 'е':'e', 'ж':'g', 'з':'z', 'и':'i', 'й':'y', 'к':'k', 'л':'l', 'м':'m', 'н':'n', 'о':'o', 'п':'p', 'р':'r', 'с':'s', 'т':'t', 'у':'u', 'ф':'f', 'ы':'i', 'э':'e', 'А':'A', 'Б':'B', 'В':'V', 'Г':'G', 'Д':'D', 'Е':'E', 'Ж':'G', 'З':'Z', 'И':'I', 'Й':'Y', 'К':'K', 'Л':'L', 'М':'M', 'Н':'N', 'О':'O', 'П':'P', 'Р':'R', 'С':'S', 'Т':'T', 'У':'U', 'Ф':'F', 'Ы':'I', 'Э':'E', 'ё':'yo', 'х':'h', 'ц':'ts', 'ч':'ch', 'ш':'sh', 'щ':'shch', 'ъ':'l', 'ь':'l', 'ю':'yu', 'я':'ya', 'Ё':'YO', 'Х':'H', 'Ц':'TS', 'Ч':'CH', 'Ш':'SH', 'Щ':'SHCH', 'Ъ':'', 'Ь':'','Ю':'YU', 'Я':'YA', '\\':'-', ' ':'-', ':':'-', '(':'-', ')':'-'};
+        var arr={'а':'a', 'б':'b', 'в':'v', 'г':'g', 'д':'d', 'е':'e', 'ж':'g', 'з':'z', 'и':'i', 'й':'y', 'к':'k', 'л':'l', 'м':'m', 'н':'n', 'о':'o', 'п':'p', 'р':'r', 'с':'s', 'т':'t', 'у':'u', 'ф':'f', 'ы':'i', 'э':'e', 'А':'A', 'Б':'B', 'В':'V', 'Г':'G', 'Д':'D', 'Е':'E', 'Ж':'G', 'З':'Z', 'И':'I', 'Й':'Y', 'К':'K', 'Л':'L', 'М':'M', 'Н':'N', 'О':'O', 'П':'P', 'Р':'R', 'С':'S', 'Т':'T', 'У':'U', 'Ф':'F', 'Ы':'I', 'Э':'E', 'ё':'yo', 'х':'h', 'ц':'ts', 'ч':'ch', 'ш':'sh', 'щ':'shch', 'ъ':'l', 'ь':'l', 'ю':'yu', 'я':'ya', 'Ё':'YO', 'Х':'H', 'Ц':'TS', 'Ч':'CH', 'Ш':'SH', 'Щ':'SHCH', 'Ъ':'', 'Ь':'','Ю':'YU', 'Я':'YA', ' ':'-', '(':'-', ')':'-'};
         var replacer=function(a){return arr[a]||a};
         return str.replace(/[А-яёЁ:)(/\\ ]/g,replacer);
     }
@@ -134,6 +149,13 @@ $(document).ready(function(){
         $(this).val(translite($(this).val()));
     });
 
+    $("#ReviewRubrics_name").keyup(function(){
+        $("#ReviewRubrics_url").val(translite($(this).val()));
+    });
+
+    $("#ReviewRubrics_url").keyup(function(){
+        $(this).val(translite($(this).val()));
+    });
 
 
 

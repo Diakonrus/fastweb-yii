@@ -125,9 +125,10 @@ class PagesTabs extends CActiveRecord
         1 =>'{{news_group}}', //Новости
         7 => '{{faq_rubrics}}', //Вопросы-ответы
         10 => '{{doctor_elements}}',  //Врачи
-        11 => '{{photoalbum}}',  //Фотогалерея
+        11 => '{{photo_rubrics}}',  //Фотогалерея
         12 => '{{before_after_rubrics}}',  //До и После
         13 => '{{main_tabel}}',  //Таблицы
+        16 => '{{review_rubrics}}',  //Таблицы
     );
 
     /**
@@ -311,8 +312,8 @@ class PagesTabs extends CActiveRecord
                         ',
                 );
                 break;
-            case 7:
-                //Вопросы-ответы
+            case 16:
+                //Отзывы
                 $template = array(
                     //Белый фон
                     1 => '
@@ -342,7 +343,37 @@ class PagesTabs extends CActiveRecord
                         ',
                     );
                 break;
-
+            case 7:
+                //Вопросы-ответы
+                $template = array(
+                    //Белый фон
+                    1 => '
+                        <div class="spisok">
+                            <main class="all" role="main">
+                                <div class="container">
+                                    <h1 class="main-caption mg-bottom-24 caption-big">%title%</h1>
+                                    %module_value%
+                                </div>
+                            </main>
+                        </div>
+                    ',
+                    //Серый фон
+                    2 => '
+                        <main class="all" role="main">
+                            <div class="container">
+                                <h2 class="main-caption mg-bottom-24">%title%</h2>
+                            </div>
+                        </main>
+                        <div class="spisok fogr gray-bg">
+                            <main class="all" role="main" style="padding-top:20px;">
+                                <div class="container">
+                                    %module_value%
+                                </div>
+                            </main>
+                        </div>
+                        ',
+                );
+                break;
             case 10:
                 //Врачи
                 $template = array(
@@ -557,11 +588,11 @@ class PagesTabs extends CActiveRecord
                 $tmp_module_value = '';
                 foreach ($module_value_array as $value){
                     if ($modelData = FaqRubrics::model()->find('id in ('.$value.') AND `status` = 1') ){
-                        $modelElements = FaqElements::model()->find('parent_id='.$modelData->id.' AND `status` = 1');
+                        if (!$modelElements = FaqElements::model()->find('parent_id='.$modelData->id.' AND `status` = 1')){continue;}
                         $modelAuthor = FaqAuthor::model()->findByPk($modelElements->author_id);
                         $tmp_module_value .= '
                         <div class="ot">
-                            <span href="#">'.$modelAuthor->name.'<span> / '.$modelData->name.' - '.(date("d.m.Y", strtotime($modelElements->created_at))).'</span></span>
+                            <span href="#">'.$modelAuthor->name.'<span> / '.$modelData->name.' - '.(date("d.m.Y", strtotime($modelElements->question_data))).'</span></span>
                             '.$modelElements->question.'
                         ';
                         if (!empty($modelElements->answer)){
@@ -571,6 +602,25 @@ class PagesTabs extends CActiveRecord
                     }
                 }
 
+                $resultHTML = $template_tmp;
+                $title = $model->title;
+                $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
+                break;
+            case 16:
+                //Отзывы
+                $tmp_module_value = '';
+                foreach ($module_value_array as $value){
+                    if ($modelData = ReviewRubrics::model()->find('id in ('.$value.') AND `status` = 1') ){
+                        if (!$modelElements = ReviewElements::model()->find('parent_id='.$modelData->id.' AND `status` = 1')){continue;}
+                        $modelAuthor = ReviewAuthor::model()->findByPk($modelElements->author_id);
+                        $tmp_module_value .= '
+                        <div class="ot">
+                            <span href="#">'.$modelAuthor->name.'<span> / '.$modelData->name.' - '.(date("d.m.Y", strtotime($modelElements->review_data))).'</span></span>
+                            '.$modelElements->review.'
+                        ';
+                        $tmp_module_value .= '<a class="all-otv" href="/review/'.$modelData->url.'">Все отзывы</a>';
+                    }
+                }
                 $resultHTML = $template_tmp;
                 $title = $model->title;
                 $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
@@ -644,12 +694,12 @@ class PagesTabs extends CActiveRecord
                 */
                 $tmp_module_value = '';
 
-                foreach ( PhotoalbumElements::model()->findAll('photoalbum_id in ('.(implode(",", $module_value_array)).')') as $data ){
+                foreach ( PhotoElements::model()->findAll('parent_id in ('.(implode(",", $module_value_array)).')') as $data ){
                     $tmp_module_value .= '
                     <div class="item">
                             <div class="doctor">
                                 <figure>
-                                    '.( (!empty($data->image))?('<a href="/photo/'.$data->photoalbum_id.'"><img src="/uploads/filestorage/photoalbum/photos/medium-'.$data->id.'.'.$data->image.'"></a>'):'' ).'
+                                    '.( (!empty($data->image))?('<a href="/photo/'.$data->parent->url.'"><img src="/uploads/filestorage/photo/elements/medium-'.$data->id.'.'.$data->image.'"></a>'):'' ).'
                                 </figure>
                             </div>
                     </div>

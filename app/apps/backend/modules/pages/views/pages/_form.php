@@ -74,7 +74,7 @@ $this->widget('ImperaviRedactorWidget', array(
     'options' => array(
         'lang' => 'ru',
         'cleanOnPaste'=>false,
-        'cleanStyleOnEnter'=>true,
+        'cleanStyleOnEnter'=>false,
         'cleanSpaces'=>false,
         'replaceDivs' => false,
         'imageUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/imageUpload'),
@@ -358,5 +358,27 @@ $this->widget('ImperaviRedactorWidget', array(
 
 
 
+        function HideShowFeelds(show){
+            var feeld_id = ['#Pages_main_template', '#Pages_main_page', '#Pages_access_lvl'];
+            var feeld_class = ['.main_block_url', '.redactor-box'];
+            $.each(feeld_id, function( index, value ) {
+                if (show==1){ $(value).parent().parent().show(); }
+                else { $(value).parent().parent().hide(); }
+            });
+            $.each(feeld_class, function( index, value ) {
+                if (show==1){ $(value).show(); }
+                else { $(value).hide(); }
+            });
+        }
+
+        $(document).on('change','#Pages_type_module',function(){
+            if( $(this).val() == 8 ){
+                HideShowFeelds(0);
+            } else { HideShowFeelds(1); }
+        });
+
+        if ($('#Pages_type_module').val()==8){
+            setTimeout(function() { HideShowFeelds(0) }, 1000);
+        }
     });
 </script>

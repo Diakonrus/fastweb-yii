@@ -70,6 +70,10 @@ $url = array(
     '/question' => '/question/question',
     'question/<param:.+>' => '/question/question/element',
 
+    //Отзывы
+    '/review' => '/review/review',
+    'review/<param:.+>' => '/review/review/element',
+
 
     //Проверка данных формы
     '/send-form' => '/content/default/index',
