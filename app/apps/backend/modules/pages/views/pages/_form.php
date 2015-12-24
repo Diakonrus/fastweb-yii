@@ -249,6 +249,14 @@ $this->widget('ImperaviRedactorWidget', array(
 
 
 
+<div class="seo_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">SEO</span></a>
+</div>
+<div id="seo_block" style="margin-top: 10px; padding: 10px;">
+    <?php echo $form->textFieldRow($model,'meta_title',array('class'=>'span5')); ?>
+    <?php echo $form->textAreaRow($model,'meta_keywords',array('class'=>'span5')); ?>
+    <?php echo $form->textAreaRow($model,'meta_description',array('class'=>'span5')); ?>
+</div>
 
 
 

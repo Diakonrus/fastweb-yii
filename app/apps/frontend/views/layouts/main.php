@@ -5,6 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="language" content="en" />
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
+    <meta name="title" content="<?=CHtml::encode($this->pageMetaTitle);?>"/>
+    <meta name="keywords" content="<?=CHtml::encode($this->pageKeywords);?>"/>
+    <meta name="description" content="<?=CHtml::encode($this->pageDescription);?>"/>
 
     <script src="/js/jquery-2.1.3.js"></script>
     <script src="/js/main.js"></script>

@@ -4,6 +4,9 @@ class PagesController extends Controller
 {
 	public $layout='//layouts/main';
 
+    public function init(){
+        //Проверку прав вставить если надо
+    }
 
     public function actionIndex($id){
         $model = Pages::model()->findByPk($id);
@@ -27,6 +30,12 @@ class PagesController extends Controller
 
         //Получаем вкладки если есть;
         $modelTabs = PagesTabs::model()->getTabsContent($id);
+
+        //Титл
+        $this->pageTitle = $this->pageTitle.' - '.$model->title;
+        foreach ( explode("/", ( parse_url(Yii::app()->request->requestUri, PHP_URL_PATH ))) as $url  ){
+            $this->setSEO($url);
+        }
 
         $this->render('index', array('model'=>$model, 'modelTabs'=>$modelTabs));
     }

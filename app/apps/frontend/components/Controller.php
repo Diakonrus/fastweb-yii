@@ -8,7 +8,12 @@ class Controller extends CController
 	public $breadcrumbs=array();
     public $layout='//layouts/main';
 
+    //SEO
     public $pageTitle = SITE_TITLE;
+    public $pageMetaTitle;
+    public $pageDescription;
+    public $pageKeywords;
+
 
     public $user;
     public $balance;
@@ -24,6 +29,18 @@ class Controller extends CController
         //$this->menuLists = $root->descendants(null,1)->findAll($root->id);
         $this->menuLists = Pages::model()->getPagesArray();
 	}
+
+
+    public function setSEO($url){
+        $model = Pages::model()->find('url LIKE "'.$url.'"');
+        if ($model){
+            if (!empty($model->meta_title)){ $this->pageTitle = $model->meta_title; $this->pageMetaTitle = $model->meta_title; }
+            if (!empty($model->meta_keywords)){ $this->pageKeywords = $model->meta_keywords;  }
+            if (!empty($model->meta_description)){ $this->pageDescription = $model->meta_description;  }
+        }
+        return true;
+    }
+
 
 
     public function filters()
