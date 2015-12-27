@@ -1,6 +1,6 @@
 <?php
 
-class StockgroupController extends Controller
+class ArticleelementsController extends Controller
 {
 
 	/**
@@ -9,8 +9,8 @@ class StockgroupController extends Controller
 	public function actionView($id)
 	{
 		// set attributes from get
-		if(isset($_GET['StockGroup'])){
-			$model->attributes=$_GET['StockGroup'];
+		if(isset($_GET['ArticleElements'])){
+			$model->attributes=$_GET['ArticleElements'];
         }
 
 	    $model = $this->loadModel($id);
@@ -27,21 +27,36 @@ class StockgroupController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new StockGroup;
+		$model=new ArticleElements;
+
+		$root = ArticleRubrics::getRoot(new ArticleRubrics);
+		$catalog = $root->descendants()->findAll($root->id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		// set attributes from get
-		if(isset($_GET['StockGroup'])){
-			$model->attributes=$_GET['StockGroup'];
+		if(isset($_GET['ArticleElements'])){
+			$model->attributes=$_GET['ArticleElements'];
         }
 
-		if(isset($_POST['StockGroup']))
+		if(isset($_POST['ArticleElements']))
 		{
-			$model->attributes=$_POST['StockGroup'];
+			$model->attributes=$_POST['ArticleElements'];
+
+			$model->imagefile = CUploadedFile::getInstance($model,'imagefile');
+			if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
 
 			if($model->save()){
+
+				if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 6')){
+					$filename = $model->id.'.'.$model->image;
+					$filepatch = '/../uploads/filestorage/article/elements/';
+					$model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
+					//Обработка изображения
+					SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 2,$model->id);
+				}
+
 				$url = isset($_POST['go_to_list'])
 					? $this->listUrl('index')
 					: $this->itemUrl('update', $model->id);
@@ -49,8 +64,11 @@ class StockgroupController extends Controller
 		    }
 		}
 
+
 		$this->render('create',array(
 			'model'=>$model,
+			'root'=>$root,
+			'catalog' => $catalog,
 		));
 	}
 
@@ -62,20 +80,34 @@ class StockgroupController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		$root = ArticleRubrics::getRoot(new ArticleRubrics);
+		$catalog = $root->descendants()->findAll($root->id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		// set attributes from get
-		if(isset($_GET['StockGroup'])){
-			$model->attributes=$_GET['StockGroup'];
+		if(isset($_GET['ArticleElements'])){
+			$model->attributes=$_GET['ArticleElements'];
         }
 
-		if(isset($_POST['StockGroup']))
+		if(isset($_POST['ArticleElements']))
 		{
-			$model->attributes=$_POST['StockGroup'];
+			$model->attributes=$_POST['ArticleElements'];
+
+			$model->imagefile = CUploadedFile::getInstance($model,'imagefile');
+			if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
 
 			if($model->save()){
+
+				if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 6')){
+					$filename = $model->id.'.'.$model->image;
+					$filepatch = '/../uploads/filestorage/article/elements/';
+					$model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
+					//Обработка изображения
+					SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 2,$model->id);
+				}
+
 					$url = isset($_POST['go_to_list'])
 						? $this->listUrl('index')
 						: $this->itemUrl('update', $model->id);
@@ -85,6 +117,8 @@ class StockgroupController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
+			'root'=>$root,
+			'catalog' => $catalog,
 		));
 	}
 
@@ -93,7 +127,7 @@ class StockgroupController extends Controller
      */
 	public function actionUpload(){
 
-        $webFolder = '/uploads/stockgroup/';
+        $webFolder = '/uploads/articleelements/';
         $tempFolder = Yii::app()->basePath . '/../www' . $webFolder;
 
         @mkdir($tempFolder, 0777, TRUE);
@@ -123,7 +157,7 @@ class StockgroupController extends Controller
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionDelete($id = null)
+	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
 		{
@@ -142,7 +176,7 @@ class StockgroupController extends Controller
 	 *
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('StockGroup');
+		$dataProvider=new CActiveDataProvider('ArticleElements');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -154,15 +188,15 @@ class StockgroupController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$model=new StockGroup('search');
+		$model=new ArticleElements('search');
         $model->attachBehavior('dateComparator', array(
             'class' => 'DateComparator',
         ));
 		$model->unsetAttributes();  // clear any default values
 
 		// set attributes from get
-		if(isset($_GET['StockGroup'])){
-			$model->attributes=$_GET['StockGroup'];
+		if(isset($_GET['ArticleElements'])){
+			$model->attributes=$_GET['ArticleElements'];
         }
 
 		$this->render('list',array(
@@ -177,7 +211,7 @@ class StockgroupController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=StockGroup::model()->findByPk($id);
+		$model=ArticleElements::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -189,35 +223,26 @@ class StockgroupController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='stock-group-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='article-elements-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
 	}
 
-    public function actionAjax()
-    {
-        if (isset($_POST)) {
-            switch ((int)$_POST['type']) {
-                case 1:
-                    //Смена статуса
-                    $model = $this->loadModel((int)$_POST['id']);
-                    $model->status = (($model->status==1)?0:1);
-                    $model->save();
-                    //Меняем статус для новостей в группе
-                    foreach (Stock::model()->findAll('group_id = '.$model->id) as $data){
-                        $data->status = $model->status;
-                        $data->save();
-                    }
-                    break;
-            }
-
-            echo CJavaScript::jsonEncode('ok');
-        }
-
-        Yii::app()->end();
-    }
-
-
+	public function actionAjax()
+	{
+		if (isset($_POST)) {
+			switch ((int)$_POST['type']) {
+				case 1:
+					//Смена статуса вопросов
+					$model = $this->loadModel((int)$_POST['id']);
+					$model->status = (($model->status==1)?0:1);
+					$model->save();
+					break;
+			}
+			echo CJavaScript::jsonEncode('ok');
+		}
+		Yii::app()->end();
+	}
 }

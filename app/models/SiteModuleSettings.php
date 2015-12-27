@@ -353,7 +353,7 @@ class SiteModuleSettings extends CActiveRecord
 				break;
 			case 6:
 				//Статьи
-				return (($type==1)?('{{stock_group}}'):('{{stock}}'));
+				return (($type==1)?('{{article_rubrics}}'):('{{article_elements}}'));
 				break;
 			case 7:
 				//Вопросы-ответы
@@ -390,6 +390,10 @@ class SiteModuleSettings extends CActiveRecord
 			case 15:
 				//Банеры
 				return (($type==1)?('{{baners_rubrics}}'):('{{baners_elements}}'));
+				break;
+			case 16:
+				//Отзывы
+				return (($type==1)?('{{review_rubrics}}'):('{{review_elements}}'));
 				break;
 		}
 		return false;

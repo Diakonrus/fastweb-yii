@@ -1,8 +1,8 @@
 <?php
 
-class StockModule extends Module
+class ArticleModule extends Module
 {
-    public $defaultController = 'stock';
+    public $defaultController = 'articlerubrics';
 
 	public function init()
 	{
@@ -12,16 +12,16 @@ class StockModule extends Module
 
 		// import the module-level models and components
 		$this->setImport(array(
-			'stock.models.*',
-			'stock.components.*',
+			'article.models.*',
+			'article.components.*',
 		));
 	}
 
 	public function beforeControllerAction($controller, $action)
 	{
 	    Yii::app()->controller->menu = array(
-            array('label'=>Yii::t('Bootstrap', 'Список статей'), 'url'=>array('index'), 'active' => $action->id === 'index' ),
-            array('label'=>Yii::t('Bootstrap', 'Создать новую статью'), 'url'=>array('create'), 'active' => $action->id === 'create' ),
+            array('label'=>Yii::t('Bootstrap', 'LIST.ArticleRubrics'), 'url'=>array('index'), 'active' => $action->id === 'index' ),
+            array('label'=>Yii::t('Bootstrap', 'CREATE.ArticleRubrics'), 'url'=>array('create'), 'active' => $action->id === 'create' ),
         );
 		
 		if(parent::beforeControllerAction($controller, $action))

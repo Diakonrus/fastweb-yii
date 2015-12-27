@@ -1,15 +1,14 @@
 
-<legend><?php echo Yii::t("Bootstrap", "LIST.StockGroup" ) ?></legend>
+<legend><?php echo Yii::t("Bootstrap", "LIST.ArticleElements" ) ?></legend>
 
 <?php
 
 $assetsDir = Yii::app()->basePath;
-$labels = NewsGroup::model()->attributeLabels();
-
+$labels = ArticleElements::model()->attributeLabels();
 
 $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 
-	'id'=>'news-group-grid',
+	'id'=>'article-elements-grid',
     'template' => "{items}\n{pager}",
     'enableHistory' => true,
 
@@ -32,13 +31,18 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'name'=> "id",
         ),
         
-	
+
+            array(
+            'header'=> $labels["parent_id"],
+            'name'=> "parent_id",
+            'value' => '$data->parent->name',
+        ),
+
+
             array(
             'header'=> $labels["name"],
             'name'=> "name",
         ),
-
-
 
 
         array(
@@ -54,29 +58,9 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             },
             'filter' =>'',
         ),
-        
-	
-            array(
-            'header'=> $labels["created_at"],
-            'name'=> "created_at",
-        ),
 
 
-        array(
-            'class'=>'bootstrap.widgets.TbButtonColumn',
-            'template' => '{link}',
-            'buttons' => array(
-                'link' => array(
-                    'label'=> 'Список статей группы',
-                    'options'=>array(
-                        //'class' => 'btn btn-small update',
-                        'target' => '_blank',
-                    ),
-                    'url'=>'Yii::app()->createUrl("/stock/stock/index", array("Stock[group_id]"=>$data->id))',
-                ),
-            ),
-            'htmlOptions'=>array('style'=>'width: 80px'),
-        ),
+
 
         array(
             'class'=>'bootstrap.widgets.TbButtonColumn',
@@ -85,7 +69,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'buttons' => array(
                 'update' => array(
                     'label'=> yii::t('Bootstrap', 'PHRASE.UPDATE'),
-                    'url'=>'CHtml::normalizeUrl(array("update", "id" => $data->id))', //'Yii::app()->controller->itemUrl("newsgroup/update/id/" . $data->id)',
+                    'url'=>'CHtml::normalizeUrl(array("update", "id" => $data->id))', //'Yii::app()->controller->itemUrl("articleelements/update/id/" . $data->id)',
                     'options'=>array(
                         //'class'=>'btn btn-small update'
                     ),
@@ -102,7 +86,9 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 	),
 )); ?>
 
-<a href="/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/create" class="btn">Добавить группу</a>
+<div class="buttons">
+    <a class="btn btn-primary" style="margin-top:14px; float:left; margin-left:15px" href="/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/create"> Добавить статью</a>
+</div>
 
 <script>
     //Меняем статус
@@ -118,4 +104,6 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
         $(this).data('status', ((status==1)?0:1));
         return false;
     });
+
+
 </script>
