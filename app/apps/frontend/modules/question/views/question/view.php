@@ -34,7 +34,7 @@
                     <article>
                         <div class="question">
                                 <a href="#"><?=$data->author->name;?>
-                                <span>/ <?=date('d.m.Y', strtotime($data->created_at));?></span></a>
+                                <span>/ <?=((!empty($data->question_data))?(date('d.m.Y', strtotime($data->question_data))):(date('d.m.Y', strtotime($data->created_at))));?></span></a>
                                 <?=$data->question;?>
                         </div>
                         <?php if (!empty($data->answer)) { ?>

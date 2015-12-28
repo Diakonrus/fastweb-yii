@@ -175,7 +175,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                         'class'=>'icon-gift',
                         'title'=>'Скидки на товар',
                     ),
-                    'url'=>'Yii::app()->createUrl("'.Yii::app()->controller->module->id.'/CatalogElementsDiscount/index", array("CatalogElementsDiscount[element_id]"=>$data->id))',
+                    'url'=>'Yii::app()->createUrl("'.Yii::app()->controller->module->id.'/catalogelementsdiscount/index", array("CatalogElementsDiscount[element_id]"=>$data->id))',
                 ),
                 'delete_product' => array(
                     'label'=>'',

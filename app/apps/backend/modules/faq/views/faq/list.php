@@ -67,8 +67,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 
 
             array(
-            'header'=> $labels["created_at"],
-            'name'=> "created_at",
+            'header'=> $labels["question_data"],
+            'name'=> "question_data",
         ),
 
 

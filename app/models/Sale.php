@@ -38,12 +38,12 @@ class Sale extends CActiveRecord
 		return array(
 			array('name, description', 'required'),
 			array('status, keyword, group_id', 'numerical', 'integerOnly'=>true),
-			array('name, primary,  meta_title', 'length', 'max'=>250),
+			array('name, primary', 'length', 'max'=>250),
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			array('brieftext, description', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, primary, name, brieftext, description, status, meta_title, group_id, meta_keywords, meta_description, maindate, keyword, image,
+			array('id, primary, name, brieftext, description, status, group_id, maindate, keyword, image,
                    ', 'safe', 'on'=>'search'),
 
 		);
@@ -72,9 +72,6 @@ class Sale extends CActiveRecord
 			'brieftext' => 'Анонс (короткий текст)',
 			'description' => 'Описание (полный текст)',
 			'status' => 'Статус',
-			'meta_title' => 'Meta Title',
-			'meta_keywords' => 'Meta Keywords',
-			'meta_description' => 'Meta Description',
 			'maindate' => 'Дата акции',
             'keyword' => 'Keyword',
 			'primary' => 'Главные новости',
@@ -105,10 +102,7 @@ class Sale extends CActiveRecord
 		$criteria->compare('brieftext',$this->brieftext,true);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('status',$this->status);
-		$criteria->compare('meta_title',$this->meta_title,true);
         $criteria->compare('image',$this->image,true);
-		$criteria->compare('meta_keywords',$this->meta_keywords,true);
-		$criteria->compare('meta_description',$this->meta_description,true);
 		$criteria->compare('maindate',$this->maindate,true);
         $criteria->compare('keyword',$this->keyword);
 		$criteria->compare('primary',$this->primary);

@@ -7,86 +7,36 @@ class PhotoController extends Controller
     public function init(){
         //Проверяю что модуль не отключен
         if (SiteModuleSettings::model()->find('site_module_id = 11 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
+
+        //Титл
+        $this->pageTitle = $this->pageTitle.' - Фотогалерея';
+        foreach ( explode("/", ( parse_url(Yii::app()->request->requestUri, PHP_URL_PATH ))) as $url  ){
+            $this->setSEO($url);
+        }
     }
 
     public function actionIndex()
 
     {
 
-        //1 - Получаем верхнее меню ссылок
-        //2 - получаем список категорий в активном (выбраном) разделе
-        //3 - Если категорй нет - получаем картинки в этом разделе
-
-        //1
+        //Получаем список под разделов 1ого раздела (Звезды)
         $root = PhotoRubrics::getRoot(new PhotoRubrics);
-        $menu_top = array();
+        $modelRoot = PhotoRubrics::model()->find('`level` = 2 AND left_key>'.$root->left_key.' AND right_key<'.$root->right_key.' AND `status` = 1');
 
-        foreach ( $root->descendants(1,1)->findAll($root->id) as $data ){
-            $menu_top[$data->id]['name'] = $data->name;
-            $menu_top[$data->id]['url'] = $data->url;
-        }
+        $model = $modelRoot->descendants(1,1)->findAll($modelRoot->id);
 
-        //2
-        //т.к. это первая страница - активный раздел первый
-        $param_model = $root->descendants(1,1)->findAll($root->id);
-        $param = array_shift( $param_model );
-
-        $model['catalogs'] = array();
-        $model['elements'] = array();
-
-        $category = PhotoRubrics::model()->findByPk($param->id);
-        $tmp_model = $category->descendants(1,1)->findAll();
-        if ( $tmp_model = $category->descendants(1,1)->findAll() ){
-            //3 Категорий нет  - получаю картинки в раздела
-            $model['catalogs'] = $tmp_model;
-        } else {
-            //3 Категорий нет  - получаю картинки в раздела
-            $model['elements'] = PhotoElements::model()->findAll('parent_id='.$param->id.' AND `status`=1');
-        }
-
-        $page = '';
 
         //ФОТОГАЛЕРЕЯ
-        $this->title_page = 'ФОТОГАЛЕРЕЯ'.'<span>'.$page.'</span>';
+        $this->show_video_title_page = false;
+        $this->title_page = 'ФОТОГАЛЕРЕЯ';
+        $this->title_page .= '<span style="color: #b1b1b1;"> / '.$modelRoot->name.'</span>';
 
 
-        $this->render('index', array('model'=>$model, 'param'=>$param, 'menu_top'=>$menu_top));
+        $is_root = true;
 
-        /*
-        //Общий список категорий вопросов
-        $model['group'] = array();
-        $model['sub_group'] = array();
-        $model['element'] = array();
-        $root = PhotoRubrics::getRoot(new PhotoRubrics);
-        $model_tmp = $root->descendants(1,1)->findAll($root->id);
-        foreach ($model_tmp as $data){
-            $model['group'][$data->id] = $data;
+        $this->setSEO(Yii::app()->request->requestUri, 'Фотогалерея', $modelRoot);
 
-            if ( $model_sub_tmp = PhotoRubrics::model()->findByPk($data->id)->descendants(1,1)->findAll($root->id) ){
-                $model['sub_group'][$data->id] = $model_sub_tmp;
-            }
-
-        }
-        //Получаю картинки в разделе
-        $model['element']['sub_catalog'][$root->id] = PhotoElements::model()->findAll('parent_id='.$root->id.' AND `status` = 1');
-
-
-        $page = '';
-        $param = array_shift($model_tmp);
-        $param = $param->id;
-
-        //ФОТОГАЛЕРЕЯ
-        $this->title_page = 'ФОТОГАЛЕРЕЯ'.'<span>'.$page.'</span>';
-
-        $root = PhotoRubrics::getRoot(new PhotoRubrics);
-        $menu_top = $root->descendants(1,1)->findAll($root->id);
-
-        $this->render('index', array('model'=>$model, 'param'=>$param, 'menu_top'=>$menu_top));
-    */
-
-
-
-
+        $this->render('index', array('model'=>$model, 'root'=>$root, 'modelRoot'=>$modelRoot, 'is_root'=>$is_root));
 
 
     }
@@ -97,49 +47,31 @@ class PhotoController extends Controller
         $paramArr = strtolower($paramArr);
 
 
+        //Получаем список под разделов 1ого раздела (Звезды)
         $root = PhotoRubrics::getRoot(new PhotoRubrics);
-        $menu_top = array();
+        $modelRoot = PhotoRubrics::model()->find('url LIKE "'.$paramArr.'"');
 
-        foreach ( $root->descendants(1,1)->findAll($root->id) as $data ){
-            $menu_top[$data->id]['name'] = $data->name;
-            $menu_top[$data->id]['url'] = $data->url;
-        }
+        $this->setSEO(Yii::app()->request->requestUri, 'Фотогалерея', $modelRoot);
 
-        //2
-        $root = PhotoRubrics::model()->find('url LIKE "'.$paramArr.'"');
-        $param_model = $root->descendants(1,1)->findAll($root->id);
-
-        $page = '';
-        foreach ($root->ancestors()->findAll() as $data){
-            if ($data->level==1){ continue; }
-            $page .= ' / '.$data->name;
-        }
-        $page .= ' / '.$root->name;
-
-
-        $param = $root;
-
-        $model['catalogs'] = array();
-        $model['elements'] = array();
-
-        $category = PhotoRubrics::model()->findByPk($param->id);
-        $tmp_model = $category->descendants(1,1)->findAll();
-        if ( $tmp_model = $category->descendants(1,1)->findAll() ){
-            //3 Категорий нет  - получаю картинки в раздела
-            $model['catalogs'] = $tmp_model;
+        $is_root = (($modelRoot->level==2)?true:false);
+        if ($is_root){
+            $model = $modelRoot->descendants(1,1)->findAll($modelRoot->id);
         } else {
-            //3 Категорий нет  - получаю картинки в раздела
-            $model['elements'] = PhotoElements::model()->findAll('parent_id='.$param->id.' AND `status`=1');
+            $model = PhotoElements::model()->findAll('parent_id = '.$modelRoot->id.' AND `status`=1');
+            $page = PhotoRubrics::model()->findByPk($modelRoot->parent_id)->name;
         }
-
-
 
         //ФОТОГАЛЕРЕЯ
-        $this->title_page = 'ФОТОГАЛЕРЕЯ'.'<span>'.$page.'</span>';
+        $this->show_video_title_page = false;
+        $this->title_page = 'ФОТОГАЛЕРЕЯ';
+        foreach ( $modelRoot->ancestors()->findAll() as $data ){
+            if ($data->level == 1){continue;}
+            $this->title_page .= '<a href="'.$data->url.'"><span style="color: #b1b1b1;"> / '.$data->name.'</span></a>';
+        }
+        $this->title_page .= '<span style="color: #b1b1b1;"> / '.$modelRoot->name.'</span>';
 
 
-        $this->render('index', array('model'=>$model, 'param'=>$param, 'menu_top'=>$menu_top));
-
+        $this->render('index', array('model'=>$model, 'root'=>$root, 'modelRoot'=>$modelRoot, 'is_root'=>$is_root));
 
     }
 

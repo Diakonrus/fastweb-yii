@@ -28,6 +28,7 @@ class FaqController extends Controller
 	public function actionCreate()
 	{
 		$model=new FaqElements;
+		$modelAuthor = new FaqAuthor;
 
         $root = FaqRubrics::getRoot(new FaqRubrics);
         $catalog = $root->descendants()->findAll($root->id);
@@ -44,6 +45,12 @@ class FaqController extends Controller
 		{
 			$model->attributes=$_POST['FaqElements'];
 
+			if (isset($_POST['FaqAuthor'])){
+				$modelAuthor->attributes=$_POST['FaqAuthor'];
+				$modelAuthor->save();
+				$model->author_id = $modelAuthor->id;
+			}
+
 			if($model->save()){
 				$url = isset($_POST['go_to_list'])
 					? $this->listUrl('index')
@@ -56,6 +63,7 @@ class FaqController extends Controller
 			'model'=>$model,
             'root'=>$root,
             'catalog' => $catalog,
+			'modelAuthor' => $modelAuthor,
 		));
 	}
 

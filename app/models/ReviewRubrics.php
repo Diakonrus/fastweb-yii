@@ -42,13 +42,13 @@ class ReviewRubrics extends CActiveRecord
 			array('name, parent_id, url', 'required'),
 			array('left_key, level, right_key, status, parent_id', 'numerical', 'integerOnly'=>true),
 			array('name, image', 'length', 'max'=>350),
-			array('url', 'length', 'max'=>250),
+			array('url, meta_title', 'length', 'max'=>250),
             array('url','unique', 'message'=>'Такой URL-адрес уже занят'),
-			array('description', 'safe'),
+			array('description, meta_keywords, meta_description', 'safe'),
 			array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, left_key, level, right_key, name, url, description, status, image, parent_id, created_at, created_at_start, created_at_end,
+			array('id, left_key, level, right_key, name, url, description, status, image, meta_title, meta_keywords, meta_description, parent_id, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -81,6 +81,9 @@ class ReviewRubrics extends CActiveRecord
 			'description' => 'Описание',
 			'status' => 'Статус',
 			'image' => 'Изображение',
+			'meta_title' => 'Meta Title',
+			'meta_keywords' => 'Meta Keywords',
+			'meta_description' => 'Meta Description',
 			'created_at' => 'Created At',
 		);
 	}
@@ -113,6 +116,9 @@ class ReviewRubrics extends CActiveRecord
 		$criteria->compare('image',$this->image,true);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('status',$this->status);
+		$criteria->compare('meta_title',$this->meta_title,true);
+		$criteria->compare('meta_keywords',$this->meta_keywords,true);
+		$criteria->compare('meta_description',$this->meta_description,true);
         $criteria->compare('created_at',$this->created_at);
 
         if (!empty($param)){

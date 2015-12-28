@@ -38,11 +38,11 @@ class BeforeAfterRubrics extends CActiveRecord
 			array('name, parent_id, url', 'required'),
 			array('parent_id, level, left_key, right_key, status', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>350),
-			array('url', 'length', 'max'=>250),
-			array('description, created_at', 'safe'),
+			array('url, meta_title', 'length', 'max'=>250),
+			array('description, created_at, meta_keywords, meta_description', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, parent_id, level, left_key, right_key, status, url, description, created_at, created_at_start, created_at_end,
+			array('id, name, parent_id, level, left_key, right_key, status, url, meta_title, meta_keywords, meta_description, description, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -73,6 +73,9 @@ class BeforeAfterRubrics extends CActiveRecord
 			'right_key' => 'Right Key',
 			'url' => 'Url адрес',
 			'description' => 'Описание',
+			'meta_title' => 'Meta Title',
+			'meta_keywords' => 'Meta Keywords',
+			'meta_description' => 'Meta Description',
 			'created_at' => 'Created At',
 		);
 	}
@@ -104,6 +107,9 @@ class BeforeAfterRubrics extends CActiveRecord
 		$criteria->compare('right_key',$this->right_key);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('description',$this->description,true);
+		$criteria->compare('meta_title',$this->meta_title,true);
+		$criteria->compare('meta_keywords',$this->meta_keywords,true);
+		$criteria->compare('meta_description',$this->meta_description,true);
         $criteria->compare('created_at',$this->created_at);
 
         if (!empty($param)){
@@ -166,4 +172,23 @@ class BeforeAfterRubrics extends CActiveRecord
         $result = ((current($model))-1);   //вычитае из резуьтата сам узел
         return $result;
     }
+
+	/**
+	 * Получить количество элементов (записей таблицы tbl_before_after_elements) в узле
+	 */
+	public static function getCountElements($id){
+		/*
+		$idArray = array();
+		$category=BeforeAfterRubrics::model()->findByPk($id);
+		foreach ($category->descendants()->findAll() as $data){
+			$idArray[] = $data->id;
+		}
+		if (!empty($idArray)){
+			$result = BeforeAfterElements::model()->count("parent_id in (".(implode(",", $idArray)).")");
+		} else { $result = 0; }
+		*/
+		$result = BeforeAfterElements::model()->count("parent_id in (".$id.")");
+
+		return $result;
+	}
 }

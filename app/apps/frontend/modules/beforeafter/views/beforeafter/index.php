@@ -44,11 +44,12 @@
                 $modelTop = BeforeAfterRubrics::model()->findByPk($model['group']->id);
                 $parent_url[] = ' / '.$model['group']->name;
                 foreach ($modelTop->ancestors()->findAll('level>1') as $data){
-                    $parent_url[] = $data->name;
+                    $parent_url[] = ' / '.$data->name;
                 }
             }
+            rsort($parent_url);
             ?>
-            <h1>ДО и ПОСЛЕ <?=(!empty($parent_url)?(implode("/", $parent_url)):'');?></h1>
+            <h1>ДО и ПОСЛЕ <?=(!empty($parent_url)?(implode("", $parent_url)):'');?></h1>
         </div>
 
 
@@ -66,7 +67,11 @@
                         $link = Yii::app()->request->requestUri.'/'.$data->url;
                     }
                 ?>
-                <a href="<?=$link;?>"><?=$data->name;?></a>
+                <?php if($link!="#"){ ?>
+                    <a href="<?=$link;?>" onclick="$(this).parent().removeAttr('data-toggle');"><?=$data->name;?></a>
+                <?php } else { ?>
+                    <span style="display: block;text-align: center;"><?=$data->name;?></span>
+                <?php } ?>
                 <span class="text-center block"><?=$data->description;?></span>
                 <?php if ( $modelImage  ) { ?>
                 <?php

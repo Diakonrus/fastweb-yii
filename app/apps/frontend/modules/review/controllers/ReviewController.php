@@ -15,6 +15,8 @@ class ReviewController extends Controller
         $root = ReviewRubrics::getRoot(new ReviewRubrics);
         $model = $root->descendants(1)->findAll($root->id);
 
+        $this->setSEO(Yii::app()->request->requestUri, 'Отзывы');
+
         $this->render('index', array('model'=>$model));
     }
 
@@ -32,7 +34,7 @@ class ReviewController extends Controller
                     $model->name = $_POST['AddReview']['name'];
                     $model->email = $_POST['AddReview']['email'];
                     if ($model->save()){
-                        $modelElement = new FaqReview();
+                        $modelElement = new ReviewElements();
                         $modelElement->parent_id = (int)$_POST['AddReview']['rubrics'];
                         $modelElement->author_id = $model->id;
                         $modelElement->review = '<p>'.$_POST['AddReview']['review'].'</p>';
@@ -49,12 +51,18 @@ class ReviewController extends Controller
         if (is_numeric($paramArr)){
             //Число - это элемент
             $model = ReviewElements::model()->findByPk((int)$paramArr);
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Отзывы', $model);
+
             //Смотрим, нужно ли вставить фотогалерею
             $render = '_form';
         }
         else {
             //Список отзывов категории
             $modelGroup =  ReviewRubrics::model()->find('url LIKE "'.$paramArr.'"');
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Отзывы', $modelGroup);
+
             $model = array();
             $model['group'] = $modelGroup;
             $model['element'] = ReviewElements::model()->findAll(array(

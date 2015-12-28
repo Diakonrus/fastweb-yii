@@ -38,6 +38,61 @@
 <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>450));; ?>
 <?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>450));; ?>
 
+<?php
+
+Yii::import('ext.imperavi-redactor-widget-master.ImperaviRedactorWidget');
+
+$this->widget('ImperaviRedactorWidget', array(
+	'model' => $model,
+	'attribute' => 'description',
+
+	'options' => array(
+		'lang' => 'ru',
+		'cleanOnPaste'=>false,
+		'cleanStyleOnEnter'=>true,
+		'cleanSpaces'=>false,
+		'replaceDivs' => false,
+		'imageUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/imageUpload'),
+		'fileUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/fileUpload'),
+		'imageManagerJson'=> Yii::app()->createAbsoluteUrl('/pages/pages/getImageLibray'),
+	),
+	'plugins' => array(
+		'fullscreen' => array(
+			'js' => array('fullscreen.js',),
+		),
+		'video' => array(
+			'js' => array('video.js',),
+		),
+		'table' => array(
+			'js' => array('table.js',),
+		),
+		'fontcolor' => array(
+			'js' => array('fontcolor.js',),
+		),
+		'fontfamily' => array(
+			'js' => array('fontfamily.js',),
+		),
+		'fontsize' => array(
+			'js' => array('fontsize.js',),
+		),
+		'filemanager' => array(
+			'js' => array('filemanager.js',),
+		),
+		'myphotogalery' => array(
+			'js' => array('myphotogalery.js',),
+		),
+		'imagemanager' => array(
+			'js' => array('imagemanager.js',),
+		),
+		'myforms' => array(
+			'js' => array('myforms.js',),
+		),
+	),
+));
+
+?>
+
+
 <div class="control-group">
     <label class="control-label" for="BanersalbumElements_imagefile">Картинка</label>
     <div class="controls">
@@ -53,6 +108,7 @@
         <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
     </div>
 </div>
+
 
 
 <?php echo $form->dropDownListRow($model,'status',

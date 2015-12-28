@@ -201,9 +201,6 @@ echo $form->dropDownListRow($model,'status',array(0=>'Не авктивно', 1=
     array('class'=>'span5'));
 ?>
 
-<?php echo $form->textFieldRow($model,'meta_title',array('class'=>'span5','maxlength'=>350));; ?>
-<?php echo $form->textAreaRow($model,'meta_keywords',array('class'=>'span5')); ?>
-<?php echo $form->textAreaRow($model,'meta_description',array('class'=>'span5')); ?>
 
 
 

@@ -38,10 +38,29 @@
 </div>
 
 
-<?php echo $form->dropDownListRow($model, "author_id",
-                        CHtml::listData( FaqAuthor::model()->findAll(), "id", "name"),
-                        array("empty" => "Не выбран", 'class'=>'span5')
-                    ); ?>
+<?php
+
+if ($model->isNewRecord){
+    echo '
+    <div class="control-group">
+        <label class="control-label required" for="FaqAuthor_name">
+            '.($form->label($model, "author_id")).'
+            <span class="required">*</span>
+        </label>
+        <div class="controls">
+            '.($form->textField($modelAuthor,'name',array('class'=>'span5','maxlength'=>450))).'
+        </div>
+    </div>
+
+    ';
+}
+else {
+    echo $form->dropDownListRow($model, "author_id",
+        CHtml::listData( FaqAuthor::model()->findAll(), "id", "name"),
+        array("empty" => "Не выбран", 'class'=>'span5')
+    );
+}
+?>
 
 <?php
 
@@ -144,6 +163,18 @@ $this->widget('ImperaviRedactorWidget', array(
 
 ?>
 
+<?php echo $form->DatePickerRow($model, 'question_data', array(
+    'options'=>array(
+        'autoclose' => true,
+        //'showAnim'=>'fold',
+        'type' => 'Component',
+        'format'=>'yyyy-mm-dd',
+    ),
+    'htmlOptions'=>array(
+        //'value'=> strlen($model->created_at) > 0 ? Yii::app()->dateFormatter->format('yyyy-MM-dd', $model->created_at) : '',
+        //'class'=>'span2'
+    ),
+));; ?>
 
 	<div class="form-actions">
 

@@ -11,6 +11,7 @@ class BasketController extends Controller
             $this->redirect('/login');
         }
         */
+
     }
 
 	public function actionIndex()
@@ -87,7 +88,7 @@ class BasketController extends Controller
 
                 }
                 //отправляем письмо админу о заказе
-                $this->sendEmailAdmin($modelBasketOrder->id);
+                $this->sendEmail($modelBasketOrder->id);
                 $this->redirect('/basket/success');
             }
 
@@ -211,8 +212,8 @@ class BasketController extends Controller
 
 
     //Отправляет письмо админу
-    private function sendEmailAdmin($id){
-        $email = "info@admin.ru";
+    private function sendEmail($id){
+        $email = "info@nzsnab.ru";
         $subject = "Новый заказ товаров";
 
 

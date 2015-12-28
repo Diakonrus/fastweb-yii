@@ -46,13 +46,13 @@ class DoctorElements extends CActiveRecord
 		return array(
 			array('name, doctor_rubrics_id', 'required'),
 			array('order_id, chief_doctor, status', 'numerical', 'integerOnly'=>true),
-			array('name, meta_title', 'length', 'max'=>350),
+			array('name', 'length', 'max'=>350),
 			array('image', 'length', 'max'=>5),
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
-			array('description, doctor_rubrics_id,  anonse, anonse_dop, meta_keywords, meta_description', 'safe'),
+			array('description, doctor_rubrics_id,  anonse, anonse_dop', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, order_id, name, anonse, anonse_dop, description, doctor_rubrics_id, image, status, chief_doctor, meta_title, meta_keywords, meta_description, created_at, created_at_start, created_at_end,
+			array('id, order_id, name, anonse, anonse_dop, description, doctor_rubrics_id, image, status, chief_doctor, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -85,9 +85,6 @@ class DoctorElements extends CActiveRecord
 			'image' => 'Фото',
             'chief_doctor' => 'Главный врач',
 			'status' => 'Статус',
-			'meta_title' => 'Meta Title',
-			'meta_keywords' => 'Meta Keywords',
-			'meta_description' => 'Meta Description',
 			'created_at' => 'Created At',
 		);
 	}
@@ -124,9 +121,6 @@ class DoctorElements extends CActiveRecord
 		$criteria->compare('image',$this->image,true);
         $criteria->compare('chief_doctor',$this->chief_doctor);
 		$criteria->compare('status',$this->status);
-		$criteria->compare('meta_title',$this->meta_title,true);
-		$criteria->compare('meta_keywords',$this->meta_keywords,true);
-		$criteria->compare('meta_description',$this->meta_description,true);
 		$this->compareDate($criteria, 'created_at');
 
 		$criteria_param = array(

@@ -13,6 +13,8 @@ class SitemapController extends Controller
             $this->redirect('/login');
         }
         */
+
+        $this->setSEO(Yii::app()->request->requestUri, 'Карта сайта');
     }
 
 	public function actionIndex()

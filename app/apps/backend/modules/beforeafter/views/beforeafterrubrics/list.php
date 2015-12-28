@@ -30,11 +30,18 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'header'=> $labels["id"],
             'name'=> "id",
         ),
-        
-	
-            array(
+
+
+        array(
             'header'=> $labels["name"],
-            'name'=> "name",
+            'type'=>'raw',
+            'value' =>  function($data){
+                return '
+                    <a href="/admin/beforeafter/beforeafterrubrics/index?id='.$data->id.'">
+                        <b>'.$data->name.'</b>
+                    </a>
+                ';
+            },
         ),
         
 	
@@ -58,6 +65,21 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
         ),
 
         array(
+            'header'=> 'Элементов',
+            'type'=>'raw',
+            'value' =>  function($data){
+                $count = BeforeAfterRubrics::getCountElements($data->id);
+                return '
+                    <a href="/admin/beforeafter/beforeafterelements?BeforeAfterElements[parent_id]='.$data->id.'">
+                        <b>'.$count.'</b>
+                    </a>
+                ';
+            },
+            'filter' =>'',
+        ),
+
+        /*
+        array(
             'header'=> 'Позиций',
             'type'=>'raw',
             'value' =>  function($data){
@@ -70,6 +92,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             },
             'filter' =>'',
         ),
+        */
         
 
         array(

@@ -17,6 +17,8 @@ class BeforeafterController extends Controller
         $model['group'] = null;
         $model['sub_group'] = $root->descendants(1)->findAll($root->id);
 
+        $this->setSEO(Yii::app()->request->requestUri, 'До и После');
+
         $this->render('index', array('model'=>$model));
     }
 
@@ -35,6 +37,10 @@ class BeforeafterController extends Controller
         else {
             //Список новостей категории
             $modelGroup =  BeforeAfterRubrics::model()->find('url LIKE "'.$paramArr.'"');
+
+            if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
+            $this->setSEO(Yii::app()->request->requestUri, 'До и После', $modelGroup);
+
             $model = array();
             $model['group'] = $modelGroup;
             $model['sub_group'] = $modelGroup->descendants(1)->findAll();
@@ -43,6 +49,7 @@ class BeforeafterController extends Controller
 
 
         if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
+
         $this->render($render, array('model'=>$model));
     }
 

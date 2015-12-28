@@ -9,6 +9,7 @@ class Controller extends CController
     public $layout='//layouts/main';
 
     //SEO
+    public $siteName = SITE_TITLE;   //Имя сайта
     public $pageTitle = SITE_TITLE;
     public $pageMetaTitle;
     public $pageDescription;
@@ -31,13 +32,24 @@ class Controller extends CController
 	}
 
 
-    public function setSEO($url){
-        $model = Pages::model()->find('url LIKE "'.$url.'"');
-        if ($model){
-            if (!empty($model->meta_title)){ $this->pageTitle = $model->meta_title; $this->pageMetaTitle = $model->meta_title; }
-            if (!empty($model->meta_keywords)){ $this->pageKeywords = $model->meta_keywords;  }
-            if (!empty($model->meta_description)){ $this->pageDescription = $model->meta_description;  }
+    public function setSEO($url_patch, $page_title =  null, $modelSEO = null){
+        $url_patch = trim($url_patch);
+        $this->pageTitle = ((!empty($page_title))?($page_title.' - '):('')).$this->siteName;
+        $url_array =  explode("/", ( parse_url($url_patch, PHP_URL_PATH )));
+        foreach ( $url_array as $url  ){
+            $model = Pages::model()->find('url LIKE "'.$url.'"');
+            if ($model){
+                if (!empty($model->meta_title)){ $this->pageTitle = $model->meta_title; $this->pageMetaTitle = $model->meta_title; }
+                if (!empty($model->meta_keywords)){ $this->pageKeywords = $model->meta_keywords;  }
+                if (!empty($model->meta_description)){ $this->pageDescription = $model->meta_description;  }
+            }
         }
+        if (!empty($modelSEO)){
+            if (isset($modelSEO->meta_title) && !empty($modelSEO->meta_title)){ $this->pageTitle = $modelSEO->meta_title; $this->pageMetaTitle = $modelSEO->meta_title; }
+            if (isset($modelSEO->meta_keywords) && !empty($modelSEO->meta_keywords)){ $this->pageKeywords = $modelSEO->meta_keywords;  }
+            if (isset($modelSEO->meta_description) && !empty($modelSEO->meta_description)){ $this->pageDescription = $modelSEO->meta_description;  }
+        }
+
         return true;
     }
 

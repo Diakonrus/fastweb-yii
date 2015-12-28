@@ -15,6 +15,8 @@ class QuestionController extends Controller
         $root = FaqRubrics::getRoot(new FaqRubrics);
         $model = $root->descendants(1)->findAll($root->id);
 
+        $this->setSEO(Yii::app()->request->requestUri, 'Вопрос - ответ');
+
         $this->render('index', array('model'=>$model));
     }
 
@@ -49,12 +51,19 @@ class QuestionController extends Controller
         if (is_numeric($paramArr)){
             //Число - это элемент
             $model = FaqElements::model()->findByPk((int)$paramArr);
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Вопрос - ответ', $model);
+
             //Смотрим, нужно ли вставить фотогалерею
             $render = '_form';
         }
         else {
             //Список новостей категории
             $modelGroup =  FaqRubrics::model()->find('url LIKE "'.$paramArr.'"');
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Вопрос - ответ', $modelGroup);
+
+
             $model = array();
             $model['group'] = $modelGroup;
             $model['element'] = FaqElements::model()->findAll(array(

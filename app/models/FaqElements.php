@@ -38,10 +38,10 @@ class FaqElements extends CActiveRecord
 		return array(
 			array('parent_id, author_id, question', 'required'),
 			array('status, parent_id, author_id', 'numerical', 'integerOnly'=>true),
-			array('answer', 'safe'),
+			array('answer, question_data', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, author_id, question, answer, status, created_at, created_at_start, created_at_end,
+			array('id, parent_id, author_id, question, answer, status, created_at, question_data, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -71,7 +71,8 @@ class FaqElements extends CActiveRecord
 			'question' => 'Вопрос',
 			'answer' => 'Ответ',
             'status' => 'Статус',
-			'created_at' => 'Дата создания вопроса',
+			'question_data' => 'Дата создания вопроса',
+			'created_at' => 'created_at',
 		);
 	}
 
@@ -103,6 +104,7 @@ class FaqElements extends CActiveRecord
 		$criteria->compare('question',$this->question,true);
 		$criteria->compare('answer',$this->answer,true);
         $criteria->compare('status',$this->status);
+		$criteria->compare('question_data',$this->question_data);
         $criteria->compare('created_at',$this->created_at);
 		//$this->compareDate($criteria, 'created_at');
 
@@ -125,6 +127,11 @@ class FaqElements extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	protected function beforeSave() {
+		if (empty($this->question_data)){$this->question_data = date('Y-m-d H:i:s');}
+		return true;
 	}
 
     public function getCountElements($parent_id){

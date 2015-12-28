@@ -24,6 +24,10 @@ class NewsController extends Controller
             "condition" => "status!=0 AND group_id=0",
             "order" => "id DESC",
         ));
+
+        $this->setSEO(Yii::app()->request->requestUri, 'Новости');
+
+
 		$this->render('index', array('model'=>$model));
 	}
 
@@ -37,6 +41,9 @@ class NewsController extends Controller
             $model = News::model()->findByPk((int)$paramArr);
             //Смотрим, нужно ли вставить фотогалерею
             $model->description = $this->addPhotogalery($model->description);
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Новости', $model);
+
             $render = 'view';
         }
         else {
@@ -48,6 +55,8 @@ class NewsController extends Controller
                 "condition" => "status!=0 AND group_id = ".$modelGroup->id,
                 "order" => "id DESC",
             ));
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Новости', $modelGroup);
 
             $render = 'index';
         }

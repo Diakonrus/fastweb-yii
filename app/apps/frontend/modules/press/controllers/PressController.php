@@ -29,6 +29,9 @@ class PressController extends Controller
             "order" => "id ASC",
         ));
         $param = $model_tmp->id;
+
+        $this->setSEO(Yii::app()->request->requestUri, 'Пресса о нас');
+
 		$this->render('index', array('model'=>$model, 'param' => $param));
 	}
 
@@ -40,9 +43,14 @@ class PressController extends Controller
         if (is_numeric($paramArr)){
             //Число - это элемент
             $model = Press::model()->findByPk((int)$paramArr);
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Пресса о нас', $model);
+
+
             //Смотрим, нужно ли вставить фотогалерею
             $model->description = $this->addPhotogalery($model->description);
             $param = null;
+
             $render = 'view';
         }
         else {
@@ -60,6 +68,9 @@ class PressController extends Controller
                 "condition" => "status!=0 AND url LIKE '".$paramArr."'",
                 "order" => "id ASC",
             ));
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Пресса о нас', $model_tmp);
+
             //получаем новости без групп
             $model['first_group'] = Press::model()->findAll(array(
                 "condition" => "status!=0 AND group_id=".$model_tmp->id,

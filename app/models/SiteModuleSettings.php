@@ -327,7 +327,7 @@ class SiteModuleSettings extends CActiveRecord
 	/**
 	 * @param $site_module_id
 	 * @param int $type
-	 * Возвращает имя таблицы по id модуля (таблица tbl_site_module_settings), тип указывает тип таблицы (1-рубрика, 2-элемент)
+	 * Возвращает имя таблицы по alias модуля (таблица tbl_site_module_settings), тип указывает тип таблицы (1-рубрика, 2-элемент)
 	 */
 	public function getModelById($site_module_id, $type=1){
 		switch ($site_module_id) {

@@ -24,6 +24,7 @@ class SaleController extends Controller
             "condition" => "status!=0 AND group_id=0",
             "order" => "id DESC",
         ));
+        $this->setSEO(Yii::app()->request->requestUri, 'Акции');
 		$this->render('index', array('model'=>$model));
 	}
 
@@ -35,6 +36,8 @@ class SaleController extends Controller
         if (is_numeric($paramArr)){
             //Число - это элемент
             $model = Sale::model()->findByPk((int)$paramArr);
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Акции', $model);
             //Смотрим, нужно ли вставить фотогалерею
             $model->description = $this->addPhotogalery($model->description);
             $render = 'view';
@@ -42,6 +45,8 @@ class SaleController extends Controller
         else {
             //Список новостей категории
             $modelGroup = SaleGroup::model()->find('url LIKE "'.$paramArr.'"');
+
+            $this->setSEO(Yii::app()->request->requestUri, 'Акции', $modelGroup);
             $model = array();
             $model['group'] = array();
             $model['no_group'] = Sale::model()->findAll(array(

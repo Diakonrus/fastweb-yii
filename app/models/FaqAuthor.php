@@ -33,7 +33,7 @@ class FaqAuthor extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, email', 'required'),
+			array('name', 'required'),
 			array('name, email', 'length', 'max'=>450),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

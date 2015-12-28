@@ -19,155 +19,20 @@ $(document).ready(function(){
     }
 
     //Транслит текста
-    function name_translit(){// alert('dsdsd');
-        var a=new
-            Array('ы','й', 'г','ф','о','т','ю','ц','ш', 'и','л', 'ч','ь','у','щ',   'в','д','с','к','з','а','ж', 'м','е','х','п', 'э','и','н', 'р','я','б',' ','ъ','ё')
-        var b=new
-            Array('y','y','g','f','o','t','yu','ts','sh','i','l','ch','','u','shch','v','d','s','k','z','a','zh','m','e','kh','p','e','i','n','r','ya','b','-','','yo')
-        var x = document.getElementById('name').value;
-        var oldd = document.getElementById('name').value;
-        for(i=0;i<a.length;i++){
-            y=eval('/'+a[i]+'/ig')
-            x=x.replace(y,b[i])
-        }
-        document.getElementById('url').value = lCase(x);
-    }
-
-
     function translite(str){
-        var arr={'а':'a', 'б':'b', 'в':'v', 'г':'g', 'д':'d', 'е':'e', 'ж':'g', 'з':'z', 'и':'i', 'й':'y', 'к':'k', 'л':'l', 'м':'m', 'н':'n', 'о':'o', 'п':'p', 'р':'r', 'с':'s', 'т':'t', 'у':'u', 'ф':'f', 'ы':'i', 'э':'e', 'А':'A', 'Б':'B', 'В':'V', 'Г':'G', 'Д':'D', 'Е':'E', 'Ж':'G', 'З':'Z', 'И':'I', 'Й':'Y', 'К':'K', 'Л':'L', 'М':'M', 'Н':'N', 'О':'O', 'П':'P', 'Р':'R', 'С':'S', 'Т':'T', 'У':'U', 'Ф':'F', 'Ы':'I', 'Э':'E', 'ё':'yo', 'х':'h', 'ц':'ts', 'ч':'ch', 'ш':'sh', 'щ':'shch', 'ъ':'l', 'ь':'l', 'ю':'yu', 'я':'ya', 'Ё':'YO', 'Х':'H', 'Ц':'TS', 'Ч':'CH', 'Ш':'SH', 'Щ':'SHCH', 'Ъ':'', 'Ь':'','Ю':'YU', 'Я':'YA', ' ':'-', '(':'-', ')':'-'};
+        var arr={'а':'a', 'б':'b', 'в':'v', 'г':'g', 'д':'d', 'е':'e', 'ё':'yo', 'ж':'g', 'з':'z', 'и':'i', 'й':'y', 'к':'k', 'л':'l', 'м':'m', 'н':'n', 'о':'o', 'п':'p', 'р':'r', 'с':'s', 'т':'t', 'у':'u', 'ф':'f', 'х':'ch', 'ц':'c', 'ч':'ch', 'ш':'sh', 'щ':'shh', 'ъ':'', 'ь':'', 'ы':'y', 'э':'e', 'ю':'yu', 'я':'ya',
+                 'А':'A', 'Б':'B', 'В':'V', 'Г':'G', 'Д':'D', 'Е':'E', 'Ё':'YO', 'Ж':'G', 'З':'Z', 'И':'I', 'Й':'Y', 'К':'K', 'Л':'L', 'М':'M', 'Н':'N', 'О':'O', 'П':'P', 'Р':'R', 'С':'S', 'Т':'T', 'У':'U', 'Ф':'F', 'Х':'CH', 'Ц':'C', 'Ч':'CH', 'Ш':'SH', 'Щ':'SHH', 'Ъ':'', 'Ь':'', 'Ы':'y', 'Ю':'YU', 'Я':'YA', 'Э':'E',
+                 ' ':'-'};
         var replacer=function(a){return arr[a]||a};
         return str.replace(/[А-яёЁ:)(/\\ ]/g,replacer);
     }
 
-    $("#Pages_title").keyup(function(){
-        $("#Pages_url").val(translite($(this).val()));
+    $(document).on('click', '.translits_href',function(){
+        var title = $(this).parent().parent().prev().find('input').val();
+        var url_trans = translite(title);
+        url_trans = url_trans.toLowerCase();
+        $(this).parent().parent().next().find('input').val(url_trans);
+        return false;
     });
-
-    $("#Pages_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-    $("#NewsGroup_name").keyup(function(){
-        $("#NewsGroup_url").val(translite($(this).val()));
-    });
-
-    $("#NewsGroup_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-    $("#PhotoRubrics_name").keyup(function(){
-        $("#PhotoRubrics_url").val(translite($(this).val()));
-    });
-
-    $("#PhotoRubrics_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-    $("#SaleGroup_name").keyup(function(){
-        $("#SaleGroup_url").val(translite($(this).val()));
-    });
-
-    $("#SaleGroup_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-    $("#FaqRubrics_name").keyup(function(){
-        $("#FaqRubrics_url").val(translite($(this).val()));
-    });
-
-    $("#FaqRubrics_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-    $("#CatalogRubrics_name").keyup(function(){
-        var str = $(this).val();
-        str = str.toLowerCase();
-        $("#CatalogRubrics_url").val(translite(str));
-    });
-
-    $("#CatalogRubrics_url").keyup(function(){
-        var str = $(this).val();
-        str = str.toLowerCase();
-        $("#CatalogRubrics_url").val(translite(str));
-    });
-
-    $("#WarehouseRubrics_name").keyup(function(){
-        var str = $(this).val();
-        str = str.toLowerCase();
-        $("#WarehouseRubrics_url").val(translite(str));
-    });
-    $("#WarehouseRubrics_url").keyup(function(){
-        var str = $(this).val();
-        str = str.toLowerCase();
-        $("#WarehouseRubrics_url").val(translite(str));
-    });
-
-    $("#CatalogtransmissionRubrics_name").keyup(function(){
-        var str = $(this).val();
-        str = str.toLowerCase();
-        $("#CatalogtransmissionRubrics_url").val(translite(str));
-    });
-    $("#CatalogtransmissionRubrics_url").keyup(function(){
-        var str = $(this).val();
-        str = str.toLowerCase();
-        $("#CatalogtransmissionRubrics_url").val(translite(str));
-    });
-
-    $("#CatalogengineRubrics_name").keyup(function(){
-        var str = $(this).val();
-        str = str.toLowerCase();
-        $("#CatalogengineRubrics_url").val(translite(str));
-    });
-    $("#CatalogengineRubrics_url").keyup(function(){
-        var str = $(this).val();
-        str = str.toLowerCase();
-        $("#CatalogengineRubrics_url").val(translite(str));
-    });
-
-    $("#BeforeAfterRubrics_name").keyup(function(){
-        $("#BeforeAfterRubrics_url").val(translite($(this).val()));
-    });
-
-    $("#BeforeAfterRubrics_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-    $("#PressGroup_name").keyup(function(){
-        $("#PressGroup_url").val(translite($(this).val()));
-    });
-
-    $("#PressGroup_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-    $("#BanersRubrics_name").keyup(function(){
-        $("#BanersRubrics_url").val(translite($(this).val()));
-    });
-
-    $("#BanersRubrics_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-    $("#ReviewRubrics_name").keyup(function(){
-        $("#ReviewRubrics_url").val(translite($(this).val()));
-    });
-
-    $("#ReviewRubrics_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-
-
-    $("#DoctorRubrics_name").keyup(function(){
-        $("#DoctorRubrics_url").val(translite($(this).val()));
-    });
-
-    $("#DoctorRubrics_url").keyup(function(){
-        $(this).val(translite($(this).val()));
-    });
-
-
-
 
 });

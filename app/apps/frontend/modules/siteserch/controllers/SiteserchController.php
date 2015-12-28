@@ -11,6 +11,8 @@ class SiteserchController extends Controller
             $this->redirect('/login');
         }
         */
+
+        $this->setSEO(Yii::app()->request->requestUri, 'Поиск по сайту');
     }
 
 	public function actionIndex()
