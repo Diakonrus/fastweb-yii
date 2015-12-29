@@ -92,6 +92,13 @@
                         </ul>
                     </li>
 
+                    <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 7 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic32.png" alt="" /></span> <a href="#" title="">HTML код  </a></li>
+                    <li class="no">
+                        <ul>
+                            <li><a href="/admin/htmlcode/htmlcode/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список записей</a></li>
+                        </ul>
+                    </li>
+
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 7 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic31.png" alt="" /></span> <a href="#" title="">Отзывы  </a></li>
                     <li class="no">
                         <ul>

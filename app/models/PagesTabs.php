@@ -129,6 +129,7 @@ class PagesTabs extends CActiveRecord
         12 => '{{before_after_rubrics}}',  //До и После
         13 => '{{main_tabel}}',  //Таблицы
         16 => '{{review_rubrics}}',  //Таблицы
+        17 => '{{html_code}}',  //HTML код
     );
 
     /**
@@ -747,6 +748,16 @@ class PagesTabs extends CActiveRecord
 
                 $resultHTML = $template_tmp;
                 $title = $model->title;
+                $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
+                break;
+            case 17:
+                //HTML код
+                $tmp_module_value = '';
+                foreach ( HtmlCode::model()->findAll('id in ('.(implode(",", $module_value_array)).') AND `status`=1') as $data ) {
+                    $tmp_module_value .= $data->code;
+                }
+                $resultHTML = $template_tmp;
+                $title = '';
                 $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
                 break;
             default:
