@@ -1,5 +1,13 @@
 $(document).ready(function(){
 
+    $(document).on('click','.block_url', function(){
+        var type = $(this).find('a').data('type');
+        if (type=='plus'){$(this).find('img').attr('src','/images/admin/icons/minus.gif'); $(this).find('a').data('type','minus');}
+        else {$(this).find('img').attr('src','/images/admin/icons/plus.gif'); $(this).find('a').data('type','plus');}
+        $(this).next().slideToggle();
+        return false;
+    });
+
     //кнопки в меню
     $(document).on('click', '.left-menu-title', function(){
         $(this).next().slideToggle();
@@ -21,10 +29,10 @@ $(document).ready(function(){
     //Транслит текста
     function translite(str){
         var arr={'а':'a', 'б':'b', 'в':'v', 'г':'g', 'д':'d', 'е':'e', 'ё':'yo', 'ж':'g', 'з':'z', 'и':'i', 'й':'y', 'к':'k', 'л':'l', 'м':'m', 'н':'n', 'о':'o', 'п':'p', 'р':'r', 'с':'s', 'т':'t', 'у':'u', 'ф':'f', 'х':'ch', 'ц':'c', 'ч':'ch', 'ш':'sh', 'щ':'shh', 'ъ':'', 'ь':'', 'ы':'y', 'э':'e', 'ю':'yu', 'я':'ya',
-                 'А':'A', 'Б':'B', 'В':'V', 'Г':'G', 'Д':'D', 'Е':'E', 'Ё':'YO', 'Ж':'G', 'З':'Z', 'И':'I', 'Й':'Y', 'К':'K', 'Л':'L', 'М':'M', 'Н':'N', 'О':'O', 'П':'P', 'Р':'R', 'С':'S', 'Т':'T', 'У':'U', 'Ф':'F', 'Х':'CH', 'Ц':'C', 'Ч':'CH', 'Ш':'SH', 'Щ':'SHH', 'Ъ':'', 'Ь':'', 'Ы':'y', 'Ю':'YU', 'Я':'YA', 'Э':'E',
-                 ' ':'-'};
-        var replacer=function(a){return arr[a]||a};
-        return str.replace(/[А-яёЁ:)(/\\ ]/g,replacer);
+            'А':'A', 'Б':'B', 'В':'V', 'Г':'G', 'Д':'D', 'Е':'E', 'Ё':'YO', 'Ж':'G', 'З':'Z', 'И':'I', 'Й':'Y', 'К':'K', 'Л':'L', 'М':'M', 'Н':'N', 'О':'O', 'П':'P', 'Р':'R', 'С':'S', 'Т':'T', 'У':'U', 'Ф':'F', 'Х':'CH', 'Ц':'C', 'Ч':'CH', 'Ш':'SH', 'Щ':'SHH', 'Ъ':'', 'Ь':'', 'Ы':'y', 'Ю':'YU', 'Я':'YA', 'Э':'E',
+            '#':'', ' ':'-'};
+        var replacer=function(a){return arr[a] !== void 0 ? arr[a]: a};
+        return str.replace(/./g,replacer);
     }
 
     $(document).on('click', '.translits_href',function(){

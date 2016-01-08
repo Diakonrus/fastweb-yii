@@ -333,7 +333,7 @@ class SiteModuleSettings extends CActiveRecord
 		switch ($site_module_id) {
 			case 1:
 				//Новости
-				return (($type==1)?('{{news_group}}'):('{{news}}'));
+				return (($type==1)?('{{news_rubrics}}'):('{{news_elements}}'));
 				break;
 			case 2:
 				//Карта сайта
@@ -450,6 +450,8 @@ class SiteModuleSettings extends CActiveRecord
 			$img_element = $val['image'];
 
 			foreach ($param as $name => $data){
+
+				if (!file_exists($filepatch.$id_element.'.'.$img_element)){continue;}
 
 				$image = new EasyImage($filepatch.$id_element.'.'.$img_element, $driver); //$image = new EasyImage($fileOrigin, 'Imagick');  - для Imagic
 

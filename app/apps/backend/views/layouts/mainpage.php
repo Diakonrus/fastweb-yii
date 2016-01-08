@@ -118,8 +118,8 @@
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 1 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic2.gif" alt="" /></span> <a href="#" title="">Новости </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/news/newsgroup/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп новостей  </a></li>
-                            <li><a href="/admin/news" title=""><img src="/images/admin/strela2.gif" alt="" /> Список новостей  </a></li>
+                            <li><a href="/admin/news/newsrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп </a></li>
+                            <li><a href="/admin/news/newselements" title=""><img src="/images/admin/strela2.gif" alt="" /> Список новостей  </a></li>
                         </ul>
                     </li>
 

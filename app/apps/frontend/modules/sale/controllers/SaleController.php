@@ -35,31 +35,50 @@ class SaleController extends Controller
 
         if (is_numeric($paramArr)){
             //Число - это элемент
-            $model = Sale::model()->findByPk((int)$paramArr);
+            $model = array();
+            $model['group'] = array();
+            $modelSale = Sale::model()->findByPk((int)$paramArr);
+            if (empty($modelSale)){throw new CHttpException(404,'The page can not be found.');}
 
-            $this->setSEO(Yii::app()->request->requestUri, 'Акции', $model);
+            $parent = SaleGroup::model()->findByPk((int)$modelSale->group_id);
+            $this->setSEO(Yii::app()->request->requestUri, 'Акции', $parent);
+
+            $model['page'] = array();
+            if (!empty($parent)){
+                $model['page'][0]['url'] = $parent->url;
+                $model['page'][0]['name'] = $parent->name;
+            }
+
+
             //Смотрим, нужно ли вставить фотогалерею
-            $model->description = $this->addPhotogalery($model->description);
+            $modelSale->description = $this->addPhotogalery($modelSale->description);
+            $model['elements'][] = $modelSale;
             $render = 'view';
         }
         else {
             //Список новостей категории
             $modelGroup = SaleGroup::model()->find('url LIKE "'.$paramArr.'"');
+            if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
 
             $this->setSEO(Yii::app()->request->requestUri, 'Акции', $modelGroup);
+
             $model = array();
-            $model['group'] = array();
-            $model['no_group'] = Sale::model()->findAll(array(
+            $model['group'] = $modelGroup;
+            $model['elements'] = Sale::model()->findAll(array(
                 "condition" => "status!=0 AND group_id = ".$modelGroup->id,
                 "order" => "id DESC",
             ));
 
-            $render = 'index';
+            $model['page'] = array();
+            $model['page'][0]['url'] = $modelGroup->url;
+            $model['page'][0]['name'] = $modelGroup->name;
+
+            $render = 'view';
         }
 
 
         if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
-        $this->render($render, array('model'=>$model));
+        $this->render($render, array('model'=>$model, 'param_url' => $paramArr));
     }
 
 

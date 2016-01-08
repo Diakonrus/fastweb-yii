@@ -51,6 +51,8 @@ class PhotoController extends Controller
         $root = PhotoRubrics::getRoot(new PhotoRubrics);
         $modelRoot = PhotoRubrics::model()->find('url LIKE "'.$paramArr.'"');
 
+        if (empty($modelRoot)){throw new CHttpException(404,'The page can not be found.');}
+
         $this->setSEO(Yii::app()->request->requestUri, 'Фотогалерея', $modelRoot);
 
         $is_root = (($modelRoot->level==2)?true:false);

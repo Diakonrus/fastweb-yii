@@ -28,19 +28,18 @@ class BeforeafterController extends Controller
         $paramArr = explode("/", $param);
         $paramArr =  array_pop($paramArr);
 
-        if (is_numeric($paramArr)){
-            //Число - это элемент
-            $model = BeforeAfterElements::model()->findAll('parent_id = '.(int)$paramArr);
-            //Смотрим, нужно ли вставить фотогалерею
-            $render = '_form';
+        $modelGroup =  BeforeAfterRubrics::model()->find('url LIKE "'.$paramArr.'"');
+        if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
+        $this->setSEO(Yii::app()->request->requestUri, 'До и После', $modelGroup);
+
+        if ($modelGroup->level == 3){
+            $model = array();
+            $model['group'] = $modelGroup;
+            $model['sub_group'] = null;
+            $model['elements'] = BeforeAfterElements::model()->findAll('parent_id = '.$modelGroup->id);
+            $render = 'view';
         }
         else {
-            //Список новостей категории
-            $modelGroup =  BeforeAfterRubrics::model()->find('url LIKE "'.$paramArr.'"');
-
-            if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
-            $this->setSEO(Yii::app()->request->requestUri, 'До и После', $modelGroup);
-
             $model = array();
             $model['group'] = $modelGroup;
             $model['sub_group'] = $modelGroup->descendants(1)->findAll();

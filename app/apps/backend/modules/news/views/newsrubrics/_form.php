@@ -1,17 +1,48 @@
+
+
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
-    'id'=>'news-group-form',
-    'enableAjaxValidation'=>false,
-    'enableClientValidation'=>false,
-    'type' => 'horizontal',
+	'id'=>'news-rubrics-form',
+	'enableAjaxValidation'=>false,
+	'enableClientValidation'=>false,
+	'type' => 'horizontal',
     'htmlOptions'=>array('enctype'=>'multipart/form-data'),
-
+	
 )); ?>
-
 
     <!-- Fields with <span class="required">*</span> are required. -->
 	<!--<p class="help-block"><?php echo Yii::t("Bootstrap", "PHRASE.FIELDS_REQUIRED") ?></p>-->
 
 	<?php echo $form->errorSummary($model); ?>
+
+<div class="control-group">
+    <label class="control-label required" for="NewsRubrics_name">
+        Категория
+        <span class="required">*</span>
+    </label>
+    <div class="controls">
+        <select name="NewsRubrics[parent_id]" id="NewsRubrics_parent_id" class="span5" <?=!$model->isNewRecord?'disabled':'';?>>
+
+            <?php echo '<option value="'.$root->id.'">/</option>'; ?>
+            <? if (!empty($categories)) : ?>
+                <? foreach ($categories as $category) : ?>
+                    <option value="<?=$category->id ?>"
+                        <?php
+                        if ($model->isNewRecord && isset($_GET['id']) &&  $category->id==(int)$_GET['id']){
+                            echo 'selected="selected"';
+                        }
+                        elseif ($model->parent_id == $category->id){
+                            echo 'selected="selected"';
+                        }
+                        ?>
+                        >
+                        <?=str_repeat('--', $category->level), $category->name?>
+                    </option>
+                <? endforeach; ?>
+            <? endif;?>
+
+        </select>
+    </div>
+</div>
 
 <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>350));; ?>
 <div class="control-group">
@@ -19,9 +50,10 @@
         <a style="margin-left:560px;" class="translits_href" href="#">транслит url</a>
     </label>
 </div>
-<?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>250)); ?>
+<?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>150));; ?>
 
 <?php
+
 Yii::import('ext.imperavi-redactor-widget-master.ImperaviRedactorWidget');
 
 
@@ -71,9 +103,7 @@ $this->widget('ImperaviRedactorWidget', array(
         ),
     ),
 ));
-?>
 
-<?php
 
 echo $form->labelEx($model,'description');
 
@@ -121,46 +151,48 @@ $this->widget('ImperaviRedactorWidget', array(
         ),
     ),
 ));
-?>
 
 
-<?php
-echo $form->dropDownListRow($model,'param_design',NewsGroup::model()->getParamDesign(),
-    array('class'=>'span5'));
 ?>
 
 <div class="control-group">
-    <label class="control-label" for="CatalogRubrics_status">Картинка на заднем фоне</label>
+    <label class="control-label" for="NewsElements_imagefile">Картинка раздела</label>
     <div class="controls">
-        <?php
-        $base_url_img = '/../uploads/filestorage/news/rubrics/';
-        ?>
         <?php if ($model->isNewRecord) { ?><img src="/images/nophoto_100_100.jpg"><?php } else {
             //Проверяем файл, если нет картинки - ставим заглушку
             $url_img = "/images/nophoto_100_100.jpg";
-            if (file_exists( YiiBase::getPathOfAlias('webroot').$base_url_img.$model->id.'.'.$model->image )) {
-                $url_img = $base_url_img.'small-'.$model->id.'.'.$model->image;
+            if (file_exists( YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/news/rubrics/admin-'.$model->id.'.'.$model->image )) {
+                $url_img = '/../uploads/filestorage/news/rubrics/admin-'.$model->id.'.'.$model->image;
             }
-            echo '<a href="'.$base_url_img.$model->id.'.'.$model->image.'" target="_blank"><img src="'.$url_img.'"></a>';
+            echo '<a href="/../uploads/filestorage/news/rubrics/'.$model->id.'.'.$model->image.'" target="_blank"><img src="'.$url_img.'"></a>';
         } ?>
         <br>
         <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
     </div>
 </div>
 
-<?php
-echo $form->dropDownListRow($model,'status',NewsGroup::model()->getStatuslist(),
-    array('class'=>'span5'));
-?>
 
-<div class="seo_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
-    <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">SEO</span></a>
+
+<div class="block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />Настройки</span></a>
 </div>
-<div id="seo_block" style="margin-top: 10px; padding: 10px;">
+<div style="margin-top: 10px; padding: 10px; display: none;">
+    <?php echo $form->dropDownListRow($model,'status',
+        array('1' => 'Активно', '0' => 'Не активно'));
+    ?>
+</div>
+
+
+
+<div class="block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />SEO</span></a>
+</div>
+<div style="margin-top: 10px; padding: 10px; display: none;">
     <?php echo $form->textFieldRow($model,'meta_title',array('class'=>'span5')); ?>
     <?php echo $form->textAreaRow($model,'meta_keywords',array('class'=>'span5')); ?>
     <?php echo $form->textAreaRow($model,'meta_description',array('class'=>'span5')); ?>
 </div>
+
 
 	<div class="form-actions">
 
@@ -170,6 +202,7 @@ echo $form->dropDownListRow($model,'status',NewsGroup::model()->getStatuslist(),
 			'htmlOptions' => array('style' => 'margin-right: 20px'),
 			'label'=>$model->isNewRecord ? Yii::t('Bootstrap', 'PHRASE.BUTTON.CREATE') : Yii::t('Bootstrap', 'PHRASE.BUTTON.SAVE'),
 		)); ?>
+
 
         <?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'link',

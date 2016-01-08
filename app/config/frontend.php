@@ -8,10 +8,10 @@ Yii::setPathOfAlias('bootstrap', realpath( dirname(__FILE__).'/../extensions/yii
 $url = array(
 
     //'/' => 'user/login/index',
+    //'/' => 'content/default/index',
 
     //ajax
     '/ajax' => 'content/ajax',
-    '/ajax.php' => 'content/ajax',
 
     // регистрация
     'registration' => 'user/registration/index',
@@ -69,11 +69,17 @@ $url = array(
     //Вопрос-ответ
     '/question' => '/question/question',
     'question/<param:.+>' => '/question/question/element',
+    '<param:.+>/question' => '/question/question/element',
 
     //Отзывы
     '/review' => '/review/review',
     'review/<param:.+>' => '/review/review/element',
+    '<param:.+>/review' => '/review/review/element',
 
+    //Статьи
+    '/article' => '/article/article',
+    'article/<param:.+>' => '/article/article/element',
+    '<param:.+>/article' => '/article/article/element',
 
     //Проверка данных формы
     '/send-form' => '/content/default/index',

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This is the model class for table "{{article_elements}}".
+ * This is the model class for table "{{news_elements}}".
  *
- * The followings are the available columns in table '{{article_elements}}':
+ * The followings are the available columns in table '{{news_elements}}':
  * @property integer $id
  * @property integer $parent_id
  * @property string $primary
@@ -18,7 +18,7 @@
  * @property string $maindate
  * @property integer $keyword
  */
-class ArticleElements extends CActiveRecord
+class NewsElements extends CActiveRecord
 {
 
 	public $imagefile;
@@ -28,7 +28,7 @@ class ArticleElements extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return '{{article_elements}}';
+		return '{{news_elements}}';
 	}
 
 	/**
@@ -42,9 +42,9 @@ class ArticleElements extends CActiveRecord
 			array('primary, name', 'required'),
 			array('parent_id, status, keyword', 'numerical', 'integerOnly'=>true),
 			array('primary', 'length', 'max'=>1),
-			array('name', 'length', 'max'=>250),
+			array('name, meta_title', 'length', 'max'=>250),
 			array('image', 'length', 'max'=>50),
-			array('brieftext, description, created_at, maindate', 'safe'),
+			array('brieftext, description, created_at, maindate, meta_keywords, meta_description', 'safe'),
 			array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -61,7 +61,7 @@ class ArticleElements extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'parent' => array(self::BELONGS_TO, 'ArticleRubrics', 'parent_id'),
+			'parent' => array(self::BELONGS_TO, 'NewsRubrics', 'parent_id'),
 		);
 	}
 
@@ -82,6 +82,9 @@ class ArticleElements extends CActiveRecord
 			'maindate' => 'Дата статьи',
 			'keyword' => 'Keyword',
 			'created_at' => 'Created At',
+			'meta_title' => 'Meta Title',
+			'meta_keywords' => 'Meta Keywords',
+			'meta_description' => 'Meta Description',
 		);
 	}
 
@@ -114,6 +117,9 @@ class ArticleElements extends CActiveRecord
 		$criteria->compare('maindate',$this->maindate,true);
 		$criteria->compare('keyword',$this->keyword);
 		$criteria->compare('status',$this->status);
+		$criteria->compare('meta_title',$this->meta_title,true);
+		$criteria->compare('meta_keywords',$this->meta_keywords,true);
+		$criteria->compare('meta_description',$this->meta_description,true);
 		$criteria->compare('created_at',$this->created_at);
 
 		return new CActiveDataProvider($this, array(
@@ -125,7 +131,7 @@ class ArticleElements extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return ArticleElements the static model class
+	 * @return NewsElements the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -136,6 +142,6 @@ class ArticleElements extends CActiveRecord
 		return true;
 	}
 	public function getCountElements($parent_id){
-		return (int)ArticleElements::model()->count("parent_id=:field AND `status`=1", array("field" => $parent_id));
+		return (int)NewsElements::model()->count("parent_id=:field AND `status`=1", array("field" => $parent_id));
 	}
 }

@@ -71,7 +71,7 @@ class BeforeAfterElements extends CActiveRecord
             'on_main' => 'Отображать как пару раздела в списке групп',
 			'before_photo' => 'Картинка `ДО`',
 			'after_photo' => 'Картинка `ПОСЛЕ`',
-			'briftext' => 'Анонс',
+			'briftext' => 'Текст над изображениями',
             'status' => 'Статус',
 			'before_text' => 'Текст 1 (над изображениями)',
 			'after_text' => 'Текст 2 (под изображениями)',

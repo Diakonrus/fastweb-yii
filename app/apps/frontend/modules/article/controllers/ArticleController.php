@@ -51,20 +51,35 @@ class ArticleController extends Controller
             $model = $model->descendants(1)->findAll($model->id);
             $render = 'view';
         } else {
+
+            if ( $modelPage = Pages::model()->find('url LIKE "'.$param.'"') ){
+                if ( $modelTabs = PagesTabs::model()->find('pages_id='.$modelPage->id) ){
+                    $module_id = array_diff((explode("|", $modelTabs->site_module_value)), array(''));
+                    if ($tmpParam = ArticleRubrics::model()->find('id in ('.(current($module_id)).') AND `status` = 1')){
+                        $paramArr = $tmpParam->url;
+                    }
+                }
+            }
+
+
             $model =  ArticleRubrics::model()->find('url LIKE "'.$paramArr.'"');
             if (!$model){ throw new CHttpException(404,'The page can not be found.'); }
             $this->setSEO(Yii::app()->request->requestUri, 'Статьи', $model);
 
+
             $pageArray = array();
-            $i = 0;
-            foreach ($model->ancestors()->findAll() as $data){
-                if ($data->level == 1){continue;}
-                $pageArray[$i]['url'] = $data->url;
-                $pageArray[$i]['name'] = $data->name;
+            $pageArray[0]['name'] = ' / '.$model->name;
+            $pageArray[0]['url'] = null;
+            $i = 1;
+            foreach ($model->ancestors()->findAll('level>1') as $data){
+                $pageArray[$i]['name'] = ' / '.$data->name;
+                $pageArray[$i]['url'] = 'article/'.$data->url;
                 ++$i;
             }
-            $pageArray[$i]['url'] = $model->url;
-            $pageArray[$i]['name'] = $model->name;
+            rsort($pageArray);
+
+
+
 
             if (count($pageArray)>1) { rsort($pageArray); }
 

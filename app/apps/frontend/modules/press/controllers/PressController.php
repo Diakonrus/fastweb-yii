@@ -43,6 +43,7 @@ class PressController extends Controller
         if (is_numeric($paramArr)){
             //Число - это элемент
             $model = Press::model()->findByPk((int)$paramArr);
+            if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
 
             $this->setSEO(Yii::app()->request->requestUri, 'Пресса о нас', $model);
 
@@ -68,6 +69,7 @@ class PressController extends Controller
                 "condition" => "status!=0 AND url LIKE '".$paramArr."'",
                 "order" => "id ASC",
             ));
+            if (empty($model_tmp)){throw new CHttpException(404,'The page can not be found.');}
 
             $this->setSEO(Yii::app()->request->requestUri, 'Пресса о нас', $model_tmp);
 

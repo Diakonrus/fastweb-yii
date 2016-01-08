@@ -1,9 +1,11 @@
 <main class="all" role="main">
-    <div class="container video-caption">
+    <div class="container <?=((count($pageArray)>0)?('video-caption'):(''));?>">
         <h1><a href="/article">Статьи</a>
-        <?php foreach ($pageArray as $val){ ?>
-            <a href="/article/<?=$val['url'];?>"><span style="color: #b1b1b1;"> / <?=$val['name'];?></span></a>
-        <?php } ?>
+            <?php foreach ($pageArray as $data){ ?>
+                <?php if (!empty($data['url'])){?> <a href="/<?=$data['url'];?>"><?php } ?>
+                <span style="color: #b1b1b1;"><?=$data['name'];?></span>
+                <?php if (!empty($data['url'])){?> </a><?php } ?>
+            <?php } ?>
         </h1>
     </div>
 </main>
@@ -58,3 +60,12 @@
 
 <?php } ?>
 <?php } ?>
+
+<script>
+    $(document).on('click','.video-caption', function(){
+        var url = '/<?php array_pop($pageArray); if (count($pageArray)>0){
+        $url = end($pageArray);
+       echo $url['url']; }  ?>';
+        location.href = "/article"+url;
+    });
+</script>

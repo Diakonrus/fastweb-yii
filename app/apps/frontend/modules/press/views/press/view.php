@@ -28,3 +28,8 @@
     </div>
 
 </section>
+<script>
+    $(document).on('click','.video-caption', function(){
+        history.back();
+    });
+</script>

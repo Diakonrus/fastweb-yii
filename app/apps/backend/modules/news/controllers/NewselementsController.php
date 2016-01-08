@@ -1,6 +1,6 @@
 <?php
 
-class NewsgroupController extends Controller
+class NewselementsController extends Controller
 {
 
 	/**
@@ -9,8 +9,8 @@ class NewsgroupController extends Controller
 	public function actionView($id)
 	{
 		// set attributes from get
-		if(isset($_GET['NewsGroup'])){
-			$model->attributes=$_GET['NewsGroup'];
+		if(isset($_GET['NewsElements'])){
+			$model->attributes=$_GET['NewsElements'];
         }
 
 	    $model = $this->loadModel($id);
@@ -27,33 +27,35 @@ class NewsgroupController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new NewsGroup;
+		$model=new NewsElements;
+
+		$root = NewsRubrics::getRoot(new NewsRubrics);
+		$catalog = $root->descendants()->findAll($root->id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		// set attributes from get
-		if(isset($_GET['NewsGroup'])){
-			$model->attributes=$_GET['NewsGroup'];
+		if(isset($_GET['NewsElements'])){
+			$model->attributes=$_GET['NewsElements'];
         }
 
-		if(isset($_POST['NewsGroup']))
+		if(isset($_POST['NewsElements']))
 		{
-			$model->attributes=$_POST['NewsGroup'];
+			$model->attributes=$_POST['NewsElements'];
 
-            $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
-            if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
+			$model->imagefile = CUploadedFile::getInstance($model,'imagefile');
+			if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
 
 			if($model->save()){
 
-                if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 1')){
-                    $filename = $model->id.'.'.$model->image;
-                    $filepatch = '/../uploads/filestorage/news/rubrics/';
-                    $model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
+				if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 1')){//site_module_id = - должен указывать на id модуля в tbl_site_module
+					$filename = $model->id.'.'.$model->image;
+					$filepatch = '/../uploads/filestorage/news/elements/';
+					$model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
 					//Обработка изображения
-					SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 1,$model->id);
-                }
-
+					SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 2,$model->id);
+				}
 
 				$url = isset($_POST['go_to_list'])
 					? $this->listUrl('index')
@@ -62,8 +64,11 @@ class NewsgroupController extends Controller
 		    }
 		}
 
+
 		$this->render('create',array(
 			'model'=>$model,
+			'root'=>$root,
+			'catalog' => $catalog,
 		));
 	}
 
@@ -75,33 +80,33 @@ class NewsgroupController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		$root = NewsRubrics::getRoot(new NewsRubrics);
+		$catalog = $root->descendants()->findAll($root->id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		// set attributes from get
-		if(isset($_GET['NewsGroup'])){
-			$model->attributes=$_GET['NewsGroup'];
+		if(isset($_GET['NewsElements'])){
+			$model->attributes=$_GET['NewsElements'];
         }
 
-		if(isset($_POST['NewsGroup']))
+		if(isset($_POST['NewsElements']))
 		{
-			$model->attributes=$_POST['NewsGroup'];
+			$model->attributes=$_POST['NewsElements'];
 
-            $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
-            if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
+			$model->imagefile = CUploadedFile::getInstance($model,'imagefile');
+			if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
 
+			if($model->save()){
 
-            if($model->save()){
-
-                if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 1')){
-                    $filename = $model->id.'.'.$model->image;
-                    $filepatch = '/../uploads/filestorage/news/rubrics/';
-                    $model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
+				if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 1')){  //site_module_id = - должен указывать на id модуля в tbl_site_module
+					$filename = $model->id.'.'.$model->image;
+					$filepatch = '/../uploads/filestorage/news/elements/';
+					$model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
 					//Обработка изображения
-					SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 1,$model->id);
-                }
-
+					SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 2,$model->id);
+				}
 
 					$url = isset($_POST['go_to_list'])
 						? $this->listUrl('index')
@@ -112,6 +117,8 @@ class NewsgroupController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
+			'root'=>$root,
+			'catalog' => $catalog,
 		));
 	}
 
@@ -120,7 +127,7 @@ class NewsgroupController extends Controller
      */
 	public function actionUpload(){
 
-        $webFolder = '/uploads/newsgroup/';
+        $webFolder = '/uploads/newselements/';
         $tempFolder = Yii::app()->basePath . '/../www' . $webFolder;
 
         @mkdir($tempFolder, 0777, TRUE);
@@ -150,7 +157,7 @@ class NewsgroupController extends Controller
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionDelete($id = null)
+	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
 		{
@@ -169,7 +176,7 @@ class NewsgroupController extends Controller
 	 *
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('NewsGroup');
+		$dataProvider=new CActiveDataProvider('NewsElements');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -181,15 +188,15 @@ class NewsgroupController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$model=new NewsGroup('search');
+		$model=new NewsElements('search');
         $model->attachBehavior('dateComparator', array(
             'class' => 'DateComparator',
         ));
 		$model->unsetAttributes();  // clear any default values
 
 		// set attributes from get
-		if(isset($_GET['NewsGroup'])){
-			$model->attributes=$_GET['NewsGroup'];
+		if(isset($_GET['NewsElements'])){
+			$model->attributes=$_GET['NewsElements'];
         }
 
 		$this->render('list',array(
@@ -204,7 +211,7 @@ class NewsgroupController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=NewsGroup::model()->findByPk($id);
+		$model=NewsElements::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -216,35 +223,26 @@ class NewsgroupController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='news-group-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='news-elements-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
 	}
 
-    public function actionAjax()
-    {
-        if (isset($_POST)) {
-            switch ((int)$_POST['type']) {
-                case 1:
-                    //Смена статуса
-                    $model = $this->loadModel((int)$_POST['id']);
-                    $model->status = (($model->status==1)?0:1);
-                    $model->save();
-                    //Меняем статус для новостей в группе
-                    foreach (News::model()->findAll('group_id = '.$model->id) as $data){
-                        $data->status = $model->status;
-                        $data->save();
-                    }
-                    break;
-            }
-
-            echo CJavaScript::jsonEncode('ok');
-        }
-
-        Yii::app()->end();
-    }
-
-
+	public function actionAjax()
+	{
+		if (isset($_POST)) {
+			switch ((int)$_POST['type']) {
+				case 1:
+					//Смена статуса вопросов
+					$model = $this->loadModel((int)$_POST['id']);
+					$model->status = (($model->status==1)?0:1);
+					$model->save();
+					break;
+			}
+			echo CJavaScript::jsonEncode('ok');
+		}
+		Yii::app()->end();
+	}
 }

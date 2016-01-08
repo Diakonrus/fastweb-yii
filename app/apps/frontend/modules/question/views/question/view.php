@@ -2,25 +2,12 @@
     <main class="all" role="main">
         <div class="container video-caption">
             <h1>
-                ОТВЕТЫ
-                <?php
-                    $parent_url = array();
-                    $modelTop = FaqRubrics::model()->findByPk($model['group']->id);
-                    foreach ($modelTop->ancestors()->findAll('level!=1') as $data){
-                        if ($data->status==0){continue;}
-                        echo '
-                        <span>
-                            /
-                            <a href="/question/'.$data->url.'">'.$data->name.'</a>
-                        </span>
-                        ';
-                        $parent_url[] = $data->url;
-                    }
-                ?>
-                <span>
-                    /
-                    <a href="/question/<?=(!empty($parent_url)?(implode("/", $parent_url)):'');?>/<?=$model['group']->url;?>"><?=$model['group']->name;?></a>
-                </span>
+                ВОПРОСЫ - ОТВЕТЫ
+                <?php foreach ($pageArray as $data){ ?>
+                    <?php if (!empty($data['url'])){?> <a href="/<?=$data['url'];?>"><?php } ?>
+                    <span style="color: #b1b1b1;"><?=$data['name'];?></span>
+                    <?php if (!empty($data['url'])){?> </a><?php } ?>
+                <?php } ?>
             </h1>
         </div>
         <div class="container">
@@ -35,11 +22,11 @@
                         <div class="question">
                                 <a href="#"><?=$data->author->name;?>
                                 <span>/ <?=((!empty($data->question_data))?(date('d.m.Y', strtotime($data->question_data))):(date('d.m.Y', strtotime($data->created_at))));?></span></a>
-                                <?=$data->question;?>
+                                <div class="q_data"><?=$data->question;?></div>
                         </div>
                         <?php if (!empty($data->answer)) { ?>
                         <div class="unswer">
-                            <?=$data->answer;?>
+                            <div class="u_data"><?=$data->answer;?></div>
                         </div>
                         <?php } ?>
                     </article>
@@ -125,3 +112,11 @@
     </main>
 </section>
 
+<script>
+    $(document).on('click','.video-caption', function(){
+        var url = '/<?php array_pop($pageArray); if (count($pageArray)>0){
+        $url = end($pageArray);
+       echo $url['url']; }  ?>';
+        location.href = "/review"+url;
+    });
+</script>

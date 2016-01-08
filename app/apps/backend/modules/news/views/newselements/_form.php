@@ -1,10 +1,12 @@
+
+
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
-	'id'=>'news-form',
+	'id'=>'news-elements-form',
 	'enableAjaxValidation'=>false,
 	'enableClientValidation'=>false,
 	'type' => 'horizontal',
     'htmlOptions'=>array('enctype'=>'multipart/form-data'),
-
+	
 )); ?>
 
     <!-- Fields with <span class="required">*</span> are required. -->
@@ -12,14 +14,31 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>150));; ?>
+<div class="control-group">
+    <label class="control-label required" for="NewsElements_parent_id">
+        Категория
+        <span class="required">*</span>
+    </label>
+    <div class="controls">
+        <select name="NewsElements[parent_id]" id="NewsElements_parent_id" class="span5">
+            <?php echo '<option value="'.$root->id.'">/</option>'; ?>
+            <? if (!empty($catalog)) : ?>
+                <? foreach ($catalog as $category) : ?>
+                    <option value="<?=$category->id ?>"
+                        <?=!$model->isNewRecord && $model->parent_id == $category['id']? 'selected="selected"' : ''?>>
+                        <?=str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $category->level), $category->name?>
+                    </option>
+                <? endforeach; ?>
+            <? endif;?>
 
-<?php echo $form->dropDownListRow($model, "group_id",
-    CHtml::listData( NewsGroup::model()->findAll(), "id", "name"),
-    array('class'=>'span5', "empty" => "Нет группы")
-); ?>
+        </select>
 
-<?php echo '<label class="control-label required">Главные новости</label> <div class="controls">' . $form->dropDownList($model,'primary', array('0'=>'Нет','1'=>'Да'), array('name' => 'News[primary]', 'title' => 'Главные новости')) . '</div>'; ?>
+    </div>
+</div>
+
+
+
+<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>250));; ?>
 
 <?php
 
@@ -29,42 +48,9 @@ echo $form->label($model,'brieftext');
 $this->widget('ImperaviRedactorWidget', array(
     'model' => $model,
     'attribute' => 'brieftext',
-
     'options' => array(
         'lang' => 'ru',
-        'imageUpload' => Yii::app()->createAbsoluteUrl('/news/news/imageUpload'),
-    ),
-    'plugins' => array(
-        'fullscreen' => array(
-            'js' => array('fullscreen.js',),
-        ),
-        'video' => array(
-            'js' => array('video.js',),
-        ),
-        'table' => array(
-            'js' => array('table.js',),
-        ),
-        'fontcolor' => array(
-            'js' => array('fontcolor.js',),
-        ),
-        'fontfamily' => array(
-            'js' => array('fontfamily.js',),
-        ),
-        'fontsize' => array(
-            'js' => array('fontsize.js',),
-        ),
-    ),
-));
-
-echo '<HR>';
-
-echo $form->label($model,'description');
-$this->widget('ImperaviRedactorWidget', array(
-    'model' => $model,
-    'attribute' => 'description',
-    'options' => array(
-        'lang' => 'ru',
-        'imageUpload' => Yii::app()->createAbsoluteUrl('/news/news/imageUpload'),
+        'imageUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/imageUpload'),
     ),
     'plugins' => array(
         'fullscreen' => array(
@@ -91,10 +77,42 @@ $this->widget('ImperaviRedactorWidget', array(
     ),
 ));
 
+echo $form->label($model,'description');
+$this->widget('ImperaviRedactorWidget', array(
+    'model' => $model,
+    'attribute' => 'description',
+    'options' => array(
+        'lang' => 'ru',
+        'imageUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/imageUpload'),
+    ),
+    'plugins' => array(
+        'fullscreen' => array(
+            'js' => array('fullscreen.js',),
+        ),
+        'video' => array(
+            'js' => array('video.js',),
+        ),
+        'table' => array(
+            'js' => array('table.js',),
+        ),
+        'fontcolor' => array(
+            'js' => array('fontcolor.js',),
+        ),
+        'fontfamily' => array(
+            'js' => array('fontfamily.js',),
+        ),
+        'fontsize' => array(
+            'js' => array('fontsize.js',),
+        ),
+        'myphotogalery' => array(
+            'js' => array('myphotogalery.js',),
+        ),
+    ),
+));
 ?>
 
 <div class="control-group">
-    <label class="control-label" for="CatalogRubrics_status">Картинка</label>
+    <label class="control-label" for="NewsRubrics_image">Картинка</label>
     <div class="controls">
         <?php
         $base_url_img = '/../uploads/filestorage/news/elements/';
@@ -113,25 +131,38 @@ $this->widget('ImperaviRedactorWidget', array(
 </div>
 
 
-<?php echo $form->DatePickerRow($model, 'maindate', array(
-    'options'=>array(
-        'autoclose' => true,
-        //'showAnim'=>'fold',
-        'type' => 'Component',
-        'format'=>'yyyy-mm-dd',
-    ),
-    'htmlOptions'=>array(
-        //'value'=> strlen($model->created_at) > 0 ? Yii::app()->dateFormatter->format('yyyy-MM-dd', $model->created_at) : '',
-        //'class'=>'span2'
-    ),
-));; ?>
 
 
-<?php
-echo $form->dropDownListRow($model,'status',News::model()->getStatuslist(),
-    array('class'=>'span5'));
-?>
+<div class="block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />Настройки</span></a>
+</div>
+<div style="margin-top: 10px; padding: 10px; display: none;">
+    <?php echo $form->dropDownListRow($model,'primary',
+        array('0' => 'Нет', '1' => 'Да'),array('class'=>'span5'));
+    ?>
+    <?php echo $form->dropDownListRow($model,'status',
+        array('1' => 'Активно', '0' => 'Не активно'));
+    ?>
+    <?php echo $form->DatePickerRow($model, 'maindate', array(
+        'options'=>array(
+            'autoclose' => true,
+            //'showAnim'=>'fold',
+            'type' => 'Component',
+            'format'=>'yyyy-mm-dd',
+        ),
+        'htmlOptions'=>array(
+        ),
+    ));; ?>
+</div>
 
+<div class="block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />SEO</span></a>
+</div>
+<div style="margin-top: 10px; padding: 10px; display: none;">
+    <?php echo $form->textFieldRow($model,'meta_title',array('class'=>'span5')); ?>
+    <?php echo $form->textAreaRow($model,'meta_keywords',array('class'=>'span5')); ?>
+    <?php echo $form->textAreaRow($model,'meta_description',array('class'=>'span5')); ?>
+</div>
 
 	<div class="form-actions">
 
@@ -142,6 +173,7 @@ echo $form->dropDownListRow($model,'status',News::model()->getStatuslist(),
 			'label'=>$model->isNewRecord ? Yii::t('Bootstrap', 'PHRASE.BUTTON.CREATE') : Yii::t('Bootstrap', 'PHRASE.BUTTON.SAVE'),
 		)); ?>
 
+
         <?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'link',
 			'label'=>Yii::t('Bootstrap', 'PHRASE.BUTTON.RETURN'),
@@ -151,4 +183,3 @@ echo $form->dropDownListRow($model,'status',News::model()->getStatuslist(),
 	</div>
 
 <?php $this->endWidget(); ?>
-

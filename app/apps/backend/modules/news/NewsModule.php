@@ -2,7 +2,7 @@
 
 class NewsModule extends Module
 {
-    public $defaultController = 'news';
+    public $defaultController = 'newsrubrics';
 
 	public function init()
 	{
@@ -20,8 +20,8 @@ class NewsModule extends Module
 	public function beforeControllerAction($controller, $action)
 	{
 	    Yii::app()->controller->menu = array(
-            array('label'=>Yii::t('Bootstrap', 'Список новостей'), 'url'=>array('index'), 'active' => $action->id === 'index' ),
-            array('label'=>Yii::t('Bootstrap', 'Создать новость'), 'url'=>array('create'), 'active' => $action->id === 'create' ),
+            array('label'=>Yii::t('Bootstrap', 'LIST.NewsRubrics'), 'url'=>array('index'), 'active' => $action->id === 'index' ),
+            array('label'=>Yii::t('Bootstrap', 'CREATE.NewsRubrics'), 'url'=>array('create'), 'active' => $action->id === 'create' ),
         );
 		
 		if(parent::beforeControllerAction($controller, $action))

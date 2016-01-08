@@ -22,9 +22,9 @@ CREATE TABLE IF NOT EXISTS `tbl_site_module` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `templates` (`templates`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='Список подклюеных модулей';
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='Список подклюеных модулей';
 
--- Дамп данных таблицы fastweb-yii.tbl_site_module: ~16 rows (приблизительно)
+-- Дамп данных таблицы fastweb-yii.tbl_site_module: ~17 rows (приблизительно)
 /*!40000 ALTER TABLE `tbl_site_module` DISABLE KEYS */;
 INSERT INTO `tbl_site_module` (`id`, `name`, `url_to_controller`, `description`, `templates`, `created_at`) VALUES
 	(1, 'Новости', '/news/news', NULL, NULL, '2015-10-20 13:24:34'),

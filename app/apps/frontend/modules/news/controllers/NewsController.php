@@ -39,6 +39,7 @@ class NewsController extends Controller
         if (is_numeric($paramArr)){
             //Число - это элемент
             $model = News::model()->findByPk((int)$paramArr);
+            if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
             //Смотрим, нужно ли вставить фотогалерею
             $model->description = $this->addPhotogalery($model->description);
 
@@ -49,6 +50,7 @@ class NewsController extends Controller
         else {
             //Список новостей категории
             $modelGroup = NewsGroup::model()->find('url LIKE "'.$paramArr.'"');
+            if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
             $model = array();
             $model['group'] = array();
             $model['no_group'] = News::model()->findAll(array(

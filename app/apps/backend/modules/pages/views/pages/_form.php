@@ -43,6 +43,11 @@
     </div>
 </div>
 
+<?php
+echo $form->dropDownListRow($model,'type_module',Pages::model()->getTypeModule(),
+    array('class'=>'span5'));
+?>
+
 <?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>150));; ?>
 <div class="control-group">
     <label>
@@ -51,20 +56,9 @@
 </div>
 <?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>250)); ?>
 
-<?php echo $form->textFieldRow($model,'main_template',array('class'=>'span5','maxlength'=>50)); ?>
-
-<?php
-echo $form->dropDownListRow($model,'type_module',Pages::model()->getTypeModule(),
-    array('class'=>'span5'));
-?>
 <?php
     echo $form->dropDownListRow($model,'status',array(0=>'Отключено', 1=>'Активно'),
         array('class'=>'span5'));
-?>
-
-<?php
-echo $form->dropDownListRow($model,'main_page',array(0=>'Нет', 1=>'Да'),
-    array('class'=>'span5'));
 ?>
 
 <?php
@@ -140,25 +134,9 @@ $this->widget('ImperaviRedactorWidget', array(
         <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
     </div>
 </div>
-<div class="control-group">
-    <label class="control-label" for="CatalogRubrics_status">Размер изображения</label>
-    <div class="controls">
-        <?php
-        $image_x = null;
-        if ( !$model->isNewRecord && file_exists( YiiBase::getPathOfAlias('webroot').$base_url_img.$model->id.'.'.$model->image ) ) {
-            //Получаю размер картинки
-            $size = getimagesize(YiiBase::getPathOfAlias('webroot').$base_url_img.'menu-'.$model->id.'.'.$model->image);
-            $image_x = $size[0];
-        }
-        ?>
-        <?php echo CHtml::textField('image_x', $image_x, array('placeholder'=>'Ширина изображения (высота подбирает пропорционально)')); ?>
-        <p>Если оставить поле пустым - изображение будет загружено без изменения размера</p>
-    </div>
-</div>
 
-
-<div class="main_block_url" onclick="$('#'+($(this).attr('class'))).slideToggle(); return false;" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
-    <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">Вкладки</span></a>
+<div class="main_block_url block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />Вкладки</span></a>
 </div>
 
 <div id="main_block_url" style="display:none; margin-top: 10px; padding: 10px;">
@@ -224,9 +202,9 @@ $this->widget('ImperaviRedactorWidget', array(
                                         $module_val[$dataModuleVal] = 1;
                                     }
                                 ?>
-                                <?php foreach (PagesTabs::model()->getModuleValue($data->site_module_id) as $key=>$val){ ?>
-                                    <input type="checkbox" name="PagesTabs[site_module_value][<?=$i;?>][]" <?=((isset($module_val[$key]))?' checked ':'');?> value="<?=$key;?>"><span style="position:absolute; padding-top:3px; margin-left:3px;"><?=$val;?></span><BR>
-                                <?php } ?>
+                            <?php foreach (PagesTabs::model()->getModuleValue($data->site_module_id) as $key=>$val){ ?>
+                                <input type="checkbox" name="PagesTabs[site_module_value][<?=$i;?>][]" <?=((isset($module_val[$val['id']]))?' checked ':'');?> value="<?=$val['id'];?>"><span style="margin-left:3px;"><?=$val['name'];?></span><BR>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -247,23 +225,30 @@ $this->widget('ImperaviRedactorWidget', array(
 
 
 
-<?php echo $form->dropDownListRow($model, 'access_lvl', UserRole::model()->getLvlAccess(), array(
-    'class'=>'span5'
-)); ?>
 
-
-
-<div class="seo_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
-    <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">SEO</span></a>
+<div class="block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />Настройки</span></a>
 </div>
-<div id="seo_block" style="margin-top: 10px; padding: 10px;">
+<div style="margin-top: 10px; padding: 10px; display: none;">
+    <?php
+    echo $form->dropDownListRow($model,'main_page',array(0=>'Нет', 1=>'Да'),
+        array('class'=>'span5'));
+    ?>
+    <?php echo $form->textFieldRow($model,'main_template',array('class'=>'span5','maxlength'=>50)); ?>
+    <?php echo $form->dropDownListRow($model, 'access_lvl', UserRole::model()->getLvlAccess(), array(
+        'class'=>'span5'
+    )); ?>
+</div>
+
+
+<div class="block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />SEO</span></a>
+</div>
+<div style="margin-top: 10px; padding: 10px; display: none;">
     <?php echo $form->textFieldRow($model,'meta_title',array('class'=>'span5')); ?>
     <?php echo $form->textAreaRow($model,'meta_keywords',array('class'=>'span5')); ?>
     <?php echo $form->textAreaRow($model,'meta_description',array('class'=>'span5')); ?>
 </div>
-
-
-
 
 
 	<div class="form-actions">
@@ -354,10 +339,10 @@ $this->widget('ImperaviRedactorWidget', array(
                     $('#PagesTabs_site_module_value-'+data_id).remove();
                     var html = '<div class="control-group" id="PagesTabs_site_module_value-'+data_id+'">';
                     html += '<label class="control-label">Значения: </label>';
-                    html += '<div class="controls">';
-                   // html += '<select name="PagesTabs[site_module_value]['+data_id+'][]" id="PagesTabs_site_module_value-'+data_id+'"  multiple size="3" >';
+                    html += '<div class="controls" style="overflow: scroll; width: 600px; height: 250px;padding: 5px; border: solid 1px black;">';
+                    // html += '<select name="PagesTabs[site_module_value]['+data_id+'][]" id="PagesTabs_site_module_value-'+data_id+'"  multiple size="3" >';
                     $.each(data, function( index, value ) {
-                        html += '<input type="checkbox" name="PagesTabs[site_module_value]['+data_id+'][]" value="'+index+'"><span style="position:absolute; padding-top:3px; margin-left:3px;">'+value+'</span><BR>';
+                        html += '<input type="checkbox" name="PagesTabs[site_module_value]['+data_id+'][]" value="'+value['id']+'"><span style="margin-left:3px;">'+value['name']+'</span><BR>';
                         //html += '<option value="'+index+'">'+value+'</option>';
                     });
                     //html += '</select>' +

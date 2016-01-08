@@ -1,16 +1,17 @@
+<style>
+    #NewsRubrics_id{  width: 30px; }
+</style>
 
-<legend><?php echo Yii::t("Bootstrap", "LIST.Pages" ) ?></legend>
-
+<legend><?php echo Yii::t("Bootstrap", "LIST.NewsRubrics" ) ?></legend>
 
 <?php
 
 $assetsDir = Yii::app()->basePath;
-$labels = Pages::model()->attributeLabels();
-
+$labels = NewsRubrics::model()->attributeLabels();
 
 $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 
-	'id'=>'pages-grid',
+    'id'=>'pages-grid',
     'template' => "{items}\n{pager}",
     'enableHistory' => true,
 
@@ -23,59 +24,72 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
         ),
     ),
 
-	'columns'=>array(
+    'columns'=>array(
 
 
 
-            array(
+        array(
             'header'=> $labels["id"],
             'name'=> "id",
         ),
 
         array(
-            'header'=> $labels["title"],
-            'name'=> "title",
+            'header'=> 'Картинка раздела',
+            'name'=> "image",
             'type'=>'raw',
-            'value' => function($data){
+            'value' => function($dataProvider){
+                $url_img = '/images/nophoto_100_100.jpg';
+                if (file_exists( YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/news/rubrics/admin-'.$dataProvider->id.'.'.$dataProvider->image )) {
+                    $url_img = '/../uploads/filestorage/news/rubrics/admin-'.$dataProvider->id.'.'.$dataProvider->image;
+                }
+                return '<img src="'.$url_img.'" style="width:80px" />';
+            },
+            'filter' =>'',
+        ),
+
+        array(
+            'header'=> $labels["name"],
+            'type'=>'raw',
+            'value' =>  function($data){
                 $return = '';
                 //Если это level = 2 - вывожу выделеным черным шрифтом
                 if ($data->level == 2){
-                    $return = '<b>'.$data->title.'</b>';
+                    $return = '<b>'.$data->name.'</b>';
                 } else {
                     //подчиненная категория - вывожу со смещением относительно родительской
                     $repeat_prefix = ($data->level==3)?$data->level:($data->level + 1);
-                    $return = str_repeat('&nbsp&nbsp', $repeat_prefix).$data->title;
+                    $return = str_repeat('&nbsp&nbsp', $repeat_prefix).$data->name;
                 }
-
-
                 return $return;
             },
-            //'filter' => array('1' => 'Да', '0' => 'Нет'),
+            'filter' =>'',
         ),
-        /*
-
-            array(
-            'header'=> $labels["title"],
-            'name'=> "title",
-        ),
-        */
 
 
+/*
         array(
             'header'=> $labels["url"],
             'name'=> "url",
-            'type'=>'raw',
-            'value' => function($data){
-                $url = '<a href="/'.(($data->main_page == 0)?($data->url):('')).'" target="_blank">'.(($data->main_page == 0)?($data->url):('/')).'</a>';
-
-                return $url;
-            },
-            'filter' => '',
         ),
+*/
 
 
         array(
-            'header'=> $labels["status"],
+            'header'=> 'Элементов',
+            'type'=>'raw',
+            'value' =>  function($data){
+                $count = NewsRubrics::getCountElement($data->id);
+                return '
+                    <a href="/admin/news/newselements/index?NewsElements[parent_id]='.$data->id.'">
+                        <b>'.$count.'</b>
+                    </a>
+                ';
+            },
+            'filter' =>'',
+        ),
+
+        array(
+            'header'=> 'Статус',
             'name'=> "status",
             'type'=>'raw',
             'value' =>  function($data){
@@ -85,25 +99,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                     </a>
                 ';
             },
-            'filter' => array('1' => 'Активно', '0' => 'Не активно'),
+            'filter' =>'',
         ),
-
-        /*
-        array(
-            'header'=> 'Главная страница сайта',
-            'name'=> "main_page",
-            'type'=>'raw',
-            'value' => function($dataProvider){
-                $return = 'Нет';
-                if ($dataProvider->main_page == 1){
-                    $return = '<img src="/../images/admin/icons/star.png" />';
-                }
-                return $return;
-            },
-            'filter' => array('1' => 'Да', '0' => 'Нет'),
-        ),
-        */
-
 
         array(
             'class'=>'bootstrap.widgets.TbButtonColumn',
@@ -121,7 +118,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                 ),
                 'move_down' => array(
                     'label'=>'',
-                    'visible'=>'(($row+2)==Pages::model()->count() || !$data->next()->find() || $data->main_page==1)?false:true',
+                    'visible'=>'(($row+2)==NewsRubrics::model()->count() || !$data->next()->find())?false:true',
                     'url'=>'"/admin/'.Yii::app()->controller->module->id.'/'.Yii::app()->controller->id.'/move?id=$data->id&move=2"',
                     'options'=>array(
                         'class'=>'icon-arrow-down',
@@ -130,14 +127,13 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                 ),
                 'update' => array(
                     'label'=> yii::t('Bootstrap', 'PHRASE.UPDATE'),
-                    'url'=>'CHtml::normalizeUrl(array("update", "id" => $data->id))', //'Yii::app()->controller->itemUrl("pages/update/id/" . $data->id)',
+                    'url'=>'CHtml::normalizeUrl(array("update", "id" => $data->id))', //'Yii::app()->controller->itemUrl("newsgroup/update/id/" . $data->id)',
                     'options'=>array(
                         //'class'=>'btn btn-small update'
                     ),
                 ),
                 'delete' => array(
                     'label'=> yii::t('Bootstrap', 'PHRASE.DELETE'),
-                    'visible'=>'($data->main_page==1)?false:true',
                     'options'=>array(
                         //'class'=>'btn btn-small delete'
                     )
@@ -145,16 +141,16 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             ),
             'htmlOptions'=>array('style'=>'white-space: nowrap'),
         ),
-	),
-)); ?>
+    ),
+));
 
-<a href="/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/create" class="btn">Добавить</a>
+
+?>
+<div class="buttons">
+    <a class="btn btn-primary" href="/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/create?id=<?=(isset($_GET['id']))?(int)$_GET['id']:0;?>" style="margin-top:14px; float:left; margin-left:15px"> Добавить новую категорию</a>
+</div>
 
 <script>
-    $(document).on('change', '#changeModule', function(){
-        location.href = "/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/index"+(($(this).val().length>0)?("?"+$(this).val()):'');
-    } );
-
     //Меняем статус
     $(document).on('click', '.on-off-product', function(){
         $.ajax({

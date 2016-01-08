@@ -20,8 +20,16 @@ class ReviewController extends Controller
         $this->render('index', array('model'=>$model));
     }
 
-    public  function actionElement($param){
+    public function actionGetelement($param){
+        $model = Pages::model()->find('url LIKE "'.$param.'"');
+        if (empty($model)){$this->actionElement($param);}
+        $modelTabs = PagesTabs::model()->find('pages_id='.$model->id);
+        if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
 
+        $this->actionElement($param);
+    }
+
+    public  function actionElement($param){
         //Если прищли данные с формы
         if (isset($_POST['AddReview'])){
             if ( !empty($_POST['AddReview']['name']) && !empty($_POST['AddReview']['email']) && !empty($_POST['AddReview']['rubrics']) && !empty($_POST['AddReview']['review']) ){
@@ -51,6 +59,7 @@ class ReviewController extends Controller
         if (is_numeric($paramArr)){
             //Число - это элемент
             $model = ReviewElements::model()->findByPk((int)$paramArr);
+            if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
 
             $this->setSEO(Yii::app()->request->requestUri, 'Отзывы', $model);
 
@@ -58,8 +67,33 @@ class ReviewController extends Controller
             $render = '_form';
         }
         else {
+
+            if ( $modelPage = Pages::model()->find('url LIKE "'.$param.'"') ){
+                if ( $modelTabs = PagesTabs::model()->find('pages_id='.$modelPage->id) ){
+                    $module_id = array_diff((explode("|", $modelTabs->site_module_value)), array(''));
+                    if ($tmpParam = ReviewRubrics::model()->find('id in ('.(current($module_id)).') AND `status` = 1')){
+                        $paramArr = $tmpParam->url;
+                    }
+                }
+            }
+
+
+
             //Список отзывов категории
             $modelGroup =  ReviewRubrics::model()->find('url LIKE "'.$paramArr.'"');
+            if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
+
+            $pageArray = array();
+            $pageArray[0]['name'] = ' / '.$modelGroup->name;
+            $pageArray[0]['url'] = null;
+            $i = 1;
+            foreach ($modelGroup->ancestors()->findAll('level>1') as $data){
+                $pageArray[$i]['name'] = ' / '.$data->name;
+                $pageArray[$i]['url'] = 'review/'.$data->url;
+                ++$i;
+            }
+            rsort($pageArray);
+
 
             $this->setSEO(Yii::app()->request->requestUri, 'Отзывы', $modelGroup);
 
@@ -86,7 +120,7 @@ class ReviewController extends Controller
 
 
         if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
-        $this->render($render, array('model'=>$model));
+        $this->render($render, array('model'=>$model, 'pageArray'=>$pageArray));
     }
 
 

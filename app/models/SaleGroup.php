@@ -131,6 +131,7 @@ class SaleGroup extends CActiveRecord
 
     protected function beforeSave() {
         $this->url = mb_strtolower($this->url);
+        return true;
     }
 
     private $statusArr = array(

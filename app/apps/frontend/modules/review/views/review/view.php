@@ -1,26 +1,12 @@
 <section class="video-block faq mg-top-17 mg-bottom-15">
     <main class="all" role="main">
-        <div class="container video-caption">
-            <h1>
-                ОТЗЫВЫ
-                <?php
-                    $parent_url = array();
-                    $modelTop = ReviewRubrics::model()->findByPk($model['group']->id);
-                    foreach ($modelTop->ancestors()->findAll('level!=1') as $data){
-                        if ($data->status==0){continue;}
-                        echo '
-                        <span>
-                            /
-                            <a href="/review/'.$data->url.'">'.$data->name.'</a>
-                        </span>
-                        ';
-                        $parent_url[] = $data->url;
-                    }
-                ?>
-                <span>
-                    /
-                    <a href="/review/<?=(!empty($parent_url)?(implode("/", $parent_url)):'');?>/<?=$model['group']->url;?>"><?=$model['group']->name;?></a>
-                </span>
+        <div class="container <?=((count($pageArray)>0)?('video-caption'):(''));?>">
+            <h1><a href="/review">ОТЗЫВЫ</a>
+                <?php foreach ($pageArray as $data){ ?>
+                    <?php if (!empty($data['url'])){?> <a href="/<?=$data['url'];?>"><?php } ?>
+                    <span style="color: #b1b1b1;"><?=$data['name'];?></span>
+                    <?php if (!empty($data['url'])){?> </a><?php } ?>
+                <?php } ?>
             </h1>
         </div>
         <div class="container">
@@ -104,4 +90,11 @@
             </aside>
     </main>
 </section>
-
+<script>
+    $(document).on('click','.video-caption', function(){
+        var url = '/<?php array_pop($pageArray); if (count($pageArray)>0){
+        $url = end($pageArray);
+       echo $url['url']; }  ?>';
+        location.href = "/review"+url;
+    });
+</script>

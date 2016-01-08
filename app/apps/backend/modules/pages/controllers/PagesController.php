@@ -65,7 +65,8 @@ class PagesController extends Controller
 
             if(!empty($model->id)){
 
-                if(isset($_POST['PagesTabs'])){PagesTabs::model()->addTabs($model, $_POST['PagesTabs']);}
+                PagesTabs::model()->addTabs($model, ((isset($_POST['PagesTabs']))?($_POST['PagesTabs']):(array())));
+
                 //Изображение
                 if (isset($model->imagefile)){
                     $filename = $model->id.'.'.$model->image;
@@ -119,8 +120,7 @@ class PagesController extends Controller
         $model = $this->loadModel($id);
         $descendants = $root->descendants()->findAll($root->id);
 
-        $modelTabs = '';
-        //$modelTabs = PagesTabs::model()->findAll('pages_id = '.$model->id.' ORDER BY order_id ASC');
+        $modelTabs = PagesTabs::model()->findAll('pages_id = '.$model->id.' ORDER BY order_id ASC');
 
         if(isset($_POST['Pages']))
         {
@@ -142,7 +142,8 @@ class PagesController extends Controller
 
             if(!empty($model->id)){
 
-                if(isset($_POST['PagesTabs'])){PagesTabs::model()->addTabs($model, $_POST['PagesTabs']);}
+                PagesTabs::model()->addTabs($model, ((isset($_POST['PagesTabs']))?($_POST['PagesTabs']):(array())));
+
                 //Изображение
                 if (isset($model->imagefile)){
                     $filename = $model->id.'.'.$model->image;
@@ -272,8 +273,9 @@ class PagesController extends Controller
             ),
         );
         $data['sort'] = array(
-            'defaultOrder'=>'left_key ASC',
+            'defaultOrder'=>'main_page DESC, left_key ASC',
         );
+
         $data['Pagination'] = array(
             'PageSize'=>1000
         );

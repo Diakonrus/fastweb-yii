@@ -1,5 +1,5 @@
 <main class="all" role="main">
-    <div class="container video-caption">
+    <div class="container">
         <h1>Отзывы</h1>
     </div>
 </main>
