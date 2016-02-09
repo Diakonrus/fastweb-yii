@@ -25,6 +25,30 @@ $sc->registerScriptFile('http://api-maps.yandex.ru/2.0/?load=package.full&amp;la
         <?php }  ?>
 
         myMap.geoObjects.add(myPointsCollection);
+
+
+        // Обработка события, возникающего при щелчке
+        // левой кнопкой мыши в любой точке карты.
+        // При возникновении такого события откроем балун.
+        myMap.events.add('click', function (e) {
+            if (!myMap.balloon.isOpen()) {
+                var coords = e.get('coordPosition');
+                myMap.balloon.open(coords, {
+                    contentHeader:'Координаты:',
+                    contentBody:'<p>Введите следующие координаты в соответствующие поля для установки координат точки.</p>' +
+                    '<p>Координаты щелчка: ' + [
+                        coords[0].toPrecision(6),
+                        coords[1].toPrecision(6)
+                    ].join(', ') + '</p>',
+                    contentFooter:'<sup></sup>'
+                });
+            }
+            else {
+                myMap.balloon.close();
+            }
+        });
+
+
     }
 </script>
 

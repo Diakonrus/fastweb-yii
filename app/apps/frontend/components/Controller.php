@@ -4,7 +4,6 @@
  */
 class Controller extends CController
 {
-	public $menu=array();
 	public $breadcrumbs=array();
     public $layout='//layouts/main';
 
@@ -23,13 +22,6 @@ class Controller extends CController
     public $loginForm;
 
     public $menuLists = array();
-
-	public function init(){
-        //Получаем список меню
-        //$root = Pages::getRoot(new Pages);
-        //$this->menuLists = $root->descendants(null,1)->findAll($root->id);
-        $this->menuLists = Pages::model()->getPagesArray();
-	}
 
 
     public function setSEO($url_patch, $page_title =  null, $modelSEO = null){

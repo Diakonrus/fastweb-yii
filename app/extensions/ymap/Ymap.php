@@ -14,6 +14,7 @@ class Ymap extends CWidget
     public $mapX = 600;
     public $mapY = 400;
     public $class = null;
+    public $return_coord_by_click = null;
 
     public function init()
     {

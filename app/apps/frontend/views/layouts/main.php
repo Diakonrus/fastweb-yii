@@ -31,7 +31,11 @@
             <div class="container">
                 <div class="row">
                     <!-- Вставляем шаблон темплейта меню -->
-
+                    <ul>
+                    <?php foreach (Pages::getMenu() as $data){ ?>
+                        <li><a href="<?=$data['url'];?>"><?=$data['title'];?></a></li>
+                    <?php } ?>
+                    </ul>
                 </div>
             </div>
 

@@ -231,6 +231,10 @@ class Pages extends CActiveRecord
 		return $result;
 	}
 
+	public static function getMenu(){
+		return Pages::model()->getPagesArray();
+	}
+
 
 
 }
