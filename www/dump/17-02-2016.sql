@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Фев 17 2016 г., 12:28
+-- Время создания: Фев 17 2016 г., 13:13
 -- Версия сервера: 5.5.47-0ubuntu0.14.04.1
 -- Версия PHP: 5.5.9-1ubuntu4.14
 
@@ -232,12 +232,19 @@ CREATE TABLE IF NOT EXISTS `tbl_catalog_chars` (
   `type_parent` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '1-категория 2-товар 3-общие характеристики',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1-активно 0-неактивно',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_deleted` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `parent_id` (`parent_id`),
   KEY `scale` (`scale`(255)),
   KEY `order_id` (`order_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=34 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=35 ;
+
+--
+-- Дамп данных таблицы `tbl_catalog_chars`
+--
+
+INSERT INTO `tbl_catalog_chars` VALUES(34, 5, 0, 'Длина', NULL, 1, 1, 3, 1, '2016-02-17 10:57:41', 0);
 
 -- --------------------------------------------------------
 
@@ -294,6 +301,44 @@ CREATE TABLE IF NOT EXISTS `tbl_catalog_elements_discount` (
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `tbl_catalog_filters`
+--
+
+DROP TABLE IF EXISTS `tbl_catalog_filters`;
+CREATE TABLE IF NOT EXISTS `tbl_catalog_filters` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL DEFAULT '' COMMENT 'Имя фильтра',
+  `type` int(11) NOT NULL DEFAULT '0' COMMENT 'Тип: 0-checkbox,1-scroll,2-select',
+  `charsname` varchar(200) NOT NULL DEFAULT '' COMMENT 'Имя характеристики',
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT 'Статус',
+  `position` int(11) NOT NULL DEFAULT '0' COMMENT 'Позиция фильтра в нулевой категории',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Список фильтров' AUTO_INCREMENT=16 ;
+
+--
+-- Дамп данных таблицы `tbl_catalog_filters`
+--
+
+INSERT INTO `tbl_catalog_filters` VALUES(15, 'Длина', 0, 'Длина', 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `tbl_catalog_filters_in_category`
+--
+
+DROP TABLE IF EXISTS `tbl_catalog_filters_in_category`;
+CREATE TABLE IF NOT EXISTS `tbl_catalog_filters_in_category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_filter` int(11) NOT NULL DEFAULT '0' COMMENT 'Ссылка на фильтр',
+  `id_catalog_rubrics` int(11) NOT NULL DEFAULT '0' COMMENT 'Ссылка на категорию',
+  `position` int(11) NOT NULL DEFAULT '0' COMMENT 'Позиция фильтра в категории',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Принадлежность фильтров катеоориям' AUTO_INCREMENT=68 ;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `tbl_catalog_rubrics`
 --
 
@@ -317,7 +362,13 @@ CREATE TABLE IF NOT EXISTS `tbl_catalog_rubrics` (
   KEY `left_key_2` (`left_key`,`right_key`,`level`),
   KEY `parent_id` (`parent_id`),
   KEY `status` (`status`)
-) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=5 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=6 ;
+
+--
+-- Дамп данных таблицы `tbl_catalog_rubrics`
+--
+
+INSERT INTO `tbl_catalog_rubrics` VALUES(5, 0, 1, 1, 2, 'Каталог Корнеаое Дерево', 'RootTreeStock', 1, 'Склад Корнеаое Дерево', 'Склад Корнеаое Дерево', 'Склад Корнеаое Дерево', 0, NULL);
 
 -- --------------------------------------------------------
 
