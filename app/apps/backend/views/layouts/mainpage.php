@@ -63,6 +63,12 @@
                             <li><a href="/admin/catalog/catalog/listgroup" title=""><img src="/images/admin/strela2.gif" alt="" />Каталоги</a></li>
                             <li><a href="/admin/catalog/catalog/listelement" title=""><img src="/images/admin/strela2.gif" alt="" />Товары</a></li>
                             <li><a href="/admin/catalog/catalog/sharechars" title=""><img src="/images/admin/strela2.gif" alt="" />Общие характеристики</a></li>
+<li>
+	<a href="/admin/catalog/catalog/filters" title="">
+		<img src="/images/admin/strela2.gif" alt="" />
+		Фильтры
+	</a>
+</li>
                         </ul>
                     </li>
 
