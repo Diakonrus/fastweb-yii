@@ -5,6 +5,7 @@ date_default_timezone_set('Europe/Moscow');
 // Вывод ошибок
 define('YII_DEBUG', true);
 define('YII_TRACE_LEVEL',3);
+define('SITE_TITLE','');
 
 ini_set("display_errors", "1");
 ini_set("display_startup_errors","1");
