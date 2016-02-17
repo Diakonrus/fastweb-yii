@@ -42,12 +42,14 @@ class CatalogElements extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_id, name', 'required'),
+			array('parent_id, name,', 'required'),
 			array('parent_id, order_id, status, ansvtype, execute, hit, qty', 'numerical', 'integerOnly'=>true),
 			array('price, price_entering', 'numerical'),
 			array('name, page_name, fkey', 'length', 'max'=>250),
 			array('image', 'length', 'max'=>5),
 			array('code', 'length', 'max'=>100),
+			array('description', 'length', 'min'=>50),
+			array('brieftext', 'length', 'max'=>1000),
 
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 
@@ -179,4 +181,180 @@ class CatalogElements extends CActiveRecord
         }
         return $result;
     }
+
+
+
+	public static function fn__get_filters($data,$id_category)
+	{
+		$id_category = intval($id_category);
+		
+		
+		if ($id_category<0)
+		{
+			return $data;
+		}
+		elseif(!$id_category)
+		{
+			$model = Yii::app()->db->createCommand()
+				->select('min(`price`) as min')
+				->from('{{catalog_elements}}')
+				->where("status=1")
+				->queryRow();
+			$data['price_min'] = intval($model['min']);
+
+			$model = Yii::app()->db->createCommand()
+				->select('max(`price`) as max')
+				->from('{{catalog_elements}}')
+				->where("status=1")
+				->queryRow();
+			$data['price_max'] = intval($model['max']);
+			
+			
+		}
+		else
+		{
+			$model_category =  CatalogRubrics::model()->find('id='.$id_category);
+			$model = Yii::app()->db->createCommand()
+				->select('min(`price`) as min')
+				->from('{{catalog_elements}}')
+				->where("
+				status=1
+					AND
+				parent_id IN 
+					(
+						SELECT 
+							`id` 
+						FROM 
+							`tbl_catalog_rubrics`
+						WHERE
+							`left_key` >=".$model_category->left_key." 
+							AND 
+							`right_key` <= ".$model_category->right_key."
+					)
+				")
+				->queryRow();
+			$data['price_min'] = intval($model['min']);
+
+			$model = Yii::app()->db->createCommand()
+				->select('max(`price`) as max')
+				->from('{{catalog_elements}}')
+				->where("
+				status=1
+					AND
+				parent_id IN 
+					(
+						SELECT 
+							`id` 
+						FROM 
+							`tbl_catalog_rubrics`
+						WHERE
+							`left_key` >=".$model_category->left_key." 
+							AND 
+							`right_key` <= ".$model_category->right_key."
+					)
+				")
+				->queryRow();
+			$data['price_max'] = intval($model['max']);
+		}
+		
+		$data['price_cur_min'] = $data['price_min'];
+		$data['price_cur_max'] = $data['price_max'];
+		
+		
+
+		
+		
+		$data['filters']['price_min'] = $data['price_min'];
+		$data['filters']['price_max'] = $data['price_max'];
+		if (isset($_COOKIE['filters']))
+		{
+			$filters_array = unserialize($_COOKIE['filters']);
+			
+			if (is_array($filters_array))
+			{
+				if (isset($filters_array['price_min'])&&isset($filters_array['price_max']))
+				{
+					if (
+							 ($filters_array['price_min']>=$data['price_min']) &&
+							 ($filters_array['price_min']<=$data['price_max'])
+						 )
+					{
+						$data['filters']['price_min'] = $filters_array['price_min'];
+					}
+
+					if (
+							 ($filters_array['price_max']<=$data['price_max']) &&
+							 ($filters_array['price_max']>=$data['price_min'])
+						 )
+					{
+						$data['filters']['price_max'] = $filters_array['price_max'];
+					}
+				}
+				
+				$filters_actual = Yii::app()->db->createCommand()
+					->selectDistinct('*')
+					->from('{{catalog_filters}}')
+					->where("charsname IN 
+										(
+											SELECT DISTINCT
+												name 
+											FROM 
+												tbl_catalog_chars
+											WHERE
+												parent_id IN 
+													(SELECT `id` FROM `tbl_catalog_elements` WHERE status = 1) 
+												AND
+													(`type_scale` = 1 OR `type_scale` = 2)
+												AND
+													`type_parent` = 2
+												AND 
+													status = 1
+										)")
+					->queryAll();
+				//print_r($filters_array); exit;
+				foreach ($filters_actual as $filters_actual_item)
+				{
+					if (isset($filters_array['filter_'.$filters_actual_item['id']]))
+					{
+						$data['filters'][$filters_actual_item['id']][$filters_actual_item['charsname']] = $filters_array['filter_'.$filters_actual_item['id']];
+					}
+				}
+			}
+
+		}
+		return $data;
+	}
+	
+	
+	// Аналог функции mysql_real_escape_string(), но без подключения к MySQL
+//******************************************************************************
+	public function sql_valid($data) {
+		$data = str_replace("\\", "\\\\", $data);
+		$data = str_replace("'", "\'", $data);
+		$data = str_replace('"', '\"', $data);
+		$data = str_replace("\x00", "\\x00", $data);
+		$data = str_replace("\x1a", "\\x1a", $data);
+		$data = str_replace("\r", "\\r", $data);
+		$data = str_replace("\n", "\\n", $data);
+		return($data); 
+ }  
+//******************************************************************************
+
+
+
+
+    /**
+     * Получить количество элементов в узле
+     */
+    public static function getCount_by_rubric($id_category){
+        $model = Yii::app()->db->createCommand()
+            ->select('count(id) as count')
+            ->from('{{catalog_elements}}')
+            ->where('parent_id='.(int)$id_category)
+            ->queryRow();
+        $result =current($model);   //вычитае из резуьтата сам узел
+        return $result;
+    }
+
+
 }
