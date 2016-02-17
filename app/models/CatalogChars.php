@@ -36,12 +36,12 @@ class CatalogChars extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name', 'required'),
-			array('parent_id, order_id, type_scale, type_parent, status, inherits', 'numerical', 'integerOnly'=>true),
+			array('parent_id, order_id, type_scale, type_parent, status, inherits, is_deleted', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>250),
 			array('scale', 'length', 'max'=>550),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, order_id, name, scale, type_scale, type_parent, status, inherits, created_at, created_at_start, created_at_end,
+			array('id, parent_id, order_id, name, scale, type_scale, type_parent, status, inherits, created_at, is_deleted, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -106,8 +106,9 @@ class CatalogChars extends CActiveRecord
 		$criteria->compare('type_scale',$this->type_scale);
 		$criteria->compare('type_parent',$this->type_parent);
 		$criteria->compare('status',$this->status);
-        $criteria->compare('inherits',$this->inherits);
-        $criteria->compare('created_at',$this->created_at);
+    $criteria->compare('inherits',$this->inherits);
+    $criteria->compare('created_at',$this->created_at);
+		$criteria->compare('is_deleted',$this->is_deleted);
 
         return $criteria;
 

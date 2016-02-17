@@ -1,69 +1,103 @@
-<div class="block_content">
-    <style>
-        table.spo th, table.spo td {
-            border: 1px solid #dddddd;
-            padding: 5px 11px;
-        }
-    </style>
+<?
 
-    <div class="tumbs">
-        <h1> <?=$modelRubric->name;?> </h1>
-        <div class="description_catalog">
-            <div class="clear"></div>
-            <table class="spo tbl" cellspacing="0" cellpadding="0">
-                <tbody>
-                <tr class="glav" style="background: none repeat scroll 0 0 #eee;">
-                    <th>Изображение</th>
-                    <th>Название</th>
-                    <th>Цена</th>
-                    <th>Действие</th>
-                </tr>
-                <?php $i = 0; ?>
-                <?php foreach ($model as $data){ ?>
-                    <?php ++$i; ?>
-                    <tr <?=(( $i & 1)?(''):('style="background: none repeat scroll 0 0 #eee;"'));?>>
-                        <td>
-                            <a title="" href="/catalog/<?=$param;?>/<?=$data->id;?>/">
-                                <?php
-                                    //Проверяю существование файла
-                                    $url_img = '/images/nophoto_100_100.jpg';
-                                    $filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/small-'.$data->id.'.'.$data->image;
-                                    if (file_exists($filename)){ $url_img = '/uploads/filestorage/catalog/elements/medium2-'.$data->id.'.'.$data->image; }
-                                ?>
-                                <img src="<?=$url_img;?>" title="<?=$data->name;?>" alt="<?=$data->name;?>" width="150px" style="border:1px solid #ddd;">
-                            </a>
-                        </td>
-                        <td>
-                            <div class="element_name">
-                                <strong>
-                                    <a title="<?=$data->name;?>" href="/catalog/<?=$param;?>/<?=$data->id;?>/">
-                                    <?=$data->name;?>
-                                    </a>
-                                </strong>
-                            </div>
-                        </td>
-                        <td><nobr><?=$data->price;?></nobr></td>
-                        <td style="text-align:center;">
-                            <input id="basket_catalog_<?=$data->id;?>" class="basket_catalog_input" type="text" value="1" onkeypress="return testKey(event)">
-                            <script>
-                                document.getElementById('basket_catalog_<?=$data->id;?>').style.display = 'none';
-                            </script>
-                            <a title="в корзину" href="javascript:void(0);" onclick="javascript:return SupposeInBasket('catalog/<?=$param;?>/<?=$data->id;?>', 'catalog', 'price','<?=$data->id;?>','<?=$data->name;?>',0,document.getElementById('basket_catalog_<?=$data->id;?>').value,'','','','1')">
-                                <img width="16" height="16" src="/images/order.png">
-                            </a>
-                        </td>
-                    </tr>
-                <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+$this->pageTitle = $modelRubric->name.' купить - '.$_SERVER['HTTP_HOST'];
+Yii::app()->clientScript->registerMetaTag($modelRubric->name.' купить в интернет магазине '.$_SERVER['HTTP_HOST'].' по выгодной цене с доставкой.', 'description');
 
+?>
+<?=$this->widget('application.apps.frontend.components.Categories',array('params'=>array($modelRubric->id)), TRUE)?>
+
+<div class="items-block-bestsallers" style="margin-top: 0px;">
+	<h1 style="text-align: center; font-size: 24px;"><?=$modelRubric->name;?></h1>
+	
+	
+<?
+/*
+$all = CatalogRubrics::model()->findAll('parent_id='.$modelRubric->id);
+foreach ($all as $item)
+{
+	$item_attributes = $item->getAttributes();
+	echo '<li><a href="/catalog/'.$item_attributes['url'].'">'.$item_attributes['name'].'</a>';
+}
+*/
+?>
+
+
+	
+	<div class="tovar_container">
+		<?php $i = 0; ?>
+		<?php foreach ($model as $data){ ?>
+			<?php ++$i; ?>
+			<?php
+				//Проверяю существование файла
+				$url_img = '/images/nophoto_100_100.jpg';
+				$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image;
+				if (file_exists($filename))
+				{ 
+					$url_img = '/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image; 
+				}
+
+
+$name_noqoutes = $data->name;
+$name_noqoutes = str_replace("'",'',$name_noqoutes);
+$name_noqoutes = str_replace('"','',$name_noqoutes);
+$name_noqoutes = htmlspecialchars($name_noqoutes,ENT_QUOTES);
+$name_noqoutes = str_replace('&#039;','',$name_noqoutes);
+
+			?>
+			<div class="items-block-item">
+				<a href="/catalog/<?=$data->id;?>" class="items-block-item-img">
+					<table>
+						<tr><td></td></tr>
+						<tr><td><img src="<?=$url_img?>" alt=""></td></tr>
+						<tr><td></td></tr>
+					</table>
+				</a>
+				<a class="items-block-item-name" href="/catalog/<?=$data->id;?>"><?=$data->name;?></a>
+				<div class="items-block-item-price"><?=$data->price;?> руб.</div>
+				<div class="buy-btn buy-btn-product" style="padding-left: 17px;"></div>
+				<div class="item-count-area">
+					<a href="" class="item-count-inc"></a>
+					<input value="1" class="item-count product_<?=$data->id;?>_count" type="text">
+					<a href="" class="item-count-dec"></a>
+				</div>
+				<div class="order_one_click">
+					<a href="javascript:void(0)" 
+						 class="fastorder"
+						 idx="<?=$data->id;?>"
+						 names="<?=$data->name;?>"
+						 pic="<?=$url_img?>"
+						 >
+						Заказать
+					</a>
+				</div>
+			</div>
+		<?php } ?>
+	</div>
+</div>
+
+<script>
+$(function() {
+  $('.dropdown-toggle').dropdown();
+});
+
+</script>
+
+
+
+<?=$filters?>
+
+
+<div class="panel panel-default paginator-panel">
+  <div class="panel-body">
+    <?$this->widget('CLinkPager', array('pages' => $pages));?>
+  </div>
 </div>
 
 
-
 <script>
-    $("a[href^='<?=$_SERVER['REQUEST_URI'];?>']").css({fontWeight: "bold"});
-    $("a[href^='<?=$_SERVER['REQUEST_URI'];?>']").parent().parent().show();
+$(function() {
+	$('.parent_lmcontainer_'+<?=$modelRubric->id?>).show();
+	$('.parent_lmcontainer_'+<?=$modelRubric->parent_id?>).show();
+	$('.lmenu_item_<?=$modelRubric->id?> > a').css('background-color','#e5e5e5');
+});
 </script>

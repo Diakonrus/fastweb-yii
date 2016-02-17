@@ -7,27 +7,21 @@
 <title>Страница не найдена</title>
 <style type="text/css">
 /*<![CDATA[*/
-body {font-family:"Verdana";font-weight:normal;color:black;background-color:white;}
-h1 { font-family:"Verdana";font-weight:normal;font-size:18pt;color:red }
-h2 { font-family:"Verdana";font-weight:normal;font-size:14pt;color:maroon }
-h3 {font-family:"Verdana";font-weight:bold;font-size:11pt}
-p {font-family:"Verdana";font-weight:normal;color:black;font-size:9pt;margin-top: -5px}
+    body,h1 {margin:0; padding:0;}
+    h2 {float: left; padding-left: 20px; font-size: 26px; font-weight: normal; color: #555; font-family: arial; margin: 0; padding-top: 60px;}
 .version {color: gray;font-size:8pt;border-top:1px solid #aaaaaa;}
 /*]]>*/
 </style>
 </head>
 <body>
-<h1>Страница не найдена</h1>
-<h2><?php echo nl2br(CHtml::encode($data['message'])); ?></h2>
-<p>
-Запрошенная страница не найдена на сервере.
-Если вы ввели адрес страницы вручную, проверьте правильность его написания и повторите попытку.
-</p>
-<p>
-Если вы считаете, что это ошибка настройки сервера, обратитесь по адресу  <?php echo $data['admin']; ?>.
-</p>
-<div class="version">
-<?php echo date('Y-m-d H:i:s',$data['time']) .' '. $data['version']; ?>
+<div style="width: 990px; margin: 0 auto;">
+    <h1 style="background: #555; font-size: 44px; color: #fff; float: left; padding: 20px; font-family: arial;">404</h1>
+    <h2>ЗАПРАШИВАЕМАЯ СТРАНИЦА НЕ НАЙДЕНА</h2>
+    <p style="padding-top: 40px; clear: left; font-size: 16px; font-family: arial; font-weight: normal;  color: #777;">
+        Страница, запрошенная Вами, не существует.<br>
+        <br><Br>
+        <a href="/">На главную страницу</a>
+    </p>
 </div>
 </body>
 </html>

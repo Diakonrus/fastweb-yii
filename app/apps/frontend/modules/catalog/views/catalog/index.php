@@ -1,48 +1,77 @@
-<?php
-
-foreach ($descendants as $category){
-    echo '<li class="ul_menu_lefl">';
-    //Получаем подкатегории
-    $category_sub = CatalogRubrics::model()->findByPk($category['id']);
-    $category_sub = $category_sub->descendants(1)->findAll();
-    if ($category_sub){
-        echo '<a onclick="$(this).next().toggle(); $(this).find(\'plus_li\').toggleClass(\'plus_li_active\');" href="javascript:void(0);">' . $category['name'] . '</a>';
-
-        echo '<ul style="padding-left: 0px; margin-left: 0px; list-style-type: none; display:none;">';
-        foreach ($category_sub as $sub_catalog){
-
-            echo '<li>';
-
-            //Смотрим, есть ли еще субкаталог
-            if ($category_sub2 = CatalogRubrics::model()->findByPk($sub_catalog['id'])->descendants(1)->findAll()){
-                echo '<a id="'.$sub_catalog['id'].'" onclick="$(this).next().toggle(); $(this).find(\'plus_li\').toggleClass(\'plus_li_active\');" title="" href="javascript:void(0);">'.$sub_catalog['name'].'</a>';
-                echo '<ul>';
-                foreach ($category_sub2 as $sub_catalog2){
-                    echo '<li>';
-                    echo '<a id="'.$sub_catalog2['id'].'" title="" href="/catalog/'.$category['url'].'/'.$sub_catalog['url'].'/'.$sub_catalog2['url'].'/">' . $sub_catalog2['name'] . '</a>';
-                    echo '</li>';
-                }
-                echo '</ul>';
-                echo '<span class="plus_li" style="width: 10px;"> </span>';
-            } else {
-                echo '<a id="'.$sub_catalog['id'].'" title="" href="/catalog/'.$category['url'].'/'.$sub_catalog['url'].'/">'.$sub_catalog['name'].'</a>';
-            }
-
-            echo '</li>';
-
-        }
-        echo '</ul>';
-        echo '<span class="plus_li" item-data="1-1"> </span>';
-    }else {
-        //Если нет подкатегорий - сразу делаем ссылкой
-        echo '<a href="/catalog/'.$category['url'].'/">'.$category['name'].'</a>';
-    }
+<?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
+<h1 class="lined nopaddingtop" style="margin-top: 10px;">Каталог продукции</h1>
+<?
+$this->pageTitle ='Каталог продукции - '.$_SERVER['HTTP_HOST'];
+?>
 
 
-    echo '</li>';
 
-    //echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $category['level']), $category['name'];
-    //echo '<BR>';
+
+
+
+
+<div class="tovar_container">
+<?php foreach ($model_elements as $data){ 
+$element = CatalogElements::model()->getProduct($data->id);
+if (isset($element['url']))
+{
+	$url = Yii::app()->request->requestUri.$element['url'].(SiteModuleSettings::getUrl($data,4));
 }
 
-?>
+		$url_img = '/images/nophoto_100_100.jpg';
+		$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image;
+		if (file_exists($filename))
+		{ 
+			$url_img = '/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image; 
+		}
+
+
+$name_noqoutes = $data->name;
+$name_noqoutes = str_replace("'",'',$name_noqoutes);
+$name_noqoutes = str_replace('"','',$name_noqoutes);
+$name_noqoutes = htmlspecialchars($name_noqoutes,ENT_QUOTES);
+$name_noqoutes = str_replace('&#039;','',$name_noqoutes);
+
+	?>
+	<div class="items-block-item">
+		<a href="<?=$url;?>" class="items-block-item-img">
+			<table>
+				<tr><td></td></tr>
+				<tr><td class="rollover"><img src="<?=$url_img?>" alt=""></td></tr>
+				<tr><td></td></tr>
+			</table>
+		</a>
+		<a class="items-block-item-name" href="<?=$url;?>"><?=$data->name;?></a>
+		<div class="item-price-count">
+			<div class="items-block-item-price"><?=$data->price;?> руб.</div>
+			<div class="item-count-area">
+				<a href="" class="item-count-inc"></a>
+				<input value="1" class="item-count" type="text">
+				<a href="" class="item-count-dec"></a>
+			</div>
+		</div>
+		<div class="clearOnly">&nbsp;</div>
+		<div class="order_one_click">
+			<a href="javascript:void(0)" 
+				 class="fastorder"
+				 idx="<?=$data->id;?>"
+				 names="<?=$data->name;?>"
+				 pic="<?=$url_img?>"
+				 >
+				Заказать
+			</a>
+		</div>
+	</div>
+<?php } ?>
+	</div>
+	
+	
+<div class="panel panel-default paginator-panel">
+  <div class="panel-body">
+    <?$this->widget('CLinkPager', array('pages' => $pages));?>
+  </div>
+</div>
+
+
+
+<?=$filters?>

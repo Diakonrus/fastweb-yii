@@ -4,6 +4,394 @@ class CatalogController extends Controller
 {
 
 
+
+
+
+
+
+
+
+	public function actionFilters($id=null){
+
+		
+		$action = (isset($_GET['action'])?$_GET['action']:'list');
+		if (!in_array($action,array('list','create','update','delete','chpos')))
+		{
+			$action = 'list';
+		}
+		$data['action'] = $action;
+		
+		
+		
+		
+		if ($action=='list')
+		{
+			$this->breadcrumbs = array('Фильтры'=>array('/catalog/catalog/filters','Список фильтров'));
+			
+			if ((isset($_GET['catid']))&&(intval($_GET['catid'])))
+			{
+				$model_filters = CatalogFIlters::model()->findAll(array(
+				"select"=>"t.*, tbl_catalog_filters_in_category.position as position",
+				'join' => "LEFT JOIN tbl_catalog_filters_in_category ON 
+									 (
+									 	tbl_catalog_filters_in_category.id_filter = t.id AND
+									 	tbl_catalog_filters_in_category.id_catalog_rubrics = ".intval($_GET['catid'])."
+									 )", 
+				'condition' =>"
+				t.id IN (
+					SELECT id_filter
+					FROM tbl_catalog_filters_in_category 
+					WHERE id_catalog_rubrics = ".intval($_GET['catid'])."
+					)
+				ORDER BY tbl_catalog_filters_in_category.position DESC "));
+			}
+			else
+			{
+				$model_filters = CatalogFIlters::model()->findAll(array(
+				'condition' =>"1 ORDER BY position DESC"));
+			}
+			$data['model_filters'] = $model_filters;
+			
+			//print_r($model_filters);
+			
+			$catalog_chars_names = Yii::app()->db->createCommand()
+				->selectDistinct('name')
+				->from('{{catalog_chars}}')
+				->where("name NOT IN (SELECT charsname FROM {{catalog_filters}})")
+				->queryAll();
+			$data['allow_add'] = count($catalog_chars_names);
+			
+			
+			$model_CatalogRubrics = CatalogRubrics::model()->findAll();
+			$categs_array = array();
+			$categs_array[0] = array('name'=>'Все фильтры','parent_id'=>0);
+			foreach ($model_CatalogRubrics as $model_CatalogRubrics_item)
+			{
+				$categs_array[$model_CatalogRubrics_item->id] =array(
+					'parent_id'=>$model_CatalogRubrics_item->parent_id,
+					'name'=>$model_CatalogRubrics_item->name,
+				); 
+			}
+			$data['categs_array'] = $categs_array;
+		}
+
+
+
+
+
+
+		if ($action=='chpos')
+		{
+			$do = (isset($_GET['do'])?$_GET['do']:'inc');
+			$catid = (isset($_GET['catid'])?intval($_GET['catid']):0);
+			if (!in_array($do,array('inc','dec')))
+			{
+				$do = 'inc';
+			}
+			$id = (isset($_GET['id'])?$_GET['id']:0);
+			if (!$catid)
+			{
+				$model = CatalogFIlters::model()->find('id = '.intval($id));
+				if ($model)
+				{
+					if ($do == 'inc')
+					{
+						$model->position = $model->position+1;
+					}
+					else
+					{
+						if (($model->position-1)>=0)
+						{
+							$model->position = $model->position-1;
+						}
+					}
+					$model->save();
+					$this->redirect(array('filters'));
+				}
+			}
+			else
+			{
+				$model = CatalogFIltersInCategory::model()->find('id_filter = '.intval($id).' AND id_catalog_rubrics = '.$catid);
+				if ($model)
+				{
+					if ($do == 'inc')
+					{
+						$model->position = $model->position+1;
+					}
+					else
+					{
+						if (($model->position-1)>=0)
+						{
+							$model->position = $model->position-1;
+						}
+					}
+					$model->save();
+					$this->redirect(array('filters?catid='.$catid));
+				}
+			}
+		}
+
+
+
+
+
+
+
+
+
+		if ($action=='create')
+		{
+			$this->breadcrumbs = array('Фильтры'=>array('/catalog/catalog/filters'),'Новая запись');
+			
+			$catalog_chars_names = Yii::app()->db->createCommand()
+				->selectDistinct('name')
+				->from('{{catalog_chars}}')
+				->where('name NOT IN (SELECT charsname FROM {{catalog_filters}})')
+				->queryAll();
+			$names_chars = array();
+			foreach ($catalog_chars_names as $item)
+			{
+				$names_chars[$item['name']] = $item['name'];
+			}
+			$data['names_chars'] = $names_chars;
+			
+			
+			
+			$model_CatalogRubrics = CatalogRubrics::model()->findAll();
+			$categs_array = array();
+			foreach ($model_CatalogRubrics as $model_CatalogRubrics_item)
+			{
+				$categs_array[$model_CatalogRubrics_item->id] =array(
+					'parent_id'=>$model_CatalogRubrics_item->parent_id,
+					'name'=>$model_CatalogRubrics_item->name,
+				); 
+			}
+			$data['categs_array'] = $categs_array;
+			
+			
+			
+			$model_filters_in_category = new CatalogFIltersInCategory;
+			$data['model_filters_in_category'] = $model_filters_in_category;
+			
+			
+			
+			$model = new CatalogFIlters;
+			$data['model'] = $model;
+			if(isset($_POST['CatalogFIlters']))
+			{
+				$model->attributes = $_POST['CatalogFIlters'];
+				if ($model->validate())
+				{
+					$model->save();
+					if (
+					     (isset($_POST['CatalogFIltersInCategory']['id_catalog_rubrics']))&&
+					     (is_array($_POST['CatalogFIltersInCategory']))
+					   )
+					{
+						foreach ($_POST['CatalogFIltersInCategory']['id_catalog_rubrics'] as $id_category)
+						{
+							
+							$model_filters_in_category = new CatalogFIltersInCategory;
+							$model_filters_in_category->id_catalog_rubrics = intval($id_category);
+							$model_filters_in_category->id_filter = $model->id;
+							if ($model_filters_in_category->validate())
+							{
+								$model_filters_in_category->save();
+							}
+						}
+					}
+					$this->redirect(array('filters'));
+				}
+			}
+		}
+
+
+
+
+
+
+
+
+		if ($action=='update')
+		{
+			$id = (isset($_GET['id'])?$_GET['id']:0);
+			$this->breadcrumbs = array('Фильтры'=>array('/catalog/catalog/filters'),'Редактировать запись');
+			$model = CatalogFIlters::model()->find('id = '.intval($id));
+			if ($model)
+			{
+				$catalog_chars_names = Yii::app()->db->createCommand()
+					->selectDistinct('name')
+					->from('{{catalog_chars}}')
+					->where("name NOT IN (SELECT charsname FROM {{catalog_filters}}) 
+					         OR 
+					         name IN (SELECT charsname FROM {{catalog_filters}} WHERE id =  '".$model->id."')")
+					->queryAll();
+				$names_chars = array();
+				foreach ($catalog_chars_names as $item)
+				{
+					$names_chars[$item['name']] = $item['name'];
+				}
+				$data['names_chars'] = $names_chars;
+				$data['model'] = $model;
+				
+				
+				$model_CatalogRubrics = CatalogRubrics::model()->findAll();
+				$categs_array = array();
+				foreach ($model_CatalogRubrics as $model_CatalogRubrics_item)
+				{
+					$categs_array[$model_CatalogRubrics_item->id] =array(
+						'parent_id'=>$model_CatalogRubrics_item->parent_id,
+						'name'=>$model_CatalogRubrics_item->name,
+					); 
+				}
+				$data['categs_array'] = $categs_array;
+				
+				
+				$model_filters_in_category = CatalogFIltersInCategory::model()->findAll('id_filter = '.intval($id));
+				$categs_array_selected = array();
+				$categs_array_selected_items = array();
+				if (($model_filters_in_category)&&(is_array($model_filters_in_category)))
+				{
+					foreach ($model_filters_in_category as $model_filters_in_category_item)
+					{
+						$categs_array_selected[$model_filters_in_category_item->id_catalog_rubrics] = array('selected'=>'selected'); 
+						$categs_array_selected_items[]=$model_filters_in_category_item->id_catalog_rubrics;
+					}
+				}
+				$data['categs_array_selected'] = $categs_array_selected;
+				$data['model_filters_in_category'] = new CatalogFIltersInCategory;
+				
+				if(isset($_POST['CatalogFIlters']))
+				{
+					$model->attributes = $_POST['CatalogFIlters'];
+					if ($model->validate())
+					{
+						$model->save();
+						$new_selected_items = array();
+						if (
+							   (isset($_POST['CatalogFIltersInCategory']['id_catalog_rubrics']))&&
+							   (is_array($_POST['CatalogFIltersInCategory']))
+							 )
+						{
+							
+							// Добавляем отсутствующие элементы
+							//----------------------------------------------------------------
+							foreach ($_POST['CatalogFIltersInCategory']['id_catalog_rubrics'] as $id_category)
+							{
+								if (in_array(intval($id_category),$categs_array_selected_items))
+								{
+									
+								}
+								else
+								{
+									$model_finc = new CatalogFIltersInCategory;
+									$model_finc->id_catalog_rubrics = intval($id_category);
+									$model_finc->id_filter = $model->id;
+									if ($model_finc->validate())
+									{
+										$model_finc->save();
+									}
+								}
+								$new_selected_items[]=$id_category;
+							}
+							//----------------------------------------------------------------
+						}
+						
+						
+						// Удаляем отсутствующие ривязки к категориям
+						foreach ($categs_array_selected_items as $value1)
+						{
+							if (!in_array($value1,$new_selected_items))
+							{
+								$model1 = CatalogFIltersInCategory::model()->find('id_catalog_rubrics = '.intval($value1).' AND id_filter = '.$model->id);
+								if ($model1)
+								{
+									$model1->delete();
+								}
+							}
+						}
+						
+						//$this->redirect(array('filters?action=update&id='.$model->id));
+						
+						$catid = (isset($_GET['catid'])?intval($_GET['catid']):0);
+						if ($catid)
+						{
+							$this->redirect(array('filters?catid='.$catid));
+						}
+						else
+						{
+							$this->redirect(array('filters'));
+						}
+					}
+				}
+			}
+		}
+		
+		
+		
+		
+		if ($action=='delete')
+		{
+			$id = (isset($_GET['id'])?$_GET['id']:0);
+			$model = CatalogFIlters::model()->find('id = '.intval($id));
+			if ($model)
+			{
+				$model->delete();
+			}
+			$this->redirect(array('filters'));
+		}
+
+		$this->render('filters',$data);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function actionListgroup($id=null){
 
         $this->breadcrumbs = array(
@@ -347,6 +735,32 @@ class CatalogController extends Controller
 
     public function actionAjax(){
         if (isset($_POST)){
+        
+					
+						if (
+							   (isset($_POST['arrscaleval'])) &&
+							   (isset($_POST['arrscaleid'])) &&
+							   (is_array($_POST['arrscaleval'])) &&
+							   (is_array($_POST['arrscaleid'])) &&
+							   (count($_POST['arrscaleval'])==count($_POST['arrscaleid']))
+							 )
+						{
+					
+							for ($i = 0; $i < count($_POST['arrscaleid']); $i++)
+							{
+								if (strlen(trim($_POST['arrscaleval'][$i])))
+								{
+									$model = $this->loadModelChars((int)$_POST['arrscaleid'][$i]);
+									if ($model)
+									{
+										$model->scale = trim($_POST['arrscaleval'][$i]);
+										$model->save();
+									}
+								}
+							}
+						}
+        
+        
             switch ((int)$_POST['type']) {
                 case 1:
                     //Смена статуса (ДЛЯ КАТАЛОГА)
@@ -420,6 +834,15 @@ class CatalogController extends Controller
                     echo CJavaScript::jsonEncode('ok');
                     break;
             }
+
+					
+					
+					
+					//print_r($_POST);
+					//exit;
+
+					
+					
         }
 
 
@@ -485,7 +908,7 @@ class CatalogController extends Controller
             }
         }
 
-        $param = null;
+        $param[] = 'is_deleted = 0';
         if (!empty($id)){
             $param[] = 'parent_id = '.$id;
         }
@@ -531,6 +954,7 @@ class CatalogController extends Controller
         if(isset($_POST['CatalogChars'])){
             $model->attributes = $_POST['CatalogChars'];
             $model->parent_id = $id;
+			$model->type_parent = (int)$_GET['type_parent'];
             if ($model->save()) {
                 //Если указано наследование - создаем это свойство для остальных элементов в этом объекте
                 if ($model->inherits == 1) {
@@ -549,10 +973,101 @@ class CatalogController extends Controller
     public function actionUpdatechars($id){
 
 
+				
+
         $model = $this->loadModelChars($id);
         if(isset($_POST['CatalogChars'])){
             $model->attributes = $_POST['CatalogChars'];
             if ($model->save()) {
+											//	echo 111111111;
+										//		print_r($_POST); exit;
+
+//echo 'Start1<br>';
+//print_r($_POST);
+
+//==============================================================================
+								if (
+								     (isset($_POST['set_childrens'])) &&
+								     ($_POST['set_childrens']==1)
+								   )
+								{
+									//echo 'Start<br>';
+									// Если редактируется свойство категории
+									if ($model->type_parent==1)
+									{
+										$model__rubric = CatalogRubrics::model()->find('id = '.$model->parent_id);
+										$model__rubric_childs = CatalogRubrics::model()->findAll('
+										left_key  >= '.$model__rubric->left_key.'
+										AND
+										right_key <= '.$model__rubric->right_key.'
+										');
+										foreach ($model__rubric_childs as $model__rubric_childs_item)
+										{
+											
+											$model__catalog_chars_item = CatalogChars::model()->find('
+											parent_id = '.$model__rubric_childs_item->id.'
+											AND
+											type_parent = 1
+											AND
+											name = \''.CatalogElements::sql_valid($model->name).'\'
+											');
+											if ($model__catalog_chars_item)
+											{
+												//echo 'rubric_chars ='.$model__catalog_chars_item->id.'<br>';
+												$model__catalog_chars_item->filter_range = $model->filter_range;
+												$model__catalog_chars_item->filter_use = $model->filter_use;
+												$model__catalog_chars_item->type_scale = $model->type_scale;
+												$model__catalog_chars_item->save();
+											}
+										}
+										
+										
+										$model_elements = CatalogChars::model()->findAll('
+											parent_id IN 
+											(
+												SELECT 
+													id 
+												FROM  
+													tbl_catalog_elements 
+												WHERE
+													parent_id IN 
+													(
+														SELECT 
+															id 
+														FROM 
+															tbl_catalog_rubrics 
+														WHERE
+															(
+																left_key  >= '.$model__rubric->left_key.'
+																AND
+																right_key <= '.$model__rubric->right_key.'
+															)
+															OR
+															(
+																id = '.$model__rubric->id.'
+															)
+													)
+											)
+											AND
+											type_parent = 2
+											AND
+											name = \''.CatalogElements::sql_valid($model->name).'\'
+										');
+										foreach ($model_elements as $model_elements_item)
+										{
+											//echo 'item_chars ='.$model__catalog_chars_item->id.'<br>';
+											$model__catalog_chars_item->filter_range = $model->filter_range;
+											$model__catalog_chars_item->filter_use = $model->filter_use;
+											$model__catalog_chars_item->type_scale = $model->type_scale;
+											$model__catalog_chars_item->save();
+										}
+										
+									}
+								}
+//==============================================================================
+
+
+
 
                 //Если указано наследование - создаем это свойство для остальных элементов в этом объекте
                 if ($model->inherits == 1) {
@@ -587,8 +1102,16 @@ class CatalogController extends Controller
     /**  Удалить свойство каталога  */
     public function actionDeletechars($id){
         $model = $this->loadModelChars($id);
-        $this->loadModelChars($id)->delete();
-        $this->redirect('listchars?id='.$model->parent_id);
+        //$this->loadModelChars($id)->delete();
+        $model->is_deleted = 1;
+		$model->save();
+
+
+        $type_parent = intval($_GET['type_parent']);
+        if ($type_parent)
+        {
+	        $this->redirect('listchars?id='.$model->parent_id.'&type_parent='.$type_parent);
+        }
     }
 
 
