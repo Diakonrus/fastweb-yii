@@ -11,7 +11,6 @@
  * @property string $brieftext
  * @property integer $status
  * @property integer $ansvtype
- * @property integer $execute
  * @property integer $hit
  * @property string $image
  * @property string $page_name
@@ -43,7 +42,7 @@ class CatalogElements extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('parent_id, name,', 'required'),
-			array('parent_id, order_id, status, ansvtype, execute, hit, qty', 'numerical', 'integerOnly'=>true),
+			array('parent_id, order_id, status, ansvtype, hit, qty', 'numerical', 'integerOnly'=>true),
 			array('price, price_entering', 'numerical'),
 			array('name, page_name, fkey', 'length', 'max'=>250),
 			array('image', 'length', 'max'=>5),
@@ -55,7 +54,7 @@ class CatalogElements extends CActiveRecord
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, order_id, name, brieftext, status, ansvtype, qty, execute, hit, image, page_name, description, fkey, code, serch_name_code, price, price_entering,
+			array('id, parent_id, order_id, name, brieftext, status, ansvtype, qty, hit, image, page_name, description, fkey, code, serch_name_code, price, price_entering,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -84,7 +83,6 @@ class CatalogElements extends CActiveRecord
 			'brieftext' => 'Brieftext',
 			'status' => 'Status',
 			'ansvtype' => 'Ansvtype',
-			'execute' => 'Execute',
 			'hit' => 'Hit',
 			'image' => 'Image',
 			'page_name' => 'Page Name',
@@ -125,7 +123,6 @@ class CatalogElements extends CActiveRecord
 		$criteria->compare('brieftext',$this->brieftext,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('ansvtype',$this->ansvtype);
-		$criteria->compare('execute',$this->execute);
 		$criteria->compare('hit',$this->hit);
 		$criteria->compare('image',$this->image,true);
 		$criteria->compare('page_name',$this->page_name,true);

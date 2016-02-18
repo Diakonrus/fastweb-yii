@@ -170,17 +170,6 @@
     </div>
 
     <div class="control-group">
-        <?=CHtml::activeLabel($model,'execute');?>
-        <div class="controls">
-            <select class="inputselect span5" name="CatalogElements[execute]"  style="font-weight: bold;">
-                <option style="color: red;" value="0"  <?php if (!$model->isNewRecord && $model->execute==0){echo 'selected';} ?> >Ожидание</option>
-                <option style="color: darkgreen;" value="1" <?php if (!$model->isNewRecord && $model->execute==1){echo 'selected';} ?> >Активно</option>
-            </select>
-        </div>
-    </div>
-
-
-    <div class="control-group">
         <label class="control-label" for="CatalogElements_status">Картинка</label>
         <div class="controls">
             <?php if ($model->isNewRecord) { ?><img src="/images/nophoto_100_100.jpg"><?php } else {
