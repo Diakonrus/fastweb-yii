@@ -11,12 +11,12 @@
  * @property string $r_cover_small_crop
  * @property string $r_cover_medium
  * @property string $r_cover_medium_crop
- * @property string $r_cover_medium2
- * @property string $r_cover_medium2_crop
+ * @property string $r_cover_large
+ * @property string $r_cover_large_crop
  * @property integer $r_cover_quality
  * @property string $r_small_color
  * @property string $r_medium_color
- * @property string $r_medium2_color
+ * @property string $r_large_color
  * @property integer $elements_page_admin
  * @property string $watermark
  * @property integer $watermark_pos
@@ -50,18 +50,18 @@ class SiteModuleSettings extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('site_module_id, r_cover_quality, r_cover_small_crop, r_cover_medium_crop, r_cover_medium2_crop, e_cover_quality, e_cover_small_crop, e_cover_medium_crop, e_cover_medium2_crop', 'required'),
-			array('site_module_id, r_cover_quality, e_cover_quality, elements_page_admin, watermark_pos, watermark_type, watermark_transp, watermask_font, status', 'numerical', 'integerOnly'=>true),
-			array('version, r_small_color, r_medium_color, r_medium2_color, e_small_color, e_medium_color, e_medium2_color', 'length', 'max'=>10),
-			array('r_cover_small, r_cover_medium, r_cover_medium2, e_cover_small, e_cover_medium, e_cover_medium2', 'length', 'max'=>50),
-			array('r_cover_small_crop, r_cover_medium_crop, r_cover_medium2_crop, e_cover_small_crop, e_cover_medium_crop, e_cover_medium2_crop', 'length', 'max'=>12),
-			array('watermark', 'length', 'max'=>255),
+			array('site_module_id, r_cover_quality, r_cover_small_crop, r_cover_medium_crop, r_cover_large_crop, e_cover_quality, e_cover_small_crop, e_cover_medium_crop, e_cover_large_crop', 'required'),
+			array('site_module_id, r_cover_quality, e_cover_quality, elements_page_admin, watermark_pos, watermark_type, watermark_transp, watermask_font, status, url_form', 'numerical', 'integerOnly'=>true),
+			array('version, r_small_color, r_medium_color, r_large_color, e_small_color, e_medium_color, e_large_color', 'length', 'max'=>10),
+			array('r_cover_small, r_cover_medium, r_cover_large, e_cover_small, e_cover_medium, e_cover_large', 'length', 'max'=>50),
+			array('r_cover_small_crop, r_cover_medium_crop, r_cover_large_crop, e_cover_small_crop, e_cover_medium_crop, e_cover_large_crop', 'length', 'max'=>12),
+			array('watermark, email', 'length', 'max'=>255),
 			array('watermark_color', 'length', 'max'=>80),
 			array('watermask_fontsize', 'length', 'max'=>20),
 			array('image_watermark', 'file', 'types'=>'png', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, site_module_id, version, r_cover_small, r_cover_small_crop, r_cover_medium, r_cover_medium_crop, r_cover_medium2, r_cover_medium2_crop, r_cover_quality, r_small_color, r_medium_color, r_medium2_color, e_cover_small, e_cover_small_crop, e_cover_medium, e_cover_medium_crop, e_cover_medium2, e_cover_medium2_crop, e_cover_quality, e_small_color, e_medium_color, e_medium2_color, elements_page_admin, watermark, watermark_pos, watermark_type, watermark_transp, watermark_color, watermask_font, watermask_fontsize, status, created_at, created_at_start, created_at_end,
+			array('id, email, site_module_id, version, r_cover_small, r_cover_small_crop, r_cover_medium, r_cover_medium_crop, r_cover_large, r_cover_large_crop, r_cover_quality, r_small_color, r_medium_color, r_large_color, e_cover_small, e_cover_small_crop, e_cover_medium, e_cover_medium_crop, e_cover_large, e_cover_large_crop, e_cover_quality, e_small_color, e_medium_color, e_large_color, elements_page_admin, watermark, watermark_pos, watermark_type, watermark_transp, watermark_color, watermask_font, watermask_fontsize, status, created_at, created_at_start, created_at_end, url_form,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -91,22 +91,22 @@ class SiteModuleSettings extends CActiveRecord
 			'r_cover_small_crop' => 'Метод обрезки изображения (префикс small)',
 			'r_cover_medium' => 'Размер картинки (префикс medium)',
 			'r_cover_medium_crop' => 'Метод обрезки изображения (префикс medium)',
-			'r_cover_medium2' => 'Размер картинки (префикс medium2)',
-			'r_cover_medium2_crop' => 'Метод обрезки изображения (префикс medium2)',
+			'r_cover_large' => 'Размер картинки (префикс large)',
+			'r_cover_large_crop' => 'Метод обрезки изображения (префикс large)',
 			'r_cover_quality' => 'Качество картинок',
 			'r_small_color' => 'Цвет заднего фона в 16-ричном формате (напр. 852a8b), для прозрачных полей - пустое значение',
 			'r_medium_color' => 'Цвет заднего фона в 16-ричном формате (напр. 852a8b), для прозрачных полей - пустое значение',
-			'r_medium2_color' => 'Цвет заднего фона в 16-ричном формате (напр. 852a8b), для прозрачных полей - пустое значение',
+			'r_large_color' => 'Цвет заднего фона в 16-ричном формате (напр. 852a8b), для прозрачных полей - пустое значение',
 			'e_cover_small' => 'Размер превью картинки (префикс small)',
 			'e_cover_small_crop' => 'Метод обрезки изображения (префикс small)',
 			'e_cover_medium' => 'Размер картинки (префикс medium)',
 			'e_cover_medium_crop' => 'Метод обрезки изображения (префикс medium)',
-			'e_cover_medium2' => 'Размер картинки (префикс medium2)',
-			'e_cover_medium2_crop' => 'Метод обрезки изображения (префикс medium2)',
+			'e_cover_large' => 'Размер картинки (префикс large)',
+			'e_cover_large_crop' => 'Метод обрезки изображения (префикс large)',
 			'e_cover_quality' => 'Качество картинок',
 			'e_small_color' => 'Цвет заднего фона в 16-ричном формате (напр. 852a8b), для прозрачных полей - пустое значение',
 			'e_medium_color' => 'Цвет заднего фона в 16-ричном формате (напр. 852a8b), для прозрачных полей - пустое значение',
-			'e_medium2_color' => 'Цвет заднего фона в 16-ричном формате (напр. 852a8b), для прозрачных полей - пустое значение',
+			'e_large_color' => 'Цвет заднего фона в 16-ричном формате (напр. 852a8b), для прозрачных полей - пустое значение',
 			'elements_page_admin' => 'Количество на страницу (админ)',
 			'watermark' => 'Watermark',
 			'watermark_pos' => 'Расположение водяного знака',
@@ -117,6 +117,8 @@ class SiteModuleSettings extends CActiveRecord
 			'watermask_fontsize' => 'Watermask Fontsize',
 			'status' => 'Статус',
 			'created_at' => 'Created At',
+			'email' => 'Email',
+			'url_form' => 'Формирование URL',
 		);
 	}
 
@@ -145,22 +147,23 @@ class SiteModuleSettings extends CActiveRecord
 		$criteria->compare('r_cover_small_crop',$this->r_cover_small_crop,true);
 		$criteria->compare('r_cover_medium',$this->r_cover_medium,true);
 		$criteria->compare('r_cover_medium_crop',$this->r_cover_medium_crop,true);
-		$criteria->compare('r_cover_medium2',$this->r_cover_medium2,true);
-		$criteria->compare('r_cover_medium2_crop',$this->r_cover_medium2_crop,true);
+		$criteria->compare('r_cover_large',$this->r_cover_large,true);
+		$criteria->compare('r_cover_large_crop',$this->r_cover_large_crop,true);
+		$criteria->compare('email',$this->email,true);
 		$criteria->compare('r_cover_quality',$this->r_cover_quality);
 		$criteria->compare('r_small_color',$this->r_small_color,true);
 		$criteria->compare('r_medium_color',$this->r_medium_color,true);
-		$criteria->compare('r_medium2_color',$this->r_medium2_color,true);
+		$criteria->compare('r_large_color',$this->r_large_color,true);
 		$criteria->compare('e_cover_small',$this->e_cover_small,true);
 		$criteria->compare('e_cover_small_crop',$this->e_cover_small_crop,true);
 		$criteria->compare('e_cover_medium',$this->e_cover_medium,true);
 		$criteria->compare('e_cover_medium_crop',$this->e_cover_medium_crop,true);
-		$criteria->compare('e_cover_medium2',$this->e_cover_medium2,true);
-		$criteria->compare('e_cover_medium2_crop',$this->e_cover_medium2_crop,true);
+		$criteria->compare('e_cover_large',$this->e_cover_large,true);
+		$criteria->compare('e_cover_large_crop',$this->e_cover_large_crop,true);
 		$criteria->compare('e_cover_quality',$this->e_cover_quality);
 		$criteria->compare('e_small_color',$this->e_small_color,true);
 		$criteria->compare('e_medium_color',$this->e_medium_color,true);
-		$criteria->compare('e_medium2_color',$this->e_medium2_color,true);
+		$criteria->compare('e_large_color',$this->e_large_color,true);
 		$criteria->compare('elements_page_admin',$this->elements_page_admin);
 		$criteria->compare('watermark',$this->watermark,true);
 		$criteria->compare('watermark_pos',$this->watermark_pos);
@@ -170,6 +173,7 @@ class SiteModuleSettings extends CActiveRecord
 		$criteria->compare('watermask_font',$this->watermask_font);
 		$criteria->compare('watermask_fontsize',$this->watermask_fontsize,true);
 		$criteria->compare('status',$this->status);
+		$criteria->compare('url_form',$this->url_form);
 		$this->compareDate($criteria, 'created_at');
 
 		return new CActiveDataProvider($this, array(
@@ -276,10 +280,10 @@ class SiteModuleSettings extends CActiveRecord
 			$model->version = '1.0';
 			$model->r_cover_small_crop = 'Resize';
 			$model->r_cover_medium_crop = 'Resize';
-			$model->r_cover_medium2_crop = 'Resize';
+			$model->r_cover_large_crop = 'Resize';
 			$model->e_cover_small_crop = 'Resize';
 			$model->e_cover_medium_crop = 'Resize';
-			$model->e_cover_medium2_crop = 'Resize';
+			$model->e_cover_large_crop = 'Resize';
 			$model->watermark_type = 0;
 			$model->watermark_pos = 1;
 			$model->status = 1;
@@ -324,16 +328,55 @@ class SiteModuleSettings extends CActiveRecord
 		return $returnArray;
 	}
 
+
+	/**
+	 * @param null $id
+	 * @return array
+	 * Массив возможного вида URL адресов
+	 */
+	public function getFormURL($id = null){
+		$returnArray = array(
+			0 => 'Страница подключения, модуль, каталог, ID элемента (например, (http://site.ru/catalog/name_category/1100)',
+			1 => 'Страница подключения, модуль, каталог, название элемента (http://site.ru/catalog/name_category/name_element)',
+			2 => 'Страница подключения, каталог, ID элемента (http://site.ru/name_category/1100/)',
+			3 => 'Страница подключения, каталог, название элемента (http://site.ru/name_category/name_element)',
+		);
+		if (!empty($id)) $returnArray = $returnArray[$id];
+		return $returnArray;
+	}
+
+	//Возвращает url объекта (модель) в соответствии с типом ссылки
+	public static function getUrl($model, $site_module_id){
+		$type_url_form = (int)SiteModuleSettings::model()->find('site_module_id = '.$site_module_id)->url_form;
+
+		switch ((int)$type_url_form) {
+			case 0:
+				$url = $model->id;
+				break;
+			case 1:
+				$url = ((!empty($model->url))?($model->url):($model->id));
+				break;
+			case 2:
+				$url = $model->id;
+				break;
+			case 3:
+				$url = ((!empty($model->url))?($model->url):($model->id));;
+				break;
+		}
+
+		return $url;
+	}
+
 	/**
 	 * @param $site_module_id
 	 * @param int $type
-	 * Возвращает имя таблицы по alias модуля (таблица tbl_site_module_settings), тип указывает тип таблицы (1-рубрика, 2-элемент)
+	 * Возвращает имя таблицы по id модуля (таблица tbl_site_module_settings), тип указывает тип таблицы (1-рубрика, 2-элемент)
 	 */
 	public function getModelById($site_module_id, $type=1){
 		switch ($site_module_id) {
 			case 1:
 				//Новости
-				return (($type==1)?('{{news_rubrics}}'):('{{news_elements}}'));
+				return (($type==1)?('{{news_group}}'):('{{news}}'));
 				break;
 			case 2:
 				//Карта сайта
@@ -353,7 +396,7 @@ class SiteModuleSettings extends CActiveRecord
 				break;
 			case 6:
 				//Статьи
-				return (($type==1)?('{{article_rubrics}}'):('{{article_elements}}'));
+				return (($type==1)?('{{stock_group}}'):('{{stock}}'));
 				break;
 			case 7:
 				//Вопросы-ответы
@@ -390,10 +433,6 @@ class SiteModuleSettings extends CActiveRecord
 			case 15:
 				//Банеры
 				return (($type==1)?('{{baners_rubrics}}'):('{{baners_elements}}'));
-				break;
-			case 16:
-				//Отзывы
-				return (($type==1)?('{{review_rubrics}}'):('{{review_elements}}'));
 				break;
 		}
 		return false;
@@ -433,13 +472,13 @@ class SiteModuleSettings extends CActiveRecord
 		if ($type==1){
 			$param['small'] = array( 'coords'=>$model->r_cover_small, 'crop'=>$model->r_cover_small_crop, 'color'=>$model->r_small_color   );
 			$param['medium'] = array( 'coords'=>$model->r_cover_medium, 'crop'=>$model->r_cover_medium_crop, 'color'=>$model->r_medium_color   );
-			$param['medium2'] = array( 'coords'=>$model->r_cover_medium2, 'crop'=>$model->r_cover_medium2_crop, 'color'=>$model->r_medium2_color   );
+			$param['large'] = array( 'coords'=>$model->r_cover_large, 'crop'=>$model->r_cover_large_crop, 'color'=>$model->r_large_color   );
 			$param['admin'] = array( 'coords'=>'100x100', 'crop'=>'Resize', 'color'=>'ffffff'   );
 		}
 		if ($type==2){
 			$param['small'] = array( 'coords'=>$model->e_cover_small, 'crop'=>$model->e_cover_small_crop, 'color'=>$model->e_small_color   );
 			$param['medium'] = array( 'coords'=>$model->e_cover_medium, 'crop'=>$model->e_cover_medium_crop, 'color'=>$model->e_medium_color   );
-			$param['medium2'] = array( 'coords'=>$model->e_cover_medium2, 'crop'=>$model->e_cover_medium2_crop, 'color'=>$model->e_medium2_color   );
+			$param['large'] = array( 'coords'=>$model->e_cover_large, 'crop'=>$model->e_cover_large_crop, 'color'=>$model->e_large_color   );
 			$param['admin'] = array( 'coords'=>'100x100', 'crop'=>'Resize', 'color'=>'ffffff'   );
 		}
 
@@ -451,7 +490,7 @@ class SiteModuleSettings extends CActiveRecord
 
 			foreach ($param as $name => $data){
 
-				if (!file_exists($filepatch.$id_element.'.'.$img_element)){continue;}
+				if (!file_exists($filepatch.$id_element.'.'.$img_element)) continue;
 
 				$image = new EasyImage($filepatch.$id_element.'.'.$img_element, $driver); //$image = new EasyImage($fileOrigin, 'Imagick');  - для Imagic
 

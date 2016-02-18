@@ -17,9 +17,9 @@
 
 	<?php echo echo $form->textFieldRow($model,'r_cover_medium_crop',array('class'=>'span5','maxlength'=>12));; ?>
 
-	<?php echo echo $form->textFieldRow($model,'r_cover_medium2',array('class'=>'span5','maxlength'=>50));; ?>
+	<?php echo echo $form->textFieldRow($model,'r_cover_large',array('class'=>'span5','maxlength'=>50));; ?>
 
-	<?php echo echo $form->textFieldRow($model,'r_cover_medium2_crop',array('class'=>'span5','maxlength'=>12));; ?>
+	<?php echo echo $form->textFieldRow($model,'r_cover_large_crop',array('class'=>'span5','maxlength'=>12));; ?>
 
 	<?php echo echo $form->textFieldRow($model,'r_cover_quality',array('class'=>'span5'));; ?>
 
@@ -27,7 +27,7 @@
 
 	<?php echo echo $form->textFieldRow($model,'r_medium_color',array('class'=>'span5','maxlength'=>10));; ?>
 
-	<?php echo echo $form->textFieldRow($model,'r_medium2_color',array('class'=>'span5','maxlength'=>10));; ?>
+	<?php echo echo $form->textFieldRow($model,'r_large_color',array('class'=>'span5','maxlength'=>10));; ?>
 
 	<?php echo echo $form->textFieldRow($model,'elements_page_admin',array('class'=>'span5'));; ?>
 

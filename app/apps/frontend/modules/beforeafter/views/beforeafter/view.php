@@ -123,8 +123,8 @@
 
                         <?php foreach ($model['elements'] as $dataElement) { ?>
                             <?php
-                            $url_before = '/uploads/filestorage/beforeafter/elements/medium2-before_'.$dataElement->id.'.'.$dataElement->before_photo;
-                            $url_after = '/uploads/filestorage/beforeafter/elements/medium2-after_'.$dataElement->id.'.'.$dataElement->before_photo;
+                            $url_before = '/uploads/filestorage/beforeafter/elements/large-before_'.$dataElement->id.'.'.$dataElement->before_photo;
+                            $url_after = '/uploads/filestorage/beforeafter/elements/large-after_'.$dataElement->id.'.'.$dataElement->before_photo;
                             ?>
 
                             <div style="margin-top: 300px;position: absolute; background-color: rgba(255, 255, 255, 0.2); height: 50px; width:100%;">

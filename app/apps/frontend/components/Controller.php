@@ -4,16 +4,11 @@
  */
 class Controller extends CController
 {
+	public $menu=array();
 	public $breadcrumbs=array();
     public $layout='//layouts/main';
 
-    //SEO
-    public $siteName = SITE_TITLE;   //Имя сайта
     public $pageTitle = SITE_TITLE;
-    public $pageMetaTitle;
-    public $pageDescription;
-    public $pageKeywords;
-
 
     public $user;
     public $balance;
@@ -23,28 +18,12 @@ class Controller extends CController
 
     public $menuLists = array();
 
-
-    public function setSEO($url_patch, $page_title =  null, $modelSEO = null){
-        $url_patch = trim($url_patch);
-        $this->pageTitle = ((!empty($page_title))?($page_title.' - '):('')).$this->siteName;
-        $url_array =  explode("/", ( parse_url($url_patch, PHP_URL_PATH )));
-        foreach ( $url_array as $url  ){
-            $model = Pages::model()->find('url LIKE "'.$url.'"');
-            if ($model){
-                if (!empty($model->meta_title)){ $this->pageTitle = $model->meta_title; $this->pageMetaTitle = $model->meta_title; }
-                if (!empty($model->meta_keywords)){ $this->pageKeywords = $model->meta_keywords;  }
-                if (!empty($model->meta_description)){ $this->pageDescription = $model->meta_description;  }
-            }
-        }
-        if (!empty($modelSEO)){
-            if (isset($modelSEO->meta_title) && !empty($modelSEO->meta_title)){ $this->pageTitle = $modelSEO->meta_title; $this->pageMetaTitle = $modelSEO->meta_title; }
-            if (isset($modelSEO->meta_keywords) && !empty($modelSEO->meta_keywords)){ $this->pageKeywords = $modelSEO->meta_keywords;  }
-            if (isset($modelSEO->meta_description) && !empty($modelSEO->meta_description)){ $this->pageDescription = $modelSEO->meta_description;  }
-        }
-
-        return true;
-    }
-
+	public function init(){
+        //Получаем список меню
+        //$root = Pages::getRoot(new Pages);
+        //$this->menuLists = $root->descendants(null,1)->findAll($root->id);
+        $this->menuLists = Pages::model()->getPagesArray();
+	}
 
 
     public function filters()
@@ -133,7 +112,7 @@ class Controller extends CController
                 if( $template_photogalery = PhotoTemplate::model()->find('active=1') ){
                     $photoContent = '';
                     foreach ( PhotoElements::model()->findAll('parent_id='.(int)$id.' AND status=1') as $data ){
-                        $url_to_full_image = $url_to_img.'medium2-'.$data->id.'.'.$data->image;
+                        $url_to_full_image = $url_to_img.'large-'.$data->id.'.'.$data->image;
                         $url_to_small_image = $url_to_img.'small-'.$data->id.'.'.$data->image;
                         $photoContent .= $template_photogalery->val;
                         $photoContent = str_replace('%url_to_full_image%', $url_to_full_image, $photoContent);
@@ -172,6 +151,8 @@ class Controller extends CController
             else { return false; }
         }
     }
+    
+  //main
 
 
 

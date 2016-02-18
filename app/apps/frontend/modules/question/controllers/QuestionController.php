@@ -13,11 +13,12 @@ class QuestionController extends Controller
     {
         //Общий список категорий вопросов
         $root = FaqRubrics::getRoot(new FaqRubrics);
-        $model = $root->descendants(1)->findAll($root->id);
+        $model['rubrics'] = $root->descendants(1)->findAll($root->id);
 
-        $this->setSEO(Yii::app()->request->requestUri, 'Вопрос - ответ');
+        $model['elements'] = FaqElements::model()->findAll('parent_id = '.$root->id);
 
-        $this->render('index', array('model'=>$model));
+
+		$this->render('index', array( 'root'=>$root, 'model'=>$model));
     }
 
     public  function actionElement($param){
@@ -50,66 +51,26 @@ class QuestionController extends Controller
 
         if (is_numeric($paramArr)){
             //Число - это элемент
-            $model = FaqElements::model()->findByPk((int)$paramArr);
-            if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
+            $model = [];
+            $model['elements'] = FaqElements::model()->findAll('parent_id = '.(int)$paramArr);
+            $model['rubrics'] = FaqRubrics::model()->find('id = '.((int)(current($model['elements'])->id)).' AND level>1');
 
-            $this->setSEO(Yii::app()->request->requestUri, 'Вопрос - ответ', $model);
-
-            //Смотрим, нужно ли вставить фотогалерею
-            $render = '_form';
         }
         else {
-            if ( $modelPage = Pages::model()->find('url LIKE "'.$param.'"') ){
-                if ( $modelTabs = PagesTabs::model()->find('pages_id='.$modelPage->id) ){
-                    $module_id = array_diff((explode("|", $modelTabs->site_module_value)), array(''));
-                    if ($tmpParam = FaqRubrics::model()->find('id in ('.(current($module_id)).') AND `status` = 1')){
-                        $paramArr = $tmpParam->url;
-                    }
-                }
-            }
-
-            //Список новостей категории
-            $modelGroup =  FaqRubrics::model()->find('url LIKE "'.$paramArr.'"');
-            if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
-
-            $pageArray = array();
-            $pageArray[0]['name'] = ' / '.$modelGroup->name;
-            $pageArray[0]['url'] = null;
-            $i = 1;
-            foreach ($modelGroup->ancestors()->findAll('level>1') as $data){
-                $pageArray[$i]['name'] = ' / '.$data->name;
-                $pageArray[$i]['url'] = 'question/'.$data->url;
-                ++$i;
-            }
-            rsort($pageArray);
-
-            $this->setSEO(Yii::app()->request->requestUri, 'Вопрос - ответ', $modelGroup);
-
-
-            $model = array();
-            $model['group'] = $modelGroup;
-            $model['element'] = FaqElements::model()->findAll(array(
-                "condition" => "status!=0 AND parent_id = ".$modelGroup->id,
+            //Список  категории
+            $model = [];
+            $root = FaqRubrics::model()->find('url LIKE "'.$paramArr.'"');
+            if (empty($root)){throw new CHttpException(404,'The page can not be found.');}
+            $model['rubrics'] = $root->descendants(1)->findAll($root->id);
+            $model['elements'] = FaqElements::model()->findAll(array(
+                "condition" => "status!=0 AND parent_id = ".$root->id,
                 "order" => "id DESC",
             ));
-
-            //Список категорий - вывод справа
-            $model['category'] = array();
-            $model['sub_category'] = array();
-            $root = FaqRubrics::getRoot(new FaqRubrics);
-            $model['select'] = $root->descendants()->findAll($root->id);
-            $model['category'] = $root->descendants(1)->findAll($root->id);
-            foreach ($model['category'] as $data){
-                $category = FaqRubrics::model()->findByPk($data->id);
-                $model['sub_category'][$data->id] = $category->descendants()->findAll($root->id);
-            }
-
-            $render = 'view';
         }
 
 
         if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
-        $this->render($render, array('model'=>$model, 'pageArray'=>$pageArray));
+        $this->render('view', array('model'=>$model));
     }
 
 

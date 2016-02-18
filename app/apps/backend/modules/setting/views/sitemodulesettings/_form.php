@@ -21,8 +21,17 @@
 
 	<?php echo $form->hiddenField($model,'site_module_id',array('class'=>'span5','maxlength'=>11));; ?>
 	<?php echo $form->hiddenField($model,'version',array('class'=>'span5','maxlength'=>10));; ?>
+	<?php echo $form->textFieldRow($model,'email',array('class'=>'span5','maxlength'=>100)); ?>
 	<?php echo $form->dropDownListRow($model, 'status', array(0=>'Отключен', 1=>'Активно'), array('class'=>'span5')); ?>
 	<?php echo $form->textFieldRow($model,'elements_page_admin',array('class'=>'span5'));; ?>
+
+	<?php
+		if ($model->siteModuleName->id == 4){
+			//Для каталога выводим правило формирования URL
+			echo $form->dropDownListRow($model, 'url_form', SiteModuleSettings::model()->getFormURL(), array('class'=>'span5'));
+		}
+	?>
+
 </div>
 
 
@@ -39,9 +48,9 @@
 	<?php echo $form->textFieldRow($model,'r_cover_medium',array('class'=>'span5','maxlength'=>50));; ?>
 	<?php echo $form->textFieldRow($model,'r_medium_color',array('class'=>'span5','maxlength'=>10));; ?>
 
-	<?php echo $form->dropDownListRow($model, 'r_cover_medium2_crop',SiteModuleSettings::model()->getResizeMethod(), array('class'=>'span5')); ?>
-	<?php echo $form->textFieldRow($model,'r_cover_medium2',array('class'=>'span5','maxlength'=>50));; ?>
-	<?php echo $form->textFieldRow($model,'r_medium2_color',array('class'=>'span5','maxlength'=>10));; ?>
+	<?php echo $form->dropDownListRow($model, 'r_cover_large_crop',SiteModuleSettings::model()->getResizeMethod(), array('class'=>'span5')); ?>
+	<?php echo $form->textFieldRow($model,'r_cover_large',array('class'=>'span5','maxlength'=>50));; ?>
+	<?php echo $form->textFieldRow($model,'r_large_color',array('class'=>'span5','maxlength'=>10));; ?>
 
 	<?php echo $form->textFieldRow($model,'r_cover_quality',array('class'=>'span5'));; ?>
 </div>
@@ -59,9 +68,9 @@
 	<?php echo $form->textFieldRow($model,'e_cover_medium',array('class'=>'span5','maxlength'=>50));; ?>
 	<?php echo $form->textFieldRow($model,'e_medium_color',array('class'=>'span5','maxlength'=>10));; ?>
 
-	<?php echo $form->dropDownListRow($model, 'e_cover_medium2_crop',SiteModuleSettings::model()->getResizeMethod(), array('class'=>'span5')); ?>
-	<?php echo $form->textFieldRow($model,'e_cover_medium2',array('class'=>'span5','maxlength'=>50));; ?>
-	<?php echo $form->textFieldRow($model,'e_medium2_color',array('class'=>'span5','maxlength'=>10));; ?>
+	<?php echo $form->dropDownListRow($model, 'e_cover_large_crop',SiteModuleSettings::model()->getResizeMethod(), array('class'=>'span5')); ?>
+	<?php echo $form->textFieldRow($model,'e_cover_large',array('class'=>'span5','maxlength'=>50));; ?>
+	<?php echo $form->textFieldRow($model,'e_large_color',array('class'=>'span5','maxlength'=>10));; ?>
 
 	<?php echo $form->textFieldRow($model,'e_cover_quality',array('class'=>'span5'));; ?>
 </div>

@@ -325,9 +325,9 @@ class XmlImport extends SimpleXMLReader {
                 $this->chgImg($this->patch, $model->id.'.jpeg', 'medium-'.$model->id.'.jpeg', 206, 50);
                 $this->chgImg($this->patch, $model->id.'.jpeg', 'admin-'.$model->id.'.jpeg', 150, 100);
                 $this->chgImg($this->patch, $model->id.'.jpeg', 'small-'.$model->id.'.jpeg', 730, 50);
-                $this->chgImg($this->patch, $model->id.'.jpeg', 'medium2-'.$model->id.'.jpeg', 900, 100);
+                $this->chgImg($this->patch, $model->id.'.jpeg', 'large-'.$model->id.'.jpeg', 900, 100);
                 //Накладываем водный знак
-                $img = $this->patch.'medium2-'.$model->id.'.jpeg';
+                $img = $this->patch.'large-'.$model->id.'.jpeg';
                 $this->addWatermark($img, $this->watermark, 1);
                 $img = $this->patch.'small-'.$model->id.'.jpeg';
                 $this->addWatermark($img, $this->watermark, 1);

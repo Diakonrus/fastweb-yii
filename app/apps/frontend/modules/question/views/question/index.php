@@ -1,22 +1,25 @@
 <main class="all" role="main">
-    <div class="container">
+    <div class="container video-caption">
         <h1>ВОПРОСЫ - ОТВЕТЫ</h1>
     </div>
 </main>
 
 <div class="main-content">
+<!--  Рубрики список -->
+<?php foreach ($model['rubrics'] as $data) { ?>
 
-<?php foreach ($model as $data) { ?>
-<h4><a href="<?=Yii::app()->request->requestUri;?>/<?=$data->url;?>"><?=$data->name;?> (<?=FaqElements::model()->getCountElements($data->id);?>)</a></h4>
-    <ul>
-    <?php
-    $tmp_model = FaqRubrics::model()->findByPk($data->id);
-    foreach ($tmp_model->descendants()->findAll() as $dataSubRubrics) { ?>
+    <div class="faq_name_theam">
+        <h1><a href="<?=Yii::app()->request->requestUri;?>/<?=$data->url;?>"><?=$data->name;?></a></h1>
+    </div>
 
-        <li><a href="<?=Yii::app()->request->requestUri;?>/<?=$dataSubRubrics->url;?>"><?=$dataSubRubrics->name;?> (<?=FaqElements::model()->getCountElements($dataSubRubrics->id);?>)</a></li>
+<?php } ?>
 
-    <?php } ?>
-    </ul>
+<!--  Элементы список -->
+<?php foreach ($model['elements'] as $data){ ?>
+
+    <div class="faq_name_theam"><h1><?=$data->question;?></h1></div></br>
+    <a href="<?=Yii::app()->request->requestUri;?>/<?=$data->id;?>">Читать далее ...</a></br>
+
 <?php } ?>
 
 </div>

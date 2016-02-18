@@ -15,7 +15,7 @@ $this->pageTitle ='Каталог продукции - '.$_SERVER['HTTP_HOST'];
 $element = CatalogElements::model()->getProduct($data->id);
 if (isset($element['url']))
 {
-	$url = Yii::app()->request->requestUri.$element['url'].(SiteModuleSettings::getUrl($data,4));
+	$url = Yii::app()->request->requestUri.$element['url'].'/'.(SiteModuleSettings::getUrl($data,4));
 }
 
 		$url_img = '/images/nophoto_100_100.jpg';

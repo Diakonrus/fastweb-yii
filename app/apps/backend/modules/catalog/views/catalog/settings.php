@@ -49,12 +49,12 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
     </div>
 </div>
 <div class="control-group">
-    <label class="control-label" for="CatalogWatermark_img_medium2">
-        Размер картинки (префикс medium2)
+    <label class="control-label" for="CatalogWatermark_img_large">
+        Размер картинки (префикс large)
         (введите ширину (x) в пикселях, высота (y) будет подобрана автоматически для сохранения пропорций)
     </label>
     <div class="controls">
-        <?php echo $form->textField($model,'img_medium2',array('class'=>'span2','maxlength'=>150)); ?>
+        <?php echo $form->textField($model,'img_large',array('class'=>'span2','maxlength'=>150)); ?>
     </div>
 </div>
 

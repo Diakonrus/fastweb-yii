@@ -7,7 +7,7 @@
  * @property integer $id
  * @property string $img_small
  * @property string $img_medium
- * @property string $img_medium2
+ * @property string $img_large
  * @property integer $watermark_pos
  * @property string $created_at
  */
@@ -35,15 +35,15 @@ class CatalogSettings extends CActiveRecord
 		return array(
 			//array('created_at', 'required'),
 			array('watermark_pos', 'numerical', 'integerOnly'=>true),
-            array('img_small, img_medium, img_medium2', 'numerical', 'integerOnly'=>true),
-            array('img_small, img_medium, img_medium2', 'numerical', 'min'=>100),
+            array('img_small, img_medium, img_large', 'numerical', 'integerOnly'=>true),
+            array('img_small, img_medium, img_large', 'numerical', 'min'=>100),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 
             array('image_watermark', 'file', 'types'=>'png', 'allowEmpty' => true),
 
 
-			array('id, img_small, img_medium, img_medium2, watermark_pos, created_at, created_at_start, created_at_end,
+			array('id, img_small, img_medium, img_large, watermark_pos, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -68,7 +68,7 @@ class CatalogSettings extends CActiveRecord
 			'id' => 'ID',
 			'img_small' => 'Размер превью картинки',
 			'img_medium' => 'Размер картинки (префикс medium)',
-			'img_medium2' => 'Размер картинки (префикс medium2)',
+			'img_large' => 'Размер картинки (префикс large)',
 			'watermark_pos' => 'Watermark Pos',
 			'created_at' => 'Created At',
 		);
@@ -95,7 +95,7 @@ class CatalogSettings extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('img_small',$this->img_small,true);
 		$criteria->compare('img_medium',$this->img_medium,true);
-		$criteria->compare('img_medium2',$this->img_medium2,true);
+		$criteria->compare('img_large',$this->img_large,true);
 		$criteria->compare('watermark_pos',$this->watermark_pos);
 		$this->compareDate($criteria, 'created_at');
 

@@ -11,18 +11,6 @@ class CatalogController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 	/*
 		Функция для дыстрого заказа в 1 клик товара
 	*/
@@ -95,11 +83,16 @@ class CatalogController extends Controller
 		$data = array();
 		$filters='';
 
+		if ($_GET['id'] && count(explode("/", $_GET['id']))>1){
+			$this->actionList(Yii::app()->request->getQuery('id'));
+			exit();
+		}
+
 		$data = CatalogElements::fn__get_filters($data,0);
 
-		
-		$where = "status=1 AND `price`>=".$data['filters']['price_min']." AND `price`<=".$data['filters']['price_max']."";
 
+		$where = "status=1 AND `price`>=".$data['filters']['price_min']." AND `price`<=".$data['filters']['price_max']."";
+		$where = 'status=1';
 
 //==============================================================================
 		$checks_arr_str = array();
@@ -255,7 +248,7 @@ class CatalogController extends Controller
     $pages->pageSize=12;
     $pages->applyLimit($criteria);
     $data['pages']=$pages;
-    
+
     
 
 
@@ -320,8 +313,8 @@ class CatalogController extends Controller
 		$filters=$this->widget('application.apps.frontend.components.Filters',array('params'=>$params), TRUE); 
 		$data['filters'] = $filters;
 		//==========================================================================
-    
-    
+
+
 		$start = ((isset($_GET['page']))?intval($_GET['page']):0);
 		$model_elements = CatalogElements::model()->findAll(array(
     'condition' => $where,

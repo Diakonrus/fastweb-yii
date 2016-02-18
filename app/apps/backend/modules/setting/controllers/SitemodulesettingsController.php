@@ -65,7 +65,7 @@ class SitemodulesettingsController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
+		//print_r($model);
 		// set attributes from get
 		if(isset($_GET['SiteModuleSettings'])){
 			$model->attributes=$_GET['SiteModuleSettings'];

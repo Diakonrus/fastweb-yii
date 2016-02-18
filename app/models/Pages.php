@@ -18,6 +18,8 @@
  * @property string $content
  * @property integer $status
  * @property string $created_at
+ * @property integer $in_footer
+ * @property integer $in_header
  */
 class Pages extends CActiveRecord
 {
@@ -42,7 +44,7 @@ class Pages extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('parent_id, url, title, type_module', 'required'),
-			array('parent_id, level, left_key, right_key, access_lvl, type_module, main_page, status', 'numerical', 'integerOnly'=>true),
+			array('parent_id, level, left_key, right_key, access_lvl, type_module, main_page, status, in_footer, in_header', 'numerical', 'integerOnly'=>true),
 			array('url, title, main_template, meta_title', 'length', 'max'=>250),
 			array('image', 'length', 'max'=>350),
 
@@ -95,6 +97,8 @@ class Pages extends CActiveRecord
 			'meta_keywords' => 'Meta Keywords',
 			'meta_description' => 'Meta Description',
 			'created_at' => 'Created At',
+			'in_footer' => 'Нижнее меню',
+			'in_header' => 'Верхнее меню',
 		);
 	}
 
@@ -208,6 +212,9 @@ class Pages extends CActiveRecord
 				$tree [$cat['id']]['title'] = $cat['title'];
 				$tree [$cat['id']]['url'] = $cat['url'];
 				$tree [$cat['id']]['access_lvl'] = $cat['access_lvl'];
+				$tree [$cat['id']]['image'] = $cat['image'];
+				$tree [$cat['id']]['in_header'] = $cat['in_header'];
+				$tree [$cat['id']]['in_footer'] = $cat['in_footer'];
 				if ( $children =  $this->build_tree($cats,$cat['id']) ){
 					$tree [$cat['id']]['children'] =  $children;
 				}
@@ -217,12 +224,12 @@ class Pages extends CActiveRecord
 		return $tree;
 	}
 
-	public function getPagesArray(){
+	public function getPagesArray($type){
 		$root = Pages::getRoot(new Pages);
 		$pagesArray = $root->descendants(null,1)->findAll($root->id);
 		$cats = array();
 		foreach ( $pagesArray as $data ){
-			if ($data->main_page == 1){ continue; /* Главную страницу пропускаю */ }
+			if ($data->main_page == 1 || ($type == 2 && $data->in_header != 1) || ($type == 3 && $data->in_footer != 1) ){ continue; /* Главную страницу пропускаю */ }
 			$cats_ID[$data->id][] = $data;
 			$cats[$data->parent_id][$data->id] =  $data;
 		}
@@ -231,10 +238,20 @@ class Pages extends CActiveRecord
 		return $result;
 	}
 
-	public static function getMenu(){
-		return Pages::model()->getPagesArray();
+	/**
+	 * Тип возвращаемых данных
+	 * 1 - все меню
+	 * 2 - только с признаком in_header = 1
+	 * 3 - только с признаком in_footer = 1
+	 */
+	public static function getMenu($type = 1){
+		return Pages::model()->getPagesArray($type);
 	}
-
-
+	public static function getMenuTitle(){
+		return Pages::getMenu(2);
+	}
+	public static function getMenuFooter(){
+		return Pages::getMenu(3);
+	}
 
 }

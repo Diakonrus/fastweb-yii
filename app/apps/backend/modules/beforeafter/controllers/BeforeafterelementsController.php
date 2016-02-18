@@ -69,7 +69,7 @@ class BeforeafterelementsController extends Controller
                     $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'small-'.$key.'_'.$model->id.'.'.$val, 150, 100);
                     $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'admin-'.$key.'_'.$model->id.'.'.$val, 210, 100);
                     $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'medium-'.$key.'_'.$model->id.'.'.$val, 210, 100);
-                    $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'medium2-'.$key.'_'.$model->id.'.'.$val, 456, 100);
+                    $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'large-'.$key.'_'.$model->id.'.'.$val, 456, 100);
                 }
 
 
@@ -140,7 +140,7 @@ class BeforeafterelementsController extends Controller
                         $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'small-'.$key.'_'.$model->id.'.'.$val, 150, 100);
                         $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'admin-'.$key.'_'.$model->id.'.'.$val, 210, 100);
                         $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'medium-'.$key.'_'.$model->id.'.'.$val, 210, 100);
-                        $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'medium2-'.$key.'_'.$model->id.'.'.$val, 456, 100);
+                        $this->chgImgBeforeAfter(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'large-'.$key.'_'.$model->id.'.'.$val, 456, 100);
                     }
                 }
 

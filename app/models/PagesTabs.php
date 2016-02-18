@@ -755,11 +755,11 @@ class PagesTabs extends CActiveRecord
                                 <a href="/before-after/'.(!empty($parent_url)?(implode("/", $parent_url)):'').'">
                                 <div class="after">
                                     <figure>
-                                        <img src="/uploads/filestorage/beforeafter/elements/medium2-before_' . $modelImage->id . '.' . $modelImage->before_photo . '">
+                                        <img src="/uploads/filestorage/beforeafter/elements/large-before_' . $modelImage->id . '.' . $modelImage->before_photo . '">
                                         <figcaption> ДО </figcaption>
                                     </figure>
                                     <figure>
-                                        <img src="/uploads/filestorage/beforeafter/elements/medium2-after_' . $modelImage->id . '.' . $modelImage->before_photo . '">
+                                        <img src="/uploads/filestorage/beforeafter/elements/large-after_' . $modelImage->id . '.' . $modelImage->before_photo . '">
                                         <figcaption> ПОСЛЕ </figcaption>
                                     </figure>
                                 </div>
