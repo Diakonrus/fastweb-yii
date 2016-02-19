@@ -66,7 +66,10 @@
 				</li>
 				
 			</ul>
-			
+
+			<?php if ($model->shares == 1){ ?>
+				<h1>НА ЭТОТ ТОВАР ДЕЙСТВУЕТ АКЦИЯ!</h1>
+			<?php } ?>
 			
 		</div>
 		<div class="item-page-img">
@@ -94,7 +97,7 @@
 	            		<?=$model->price;?> руб
 	           	 	</div>
 	           	 	<div class="product_old_price">
-	           	 		249 990 руб.
+						<?=$model->price_old;?> руб.
 	           	 	</div>
 				</div>
 	            

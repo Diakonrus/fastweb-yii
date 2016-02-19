@@ -227,8 +227,6 @@ $this->widget('ImperaviRedactorWidget', array(
 
 <?php echo $form->dropDownListRow($model, 'on_main', array(0 => 'Нет', 1 => 'Да'),array('class'=>'span5'));?>
 
-
-
 	<div class="form-actions">
 
 		<?php $this->widget('bootstrap.widgets.TbButton', array(

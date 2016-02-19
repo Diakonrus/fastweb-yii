@@ -113,6 +113,10 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
         ),
 	),
 )); ?>
+<? if (!empty($parent_id)) : ?>
+	<input type="file" name="file_upload" id="file_upload" />
+<? endif;?>
+
 
 <div id="ajax_loader" style="display: none;"><img width="40px;" style="position:absolute; margin-top:10px; margin-left:-40px;" src="/images/admin/ajaxloader.gif"></div>
 <div class="buttons">

@@ -15,6 +15,13 @@ class PagesController extends Controller
 
         $this->layout = '//layouts/'.$model->main_template;
 
+        $modelCatalog = null;
+        //Если главная - добавляю товары помеченые как на главную
+        if($model->main_page == 1){
+            $modelCatalog = CatalogElements::model()->findAll('`status` = 1 AND `primary` = 1');
+        }
+
+
         //Проверка прав доступа
         if ($model->access_lvl>0){
             if (Yii::app()->user->isGuest){ $this->redirect('/login'); }
@@ -32,7 +39,7 @@ class PagesController extends Controller
         $modelTabs = '';
         //$modelTabs = PagesTabs::model()->getTabsContent($id);
 
-        $this->render('index', array('model'=>$model, 'modelTabs'=>$modelTabs));
+        $this->render('index', array('model'=>$model, 'modelTabs'=>$modelTabs, 'modelCatalog'=>$modelCatalog));
     }
 
 

@@ -42,8 +42,8 @@ class CatalogElements extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('parent_id, name,', 'required'),
-			array('parent_id, order_id, status, ansvtype, hit, qty', 'numerical', 'integerOnly'=>true),
-			array('price, price_entering', 'numerical'),
+			array('parent_id, order_id, status, ansvtype, hit, qty, shares, primary', 'numerical', 'integerOnly'=>true),
+			array('price, price_old, price_entering', 'numerical'),
 			array('name, page_name, fkey', 'length', 'max'=>250),
 			array('image', 'length', 'max'=>5),
 			array('code', 'length', 'max'=>100),
@@ -54,7 +54,7 @@ class CatalogElements extends CActiveRecord
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, order_id, name, brieftext, status, ansvtype, qty, hit, image, page_name, description, fkey, code, serch_name_code, price, price_entering,
+			array('id, parent_id, order_id, name, brieftext, status, ansvtype, qty, shares, primary, hit, image, page_name, description, fkey, code, serch_name_code, price, price_old, price_entering,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -77,19 +77,22 @@ class CatalogElements extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'parent_id' => 'Parent',
-			'order_id' => 'Order',
-			'name' => 'Name',
-			'brieftext' => 'Brieftext',
-			'status' => 'Status',
+			'parent_id' => 'Категория',
+			'order_id' => 'Порядок',
+			'name' => 'Название',
+			'brieftext' => 'Анонс (короткий текст)',
+			'status' => 'Статус',
 			'ansvtype' => 'Ansvtype',
 			'hit' => 'Hit',
-			'image' => 'Image',
+			'image' => 'Изображение',
 			'page_name' => 'Page Name',
-			'description' => 'Description',
+			'description' => 'Описание',
 			'fkey' => 'Fkey',
-			'code' => 'Code',
-			'price' => 'Price',
+			'code' => 'Код',
+			'price' => 'Цена',
+			'shares' => 'Акция',
+			'primary' => 'На главную',
+			'price_old' => 'Старая цена',
 			'price_entering' => 'Price Entering',
 		);
 	}
@@ -129,7 +132,10 @@ class CatalogElements extends CActiveRecord
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('fkey',$this->fkey,true);
 		$criteria->compare('code',$this->code,true);
+		$criteria->compare('shares',$this->shares);
+		$criteria->compare('primary',$this->primary);
 		$criteria->compare('price',$this->price);
+		$criteria->compare('price_old',$this->price_old);
         $criteria->compare('qty',$this->qty);
 		$criteria->compare('price_entering',$this->price_entering);
 

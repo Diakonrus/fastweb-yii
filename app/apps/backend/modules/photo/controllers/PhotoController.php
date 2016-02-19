@@ -73,6 +73,7 @@ class PhotoController extends Controller
 		$this->render('create',array(
 			'model'=>$model,
             'root'=>$root,
+            //'parent_id'=>$root,
             'catalog' => $catalog,
 		));
 	}
@@ -84,6 +85,11 @@ class PhotoController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		$this->breadcrumbs = array(
+			'Список фотографий'=>array('/photo/photo/index'),
+			'Редактирование записи'
+		);
+
 		$model=new PhotoElements;
 
 		$root = PhotoRubrics::getRoot(new PhotoRubrics);
@@ -198,18 +204,59 @@ class PhotoController extends Controller
 	 */
 	public function actionIndex()
 	{
+		$this->breadcrumbs = array(
+			'Список альбомов'=>array('/photo/photorubrics/index'),
+			'Просмотр альбома'
+		);
+
+		
 		$model=new PhotoElements('search');
         $model->attachBehavior('dateComparator', array(
             'class' => 'DateComparator',
         ));
 		$model->unsetAttributes();  // clear any default values
 
+		$parent_id = 0;
+		
 		// set attributes from get
 		if(isset($_GET['PhotoElements'])){
 			$model->attributes=$_GET['PhotoElements'];
+			
+			$parent_id = $_GET['PhotoElements']['parent_id'];
         }
 
+		$dmp = var_export($_POST, true);
+		file_put_contents($_SERVER["DOCUMENT_ROOT"]."/log.txt",$dmp);
+		// если это мультизагрузка, значит должен быть файл...
+		if (isset($_POST['ASPSESSID'])) {
+			file_put_contents($_SERVER["DOCUMENT_ROOT"]."/log.txt","request");
+			$model_el=new PhotoElements;
 
+			$root = PhotoRubrics::getRoot(new PhotoRubrics);
+			$catalog = $root->descendants()->findAll($root->id);
+
+			// set attributes from get
+			if(isset($_GET['PhotoElements'])){
+				$model_el->attributes=$_GET['PhotoElements'];
+			}
+
+			$model_el->attributes=$_POST['PhotoElements'];
+
+			$model_el->imagefile = CUploadedFile::getInstance($model_el,'Filedata');
+			if (isset($model_el->imagefile)){$ext=pathinfo($model_el->imagefile);$model_el->image = $ext['extension'];}
+
+			if($model_el->save()){
+
+				if (isset($model_el->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 11')){
+					$filename = $model_el->id.'.'.$model_el->image;
+					$filepatch = '/../uploads/filestorage/photo/elements/';
+					$model_el->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
+					//Обработка изображения
+					SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 2,$model_el->id);
+				}
+			}
+		}
+		
         $param = array();
         $data['sort'] = array(
             'defaultOrder'=>'id DESC',
@@ -234,6 +281,7 @@ class PhotoController extends Controller
 			'model'=>$model,
             'provider'=>$provider,
 			'root'=>$root,
+			'parent_id'=>$parent_id,
 			'catalog'=>$catalog,
 		));
 	}
@@ -285,3 +333,4 @@ class PhotoController extends Controller
 
 
 }
+

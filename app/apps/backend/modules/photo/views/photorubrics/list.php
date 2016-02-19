@@ -6,9 +6,10 @@
 $assetsDir = Yii::app()->basePath;
 $labels = PhotoRubrics::model()->attributeLabels();
 
+
 $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 
-    'id'=>'pages-grid',
+    'id'=>'faq-group-grid',
     'template' => "{items}\n{pager}",
     'enableHistory' => true,
 
@@ -24,6 +25,14 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
     'columns'=>array(
 
 
+
+
+            /*
+        array(
+            'header' => '№',
+            'value' => '$row+1',
+        ),
+        */
 
         array(
             'header'=> $labels["id"],
@@ -51,31 +60,49 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                 $return = '';
                 //Если это level = 2 - вывожу выделеным черным шрифтом
                 if ($data->level == 2){
-                    $return = '<b>'.$data->name.'</b>';
+                    $return = '<a href="/admin/photo/photo/index?PhotoElements[parent_id]='.$data->id.'"><b>'.$data->name.'</b></a>';
                 } else {
                     //подчиненная категория - вывожу со смещением относительно родительской
                     $repeat_prefix = ($data->level==3)?$data->level:($data->level + 1);
-                    $return = str_repeat('&nbsp&nbsp', $repeat_prefix).$data->name;
+                    $return = '<a href="/admin/photo/photo/index?PhotoElements[parent_id]='.$data->id.'"><b>'.str_repeat('&nbsp&nbsp', $repeat_prefix).$data->name.'</b></a>';
                 }
-                return $return;
+				
+				return $return;
+            },
+            'filter' =>'',
+        ),
+
+        /*
+        array(
+            'header'=> $labels["name"],
+            'name'=> "name",
+        ),
+        */
+
+        array(
+            'header'=> 'url',
+            'name'=> "url",
+            'type'=>'raw',
+            'value' =>  function($data){
+                return $data->url;
+				/*return '
+                    <a href="'.SITE_NAME_FULL.'/'.$data->url.'" target="_blank">
+                        '.$data->url.'
+                    </a>
+                ';
+				*/
             },
             'filter' =>'',
         ),
 
 
-
         array(
-            'header'=> $labels["url"],
-            'name'=> "url",
-        ),
-
-        array(
-            'header'=> 'Позиций',
+            'header'=> 'Альбомов',
             'type'=>'raw',
             'value' =>  function($data){
-                $count = PhotoRubrics::getCountElement($data->id);
+                $count = PhotoRubrics::getCountTree($data->left_key,$data->right_key);
                 return '
-                    <a href="/admin/photo/photo/index?PhotoElements[parent_id]='.$data->id.'">
+                    <a href="/admin/photo/photorubrics/index?id='.$data->id.'">
                         <b>'.$count.'</b>
                     </a>
                 ';
@@ -97,6 +124,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'filter' =>'',
         ),
 
+
+
         array(
             'class'=>'bootstrap.widgets.TbButtonColumn',
             'template' => '{move_up}  {move_down}  {update}  {delete}',
@@ -104,8 +133,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'buttons' => array(
                 'move_up' => array(
                     'label'=>'',
-                    'visible'=>'($row==0 || !$data->prev()->find() )?false:true',
-                    'url'=>'"/admin/'.Yii::app()->controller->module->id.'/'.Yii::app()->controller->id.'/move?id=$data->id&move=1"',
+                    'visible'=>'($row==0)?false:true',
+                    'url'=>'"/admin/photo/photorubrics/move?id=$data->id&move=1"',
                     'options'=>array(
                         'class'=>'icon-arrow-up',
                         'data-original-title'=>'Переместить выше',
@@ -113,8 +142,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                 ),
                 'move_down' => array(
                     'label'=>'',
-                    'visible'=>'(($row+2)==PhotoRubrics::model()->count() || !$data->next()->find())?false:true',
-                    'url'=>'"/admin/'.Yii::app()->controller->module->id.'/'.Yii::app()->controller->id.'/move?id=$data->id&move=2"',
+                    'visible'=>'(($row+1)==PhotoRubrics::model()->count("level=$data->level"))?false:true',
+                    'url'=>'"/admin/photo/photorubrics/move?id=$data->id&move=2"',
                     'options'=>array(
                         'class'=>'icon-arrow-down',
                         'data-original-title'=>'Переместить ниже',
@@ -137,9 +166,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'htmlOptions'=>array('style'=>'white-space: nowrap'),
         ),
     ),
-));
-
-?>
+)); ?>
 
 
 <div class="buttons">

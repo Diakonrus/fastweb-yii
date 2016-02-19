@@ -59,18 +59,11 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'name'=> "title",
         ),
         */
-
-
-        array(
+        
+	
+            array(
             'header'=> $labels["url"],
             'name'=> "url",
-            'type'=>'raw',
-            'value' => function($data){
-                $url = '<a href="/'.(($data->main_page == 0)?($data->url):('')).'" target="_blank">'.(($data->main_page == 0)?($data->url):('/')).'</a>';
-
-                return $url;
-            },
-            'filter' => '',
         ),
 
 
@@ -88,7 +81,60 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'filter' => array('1' => 'Активно', '0' => 'Не активно'),
         ),
 
-        /*
+
+
+
+
+
+
+
+
+
+
+        array(
+            'header'=> $labels["in_header"],
+            'name'=> "in_header",
+            'type'=>'raw',
+            'value' =>  function($data){
+                return '
+                    <a href="#" class="on-off-product-header" data-id="'.$data->id.'" data-status="'.$data->in_header.'">
+                        <div style="margin-left:20px; width: 13px; height: 13px; border-radius: 3px; background:'.(($data->in_header==1)?'green':'red').'"></div>
+                    </a>
+                ';
+            },
+            'filter' => array('1' => 'Активно', '0' => 'Не активно'),
+        ),
+
+
+
+
+
+
+
+
+
+        array(
+            'header'=> $labels["in_footer"],
+            'name'=> "in_footer",
+            'type'=>'raw',
+            'value' =>  function($data){
+                return '
+                    <a href="#" class="on-off-product-footer" data-id="'.$data->id.'" data-status="'.$data->in_footer.'">
+                        <div style="margin-left:20px; width: 13px; height: 13px; border-radius: 3px; background:'.(($data->in_footer==1)?'green':'red').'"></div>
+                    </a>
+                ';
+            },
+            'filter' => array('1' => 'Активно', '0' => 'Не активно'),
+        ),
+
+
+
+
+
+
+
+
+
         array(
             'header'=> 'Главная страница сайта',
             'name'=> "main_page",
@@ -102,7 +148,6 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             },
             'filter' => array('1' => 'Да', '0' => 'Нет'),
         ),
-        */
 
 
         array(
@@ -121,7 +166,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                 ),
                 'move_down' => array(
                     'label'=>'',
-                    'visible'=>'(($row+2)==Pages::model()->count() || !$data->next()->find() || $data->main_page==1)?false:true',
+                    'visible'=>'(($row+2)==Pages::model()->count() || !$data->next()->find())?false:true',
                     'url'=>'"/admin/'.Yii::app()->controller->module->id.'/'.Yii::app()->controller->id.'/move?id=$data->id&move=2"',
                     'options'=>array(
                         'class'=>'icon-arrow-down',
@@ -137,7 +182,6 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                 ),
                 'delete' => array(
                     'label'=> yii::t('Bootstrap', 'PHRASE.DELETE'),
-                    'visible'=>'($data->main_page==1)?false:true',
                     'options'=>array(
                         //'class'=>'btn btn-small delete'
                     )
@@ -160,6 +204,34 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
         $.ajax({
             type: 'POST',
             url: '/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/ajax',
+            dataType: "json",
+            data: {type:1, id:$(this).data('id')}
+        });
+        var status = $(this).data('status');
+        $(this).find('div').css('background',((status==1)?'red':'green'));
+        $(this).data('status', ((status==1)?0:1));
+        return false;
+    });
+    
+    //Меняем статус
+    $(document).on('click', '.on-off-product-footer', function(){
+        $.ajax({
+            type: 'POST',
+            url: '/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/ajaxfooter',
+            dataType: "json",
+            data: {type:1, id:$(this).data('id')}
+        });
+        var status = $(this).data('status');
+        $(this).find('div').css('background',((status==1)?'red':'green'));
+        $(this).data('status', ((status==1)?0:1));
+        return false;
+    });
+	
+	//Меняем статус
+    $(document).on('click', '.on-off-product-header', function(){
+        $.ajax({
+            type: 'POST',
+            url: '/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/ajaxheader',
             dataType: "json",
             data: {type:1, id:$(this).data('id')}
         });

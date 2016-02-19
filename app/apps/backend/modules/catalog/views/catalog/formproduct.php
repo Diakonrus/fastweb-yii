@@ -64,7 +64,9 @@
 <div id="price_block" style="margin-top: 10px; padding: 10px;">
     <?php echo $form->textFieldRow($model,'price',array('class'=>'span5','maxlength'=>150));; ?>
 </div>
-
+<div id="price_block" style="margin-top: 10px; padding: 10px;">
+    <?php echo $form->textFieldRow($model,'price_old',array('class'=>'span5','maxlength'=>150));; ?>
+</div>
 
 <div class="body_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
     <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">Содержание страницы</span></a>
@@ -165,6 +167,26 @@
             <select class="inputselect span5" name="CatalogElements[status]"  style="font-weight: bold;">
                 <option style="color: red;" value="0"  <?php if (!$model->isNewRecord && $model->status==0){echo 'selected';} ?> >Ожидание</option>
                 <option style="color: darkgreen;" value="1" <?php if (!$model->isNewRecord && $model->status==1){echo 'selected';} ?> >Активно</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <?=CHtml::activeLabel($model,'primary');?>
+        <div class="controls">
+            <select class="inputselect span5" name="CatalogElements[primary]"  style="font-weight: bold;">
+                <option style="color: red;" value="0"  <?php if (!$model->isNewRecord && $model->primary==0){echo 'selected';} ?> >Нет</option>
+                <option style="color: darkgreen;" value="1" <?php if (!$model->isNewRecord && $model->primary==1){echo 'selected';} ?> >Да</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <?=CHtml::activeLabel($model,'shares');?>
+        <div class="controls">
+            <select class="inputselect span5" name="CatalogElements[shares]"  style="font-weight: bold;">
+                <option style="color: red;" value="0"  <?php if (!$model->isNewRecord && $model->shares==0){echo 'selected';} ?> >Нет</option>
+                <option style="color: darkgreen;" value="1" <?php if (!$model->isNewRecord && $model->shares==1){echo 'selected';} ?> >Да</option>
             </select>
         </div>
     </div>

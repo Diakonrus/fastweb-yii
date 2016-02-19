@@ -44,11 +44,6 @@
 </div>
 
 <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>350));; ?>
-<div class="control-group">
-    <label>
-        <a style="margin-left:560px;" class="translits_href" href="#">транслит url</a>
-    </label>
-</div>
 <?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>250));; ?>
 
 
@@ -105,15 +100,6 @@ $this->widget('ImperaviRedactorWidget', array(
 ?>
 
 <?php echo $form->dropDownListRow($model,'status',array(1=>'Активно', 0=>'Не активно'),array('class'=>'span5'));?>
-
-<div class="seo_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
-    <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">SEO</span></a>
-</div>
-<div id="seo_block" style="margin-top: 10px; padding: 10px;">
-    <?php echo $form->textFieldRow($model,'meta_title',array('class'=>'span5')); ?>
-    <?php echo $form->textAreaRow($model,'meta_keywords',array('class'=>'span5')); ?>
-    <?php echo $form->textAreaRow($model,'meta_description',array('class'=>'span5')); ?>
-</div>
 
 	<div class="form-actions">
 

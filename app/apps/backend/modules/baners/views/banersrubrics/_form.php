@@ -42,11 +42,6 @@
 </div>
 
 <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>350));; ?>
-<div class="control-group">
-    <label>
-        <a style="margin-left:560px;" class="translits_href" href="#">транслит url</a>
-    </label>
-</div>
 <?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>150));; ?>
 
 <?php

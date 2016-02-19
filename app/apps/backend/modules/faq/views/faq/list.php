@@ -37,7 +37,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
     		array(
             'header'=> $labels["parent_id"],
             'name' => 'parent_id',
-            'value' => '$data->parent ? $data->parent->name : ""',
+            'value' => '$data->parent && $data->parent->level>1  ? $data->parent->name : "/"',
             'filter' => CHtml::listData( FaqRubrics::model()->findAll( array('order'=>'name') ), 'id', 'name'),
         ),
 		
@@ -67,8 +67,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 
 
             array(
-            'header'=> $labels["question_data"],
-            'name'=> "question_data",
+            'header'=> $labels["created_at"],
+            'name'=> "created_at",
         ),
 
 

@@ -3,7 +3,7 @@
 
 
 <div class="tovar_container">
-<?php foreach ($model_elements as $data){ 
+<?php foreach ($model_elements as $data){
 $element = CatalogElements::model()->getProduct($data->id);
 if (isset($element['url']))
 {
@@ -38,13 +38,22 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 			<div class="item-price-count">
 				<div class="items-block-item-price"><?=$data->price;?> руб.</div>
 				<div class="old_price_product_cat">
-					199990 руб.
+					<?=$data->price_old;?> руб.
 				</div>
+
+				<?php if ($data->shares==1){ ?>
+					<div class="shares">
+						<p>НА ЭТОТ ТОВАР ДЕЙСТВУЕТ АКЦИЯ!</p>
+					</div>
+				<?php } ?>
+
 				<div class="item-count-area">
 					<a href="" class="item-count-inc"></a>
 					<input value="1" class="item-count" type="text">
 					<a href="" class="item-count-dec"></a>
 				</div>
+
+
 				<div class="clear"></div>
 			</div>
 
@@ -55,7 +64,7 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 				   names="<?=$data->name;?>"
 				   pic="<?=$url_img?>"
 				   price="<?=$data->price?>"
-				   old_price="199990"
+				   old_price="<?=$data->price_old;?>"
 				>
 					Заказать
 				</a>

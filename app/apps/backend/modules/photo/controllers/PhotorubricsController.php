@@ -231,16 +231,25 @@ class PhotorubricsController extends Controller
 
 
 
+        if (!empty($id)){
+            $model = PhotoRubrics::model()->findByPk((int)$id);
+            $root = PhotoRubrics::getRoot($model);
+            $category = PhotoRubrics::model()->findByPk((int)$id); //Получаем нужный узел
+            $descendants = $category->descendants(1)->findAll();
+
+            $param[] = 'left_key > '.$model->left_key.' AND right_key < '.$model->right_key;
+        }
+        else {
+            $model = new PhotoRubrics;
+            $category = PhotoRubrics::getRoot($model);
+            $category = PhotoRubrics::model()->findByPk($category->id);
+            $descendants = $category->descendants(1)->findAll();
+            $root = "";
+
+            $param[] = 'level > 1';
+        }
+
         $model = new PhotoRubrics;
-        $category = PhotoRubrics::getRoot($model);
-        $category = PhotoRubrics::model()->findByPk($category->id);
-        $descendants = $category->descendants(1)->findAll();
-        $root = "";
-
-
-        $param = array();
-        $param[] = 'level > 1';
-
 
         $param = implode(" AND ", $param);
         $data = array(

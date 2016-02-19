@@ -69,6 +69,7 @@
 		Фильтры
 	</a>
 </li>
+
                         </ul>
                     </li>
 
@@ -98,22 +99,6 @@
                         </ul>
                     </li>
 
-                    <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 7 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic32.png" alt="" /></span> <a href="#" title="">HTML код  </a></li>
-                    <li class="no">
-                        <ul>
-                            <li><a href="/admin/htmlcode/htmlcode/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список записей</a></li>
-                        </ul>
-                    </li>
-
-                    <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 7 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic31.png" alt="" /></span> <a href="#" title="">Отзывы  </a></li>
-                    <li class="no">
-                        <ul>
-                            <li><a href="/admin/review/reviewrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список категорий</a></li>
-                            <li><a href="/admin/review/reviewauthor/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список авторов отзывов</a></li>
-                            <li><a href="/admin/review/review/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список отзывов</a></li>
-                        </ul>
-                    </li>
-
                     <li class="left-menu-title"><span><img src="/images/admin/icons/ic12.gif" alt="" /></span> <a href="#" title="">Сервисы почты </a></li>
                     <li class="no">
                         <ul>
@@ -124,8 +109,8 @@
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 1 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic2.gif" alt="" /></span> <a href="#" title="">Новости </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/news/newsrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп </a></li>
-                            <li><a href="/admin/news/newselements" title=""><img src="/images/admin/strela2.gif" alt="" /> Список новостей  </a></li>
+                            <li><a href="/admin/news/newsgroup/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп новостей  </a></li>
+                            <li><a href="/admin/news" title=""><img src="/images/admin/strela2.gif" alt="" /> Список новостей  </a></li>
                         </ul>
                     </li>
 
@@ -156,8 +141,8 @@
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 6 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/articles.gif" alt="" /></span> <a href="#" title="">Статьи </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/article/articlerubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список категорий  </a></li>
-                            <li><a href="/admin/article/articleelements" title=""><img src="/images/admin/strela2.gif" alt="" /> Список статей  </a></li>
+                            <li><a href="/admin/stock/stockgroup/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп статей  </a></li>
+                            <li><a href="/admin/stock" title=""><img src="/images/admin/strela2.gif" alt="" /> Список статей  </a></li>
                         </ul>
                     </li>
 
@@ -168,7 +153,6 @@
                             <li><a href="/admin/beforeafter/beforeafterelements" title=""><img src="/images/admin/strela2.gif" alt="" /> Список элементов  </a></li>
                         </ul>
                     </li>
-
 
 
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 11 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic5.gif" alt="" /></span> <a href="#" title="">Фотоальбом </a></li>
@@ -186,7 +170,6 @@
                             <li><a href="/admin/feedback" title=""><img src="/images/admin/strela2.gif" alt="" /> Список обращений  </a></li>
                         </ul>
                     </li>
-
 
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 13 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic22.gif" alt="" /></span> <a href="#" title="">Таблицы </a></li>
                     <li class="no">
