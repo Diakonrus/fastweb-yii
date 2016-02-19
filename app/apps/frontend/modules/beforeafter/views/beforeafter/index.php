@@ -37,19 +37,18 @@
 
 <section class="after-before mg-top-17 x">
     <div class="container befor-iner ">
-        <div class="container <?=(isset($model['group']) && !empty($model['group']))?('video-caption'):('');?>">
+        <div class="container video-caption">
             <?php
             $parent_url = array();
             if (!empty($model['group'])){
                 $modelTop = BeforeAfterRubrics::model()->findByPk($model['group']->id);
                 $parent_url[] = ' / '.$model['group']->name;
                 foreach ($modelTop->ancestors()->findAll('level>1') as $data){
-                    $parent_url[] = ' / '.$data->name;
+                    $parent_url[] = $data->name;
                 }
             }
-            rsort($parent_url);
             ?>
-            <h1><a href="/beforeafter">ДО и ПОСЛЕ</a><span style="color: #b1b1b1;"><?=(!empty($parent_url)?(implode("", $parent_url)):'');?></span></h1>
+            <h1>ДО и ПОСЛЕ <?=(!empty($parent_url)?(implode("/", $parent_url)):'');?></h1>
         </div>
 
 
@@ -61,41 +60,27 @@
             <div class="after" data-toggle="modal" <?php if ( $modelImage  ) { ?>data-target="#myModal-g<?=$data->id;?>" <?php } ?>>
                 <?php
                     //Если нет дочерних категорий - выводим ссылку parent_id
-                    $link = Yii::app()->request->requestUri.'/'.$data->url;
-                    /*
+                    //$link = '/beforeafter/'.$data->id;
+                    $link = '#';
                     if ( $data->children()->findAll() ){
                         $link = Yii::app()->request->requestUri.'/'.$data->url;
                     }
-                    */
                 ?>
-                <a href="<?=$link;?>" onclick="$(this).parent().removeAttr('data-toggle');"><?=$data->name;?></a>
+                <a href="<?=$link;?>"><?=$data->name;?></a>
                 <span class="text-center block"><?=$data->description;?></span>
                 <?php if ( $modelImage  ) { ?>
                 <?php
                     $url_before = '/uploads/filestorage/beforeafter/elements/medium-before_'.$modelImage->id.'.'.$modelImage->before_photo;
                     $url_after = '/uploads/filestorage/beforeafter/elements/medium-after_'.$modelImage->id.'.'.$modelImage->before_photo;
                 ?>
-                <a href="<?=$link;?>">
                 <figure>
-                    <div style="
-                        background: url(<?=$url_before;?>) no-repeat center top;
-                        width: 100%;
-                        height: 100%;
-                        overflow: hidden;
-                        ">
-                    </div>
+                    <img src="<?=$url_before;?>">
                     <figcaption> ДО </figcaption>
                 </figure>
                 <figure>
-                    <div style="
-                        background: url(<?=$url_after;?>) no-repeat center top;
-                        width: 100%;
-                        height: 100%;
-                        overflow: hidden;
-                        ">
+                    <img src="<?=$url_after;?>">
                     <figcaption> ПОСЛЕ </figcaption>
                 </figure>
-                </a>
                 <?php } ?>
             </div>
 
@@ -108,6 +93,56 @@
 
 </section>
 
+
+
+
+
+<?php foreach ($model['sub_group'] as $data) { ?>
+
+<div class="modal fade myfade" id="myModal-g<?=$data->id;?>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <button type="button" class="close-btn1" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <div class="modal-body">
+
+
+                <div class="befor-meore">
+
+                    <div id="carusel25_<?=$data->id;?>" class="owl-carousel owl-theme slider pos-relative mg-top-15">
+
+                        <?php foreach (BeforeAfterElements::model()->findAll('parent_id='.$data->id) as $dataElement) { ?>
+                            <?php
+                                $url_before = '/uploads/filestorage/beforeafter/elements/medium2-before_'.$dataElement->id.'.'.$dataElement->before_photo;
+                                $url_after = '/uploads/filestorage/beforeafter/elements/medium2-after_'.$dataElement->id.'.'.$dataElement->before_photo;
+                            ?>
+                        <div class="item">
+                            <figure >
+                                <h3><?=$dataElement->before_text;?></h3>
+                                <a href="#">
+                                    <img src="<?=$url_before;?>">
+                                </a>
+                                <a href="#">
+                                    <img src="<?=$url_after;?>">
+                                </a>
+                                <h4><?=$dataElement->after_text;?></h4>
+                            </figure>
+                        </div>
+                        <?php } ?>
+
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<?php } ?>
 
 <script>
 
@@ -122,12 +157,5 @@
         });
     <? } ?>
 
-    $(document).on('click','.video-caption', function(){
-        var url = '/<?php array_pop($parent_url);
-        if (count($parent_url)>0){
-        $url = end($parent_url);
-        echo $url['url']; }  ?>';
-        location.href = "/beforeafter"+url;
-    });
 </script>
 

@@ -1,48 +1,73 @@
-<style>
-    .new_row {
-        clear: both;
-    }
-    .alert-error {
-        color: red;
-    }
-    td {
-        padding: 10px;
-    }
-</style>
+<?
+$this->pageTitle = 'Оформление заказа - '.$_SERVER['HTTP_HOST'];
+?>
+<h1 class="lined nopaddingtop" style="margin-top: 10px;">Оформление заказа</h1>
 
-<div class="block_content">
-    <p class="tema3">Оформление заказа</p>
+
+
+
+
 
 
     <div id="basket_form_block">
 
     <form id="basket_form" method="post">
-    <table id="basketLists" class="info2" cellspacing="0" cellpadding="0">
+    <table id="basketLists" class="info2 table  table-striped  table-bordered table-hover" cellspacing="0" cellpadding="0">
 
-        <tbody>
+        <tbody >
             <tr class="glav">
-                <td>Наименование</td>
-                <td>Каталожный номер</td>
-                <td>Комплект</td>
-                <td>Количество</td>
-                <td>Цена</td>
-                <td> </td>
+                <th>Наименование</th>
+                <th>Модель</th>
+                <th>Количество</th>
+                <th>Цена</th>
+                <th>Сумма</th>
+                <th> </th>
             </tr>
 
-            <?php foreach ($model as $key=>$value){ ?>
-
+            <?php
+            $summ=0;
+             foreach ($model as $key=>$value){ 
+             ?>
                 <tr>
-                    <td><?=$value['name'];?></td>
+                    <td><a href="/<?=$value['key']?>" target="_blank"><?=$value['name'];?></a></td>
                     <td><?=$value['code'];?></td>
-                    <td><?=$value['qty'];?></td>
-                    <td class="width_50"><input class="inputtext input_quantity" data-id="<?=$value['key'];?>" type="text" style="width: 100px;" value="<?=$value['quantity'];?>" name="<?=$value['key'];?>"></td>
+                    <td class="width_50">
+                   
+                    
+  <div class="form-group basket_count">
+    <div class="input-group">
+      <div class="input-group-addon basket_count_minus" >
+	      <i class="glyphicon glyphicon-minus"></i>
+      </div>
+      <input type="text" class="form-control inputtext input_quantity" 
+             data-id="<?=$value['key'];?>" 
+             name="<?=$value['key'];?>" 
+             value="<?=$value['quantity'];?>">
+      <div class="input-group-addon basket_count_plus">
+      	<i class="glyphicon glyphicon-plus"></i>
+      </div>
+    </div>
+  </div>
+				
+                    </td>
                     <td>
-                        <?=$value['price']; ?>
+                        <?=$value['price']; ?>  руб.
+                    </td>
+                    <td>
+                        <?=$value['price']*$value['quantity']; ?>  руб.
                     </td>
                     <td><a data-id="<?=$value['key'];?>" href="#" class="delete_btn">Удалить</a></td>
                 </tr>
-
-            <?php } ?>
+						
+            <?php 
+            $summ+=($value['price']*$value['quantity']);
+            } ?>
+            
+                <tr class="success">
+                    <td colspan="4">Итого</td>
+                    <td><?=$summ?> руб.</td>
+                    <td></td>
+                </tr>
 
 
         </tbody>
@@ -55,8 +80,8 @@
         <tr align="right">
             <td>
                 <?php if (!empty($model)){ ?>
-                    <input class="send basket-next-url" type="submit" value="Продолжить" name="issue">
-                    <input class="send recount-url" type="submit" value="Пересчитать" name="recount">
+                    <input class="send basket-next-url btn btn-primary" type="submit" value="Оформить заказ" name="issue">
+                    <input class="send recount-url btn btn-info" type="submit" style="display:none;" value="Пересчитать" name="recount">
                 <?php } ?>
             </td>
         </tr>
@@ -88,38 +113,43 @@
         }
     ?>
 
-    <div id="basket_address_block" style="display: none;">
+<div id="basket_address_block" class="col-md-12" style="display: none;">
+
+	<?php echo $form->errorSummary($modelBasketOrder); ?>
 
 
-        <?php echo $form->errorSummary($modelBasketOrder); ?>
+	<div class="form-group">
+		<label> Адрес доставки заказа: *</label>
+		<?php echo $form->textArea($modelBasketOrder,'address',array('class'=>'form-control')); ?>
+	</div>
 
-        <div class="new_row">
-            Адрес доставки заказа: *<BR>
-            <?php echo $form->textArea($modelBasketOrder,'address',array('class'=>'textarea2')); ?>
-        </div>
 
-        <div class="new_row">
-            Телефон: <BR>
-            <?php echo $form->textField($modelBasketOrder,'phone',array('class'=>'inputtext','maxlength'=>254)); ?>
-        </div>
 
-        <div class="new_row">
-            Примечания: <BR>
-            <?php echo $form->textArea($modelBasketOrder,'comments',array('class'=>'textarea2')); ?>
-        </div>
+	<div class="form-group">
+		<label>Телефон:</label>
+		<?php echo $form->textField($modelBasketOrder,'phone',array('class'=>'form-control','maxlength'=>254)); ?>
+	</div>
 
-        <table class="cabinet_shopcart_keytable" border="0">
-            <tbody>
-            <tr align="right">
-                <td>
-                    <?php if (!empty($model)){ ?>
-                        <input class="send basket-back-url" type="submit" value="Назад" name="issue">
-                        <input class="send applyForm" type="submit" value="Оформить" name="complite">
-                    <?php } ?>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+	<div class="form-group">
+		<label>Примечания:</label>
+		<?php echo $form->textArea($modelBasketOrder,'comments',array('class'=>'form-control')); ?>
+	</div>
+
+
+
+
+<table class="cabinet_shopcart_keytable" border="0" style="margin-left:-15px;">
+    <tbody>
+    <tr>
+        <td>
+            <?php if (!empty($model)){ ?>
+                <input class="send basket-back-url  btn btn-default" type="submit" value="Назад" name="issue">
+                <input class="send applyForm  btn btn-primary" type="submit" value="Оформить" name="complite">
+            <?php } ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
 
     </div>
@@ -130,7 +160,6 @@
 
 
 
-</div>
 
 <script>
 
@@ -142,8 +171,9 @@
             dataType: "html",
             data: $("#basket_form").serialize(),
             success: function (response) {
+            		
                 get_basket_count();
-                $("#basketLists").load(document.location.href + " #basketLists");
+                $("#basketLists").load(document.location.href + " #basketLists tbody");
             }
         });
         return false;

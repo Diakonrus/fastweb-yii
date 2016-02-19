@@ -60,8 +60,6 @@ $model = Yii::app()->db->createCommand()
             }
         }
 
-        $this->setSEO(Yii::app()->request->requestUri, 'Специалисты');
-
 		$this->render('index', array('model'=>$model));
 	}
 

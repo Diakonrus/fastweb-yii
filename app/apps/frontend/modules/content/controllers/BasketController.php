@@ -154,6 +154,26 @@ class BasketController extends Controller
         echo 'ok';
         Yii::app()->end();
     }
+    
+    
+    
+    
+    //пересчет товаров в корзине
+    public function actionAjaxgettotal(){
+
+      $cookies = Yii::app()->request->cookies;
+      $basket = $cookies['basket']->value;
+      $basket = unserialize($basket);
+
+      $total = 0;
+      foreach ($basket as $item)
+      {
+      	$total+=$item['quantity']*$item['price'];
+      }
+      echo $total;
+      //print_r($basket); exit;
+      
+    }
 
 
     // удаление товара из корзины
@@ -212,7 +232,7 @@ class BasketController extends Controller
 
 
     //Отправляет письмо админу
-    private function sendEmail($id){
+    public function sendEmail($id){
         $email = "info@nzsnab.ru";
         $subject = "Новый заказ товаров";
 

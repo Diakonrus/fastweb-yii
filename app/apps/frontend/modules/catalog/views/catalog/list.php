@@ -1,9 +1,3 @@
-<?
-
-$this->pageTitle = $modelRubric->name.' купить - '.$_SERVER['HTTP_HOST'];
-Yii::app()->clientScript->registerMetaTag($modelRubric->name.' купить в интернет магазине '.$_SERVER['HTTP_HOST'].' по выгодной цене с доставкой.', 'description');
-
-?>
 <?=$this->widget('application.apps.frontend.components.Categories',array('params'=>array($modelRubric->id)), TRUE)?>
 
 <div class="items-block-bestsallers" style="margin-top: 0px;">
@@ -48,25 +42,26 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 				<a href="/catalog/<?=$data->id;?>" class="items-block-item-img">
 					<table>
 						<tr><td></td></tr>
-						<tr><td><img src="<?=$url_img?>" alt=""></td></tr>
+						<tr><td><img src="<?=$url_img_small?>" alt=""></td></tr>
 						<tr><td></td></tr>
 					</table>
 				</a>
 				<a class="items-block-item-name" href="/catalog/<?=$data->id;?>"><?=$data->name;?></a>
-				<div class="items-block-item-price"><?=$data->price;?> руб.</div>
+
 				<div class="buy-btn buy-btn-product" style="padding-left: 17px;"></div>
 				<div class="item-count-area">
 					<a href="" class="item-count-inc"></a>
 					<input value="1" class="item-count product_<?=$data->id;?>_count" type="text">
 					<a href="" class="item-count-dec"></a>
 				</div>
+				<div class="items-block-item-price"><?=$data->price;?> руб.</div>
 				<div class="order_one_click">
-					<a href="javascript:void(0)" 
-						 class="fastorder"
-						 idx="<?=$data->id;?>"
-						 names="<?=$data->name;?>"
-						 pic="<?=$url_img?>"
-						 >
+					<a href="javascript:void(0)"
+					   class="fastorder"
+					   idx="<?=$data->id;?>"
+					   names="<?=$data->name;?>"
+					   pic="<?=$url_img?>"
+					>
 						Заказать
 					</a>
 				</div>
@@ -87,11 +82,11 @@ $(function() {
 <?=$filters?>
 
 
-<div class="panel panel-default paginator-panel">
-  <div class="panel-body">
+
+  <div class="pagination">
     <?$this->widget('CLinkPager', array('pages' => $pages));?>
   </div>
-</div>
+
 
 
 <script>

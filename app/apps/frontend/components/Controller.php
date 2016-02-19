@@ -8,7 +8,12 @@ class Controller extends CController
 	public $breadcrumbs=array();
     public $layout='//layouts/main';
 
+    //SEO
     public $pageTitle = SITE_TITLE;
+    public $pageMetaTitle;
+    public $pageDescription;
+    public $pageKeywords;
+
 
     public $user;
     public $balance;
@@ -18,12 +23,6 @@ class Controller extends CController
 
     public $menuLists = array();
 
-    //SEO
-    public $siteName = 'FastWeb';   //Имя сайта
-    public $pageMetaTitle;
-    public $pageDescription;
-    public $pageKeywords;
-
 	public function init(){
 
 	}
@@ -31,7 +30,7 @@ class Controller extends CController
 
     public function setSEO($url_patch, $page_title =  null, $modelSEO = null){
         $url_patch = trim($url_patch);
-        $this->pageTitle = ((!empty($page_title))?($page_title.' - '):('')).$this->siteName;
+        $this->pageTitle = ((!empty($page_title))?($page_title.' - '):('')).$this->pageTitle;
         $url_array =  explode("/", ( parse_url($url_patch, PHP_URL_PATH )));
         foreach ( $url_array as $url  ){
             $model = Pages::model()->find('url LIKE "'.$url.'"');

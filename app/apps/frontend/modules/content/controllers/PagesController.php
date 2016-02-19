@@ -5,13 +5,13 @@ class PagesController extends Controller
 	public $layout='//layouts/main';
 
 
-    public function init(){
-        //Проверку прав вставить если надо
-    }
-
     public function actionIndex($id){
         $model = Pages::model()->findByPk($id);
         if (!$model){ throw new CHttpException(404,'The page can not be found.'); }
+
+        //Титл и SEO
+        $this->pageTitle = (mb_convert_case($model->title, MB_CASE_UPPER, "UTF-8")). ' - ' . $this->pageTitle;
+        $this->setSEO($model->url, $this->pageTitle);
 
         $this->layout = '//layouts/'.$model->main_template;
 
@@ -21,9 +21,6 @@ class PagesController extends Controller
 
         }
 
-        //Титл
-        $this->pageTitle = mb_convert_case($model->title, MB_CASE_UPPER, "UTF-8");
-        $this->setSEO($model->url, $this->pageTitle);
 
         //Проверяем есть ли фотогалерея, если есть - меняем содержимое страницы
         $model->content = $this->addPhotogalery($model->content);
@@ -32,8 +29,8 @@ class PagesController extends Controller
         $model->content = $this->addForm($model->content);
 
         //Получаем вкладки если есть;
-        $modelTabs = PagesTabs::model()->getTabsContent($id);
-
+        $modelTabs = '';
+        //$modelTabs = PagesTabs::model()->getTabsContent($id);
 
         $this->render('index', array('model'=>$model, 'modelTabs'=>$modelTabs));
     }

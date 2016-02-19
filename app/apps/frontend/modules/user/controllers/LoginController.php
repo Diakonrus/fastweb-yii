@@ -20,6 +20,10 @@ class LoginController extends Controller {
      * Форма авторизации
      */
     public function actionLogin() {
+      //Если пользователь не авторизован - перенаправляем на авторизацию
+      if (!Yii::app()->user->isGuest){
+          $this->redirect('/');
+      }
 
         $form = new LoginForm();
 

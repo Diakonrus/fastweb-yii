@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="/css/jquery-ui.min.css"/>
     <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css" />
     <link rel="stylesheet" href="/css/bootstrap-select.min.css"/>
-    <link rel="stylesheet" href="/css/styles_old.css"/>
-	<link rel="stylesheet" href="/css/styles.css"/>
+	<link rel="stylesheet" href="/css/styles_old.css"/>
+	<link href="/css/jquery.bxslider.css" rel="stylesheet" />
+	
     
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -17,7 +18,9 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="/js/jquery-ui.min.js"></script>
-    <script src="/js/bootstrap-select.min.js"></script>
+    <script src="/js/bootstrap-select.min.js"></script>    
+    <script src="/js/jquery.bxslider.min.js"></script>
+
     <script src="/js/script.js"></script>
     <script src="/js/main.js"></script>
     <link rel="stylesheet" href="/public/themes/wengerland/components/lightbox2-master/dist/css/lightbox.min.css"/>
@@ -40,6 +43,7 @@
 		});
 	});
 	</script>
+	<link rel="stylesheet" href="/css/styles.css"/>
 </head>
 <body id="f1a">
 	<div id="pageWrap">
@@ -126,14 +130,14 @@
 			</script>
 		</div>
 	</div>
-	<script src="/public/themes/wengerland/components/lightbox2-master/dist/js/lightbox.min.js"></script>
+	<!--script src="/public/themes/wengerland/components/lightbox2-master/dist/js/lightbox.min.js"></script-->
 
 	<div class="modal fade" tabindex="-1" role="dialog" id="modal_fastorder">
 	  <div class="modal-dialog">
 		<div class="modal-content" style="padding: 10px;">
 		  <div class="modal-header" style="padding: 0px; padding-bottom: 5px;">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" style="font-size: 17px; text-align:center;">Заказать в один клик</h4>
+			<h1 class="modal-title" style="text-align:center;">Заказать в один клик</h1>
 		  </div>
 		  <div class="modal-body" style="padding: 5px;">
 
@@ -142,39 +146,56 @@
 	<div style="color:#4e9a06; font-weight:bold; padding:5px; text-align:center; font-size:14px;" id="fo_confirm_msg"></div>
 
 	<div style="display: table; width: 100%;">
-	<div class="col-md-6" style="padding: 0px;">
-		<div style="font-weight: bold; font-size: 16px; padding-bottom: 5px; text-align: center;" id="fo_product_title">Название товара</div>
-		<div style="display: table;text-align: center; width: 100%;">
-			<div class="col-md-12">
-					<img src="/uploads/filestorage/catalog/elements/44017.png" style="max-width: 300px;" id="fo_product_pic">
+		<div class="col-md-6" style="padding: 0px;">
+			<div style="font-weight: bold; font-size: 16px; padding-bottom: 5px; text-align: center;" id="fo_product_title"><h1>Название товара</h1></div>
+			<div style="display: table;text-align: center; width: 100%;">
+				<div class="col-md-12">
+					<img src="" style="max-width: 300px;" id="fo_product_pic">
+				</div>
+
 			</div>
 		</div>
-	</div>
-	<div class="col-md-6">
-		<form method="post" id="form_fastorder">
-			<input type="hidden" id="fo_id_product">
-			<div class="form-group">
-			  <label>Имя</label>
-			  <input type="text" class="form-control" id="fo_name" placeholder="Введите имя">
+		<div class="col-md-6">
+			<form method="post" id="form_fastorder">
+				<input type="hidden" id="fo_id_product">
+				<div class="form-group">
+				  <label>Имя</label>
+				  <input type="text" class="form-control" id="fo_name" placeholder="Введите имя">
+				</div>
+				<div class="form-group">
+				  <label>Email</label>
+				  <input type="email" class="form-control" id="fo_email" placeholder="Введите ваш email">
+				</div>
+				<div class="form-group">
+				  <label>Телефон</label>
+				  <input type="text" class="form-control" id="fo_phone" placeholder="Введите контактный телефон">
+				</div>
+			</form>
+			<div class="product_message">
+				<b>ЕСЛИ У ВАС ОСТАЛИСЬ ВОПРОСЫ, ПОЗВОНИТЕ НАМ +7 (495) 543-58-39</b>
+				<p>* Цена на сайте указана ориентировочная, окончательная стоимость зависит от цвета соболя, будет ли изделие вдоль или поперек, какое количество замши стоит между шкурами, наличие капюшона, расклешенности, наличие пояса.
+					</p>
 			</div>
-			<div class="form-group">
-			  <label>Email</label>
-			  <input type="email" class="form-control" id="fo_email" placeholder="Введите ваш email">
-			</div>
-			<div class="form-group">
-			  <label>Телефон</label>
-			  <input type="text" class="form-control" id="fo_phone" placeholder="Введите контактный телефон">
-			</div>
-		</form>
-	</div>
+		</div>
+		
 	</div>
 
 
 
 		  </div>
 		  <div class="modal-footer" style="padding: 10px 0px 0px;">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-			<button type="button" class="btn btn-primary likebuybtn" id="fo_submit">Заказать</button>
+			  <div class="col-md-6">
+				  <div class="items-block-item-price items-block-item-price_first">Цена: <span id="fo_item_price"></span> руб.</div>
+				  <div class="items-block-item-price">Старая цена: <span class="old_price_f"><span id="fo_item_old_price"></span> руб.</span></div>
+
+
+			  </div>
+			  <div class="col-md-5 fastorder_btns">
+				  <button type="button" class="fastorder_order likebuybtn" id="fo_submit">Заказать</button>
+				  <button type="button" class="fastorder_close" data-dismiss="modal">Закрыть</button>
+			  </div>
+
+
 		  </div>
 		</div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->

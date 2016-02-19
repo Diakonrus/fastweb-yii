@@ -24,7 +24,6 @@ class SaleController extends Controller
             "condition" => "status!=0 AND group_id=0",
             "order" => "id DESC",
         ));
-        $this->setSEO(Yii::app()->request->requestUri, 'Акции');
 		$this->render('index', array('model'=>$model));
 	}
 
@@ -35,50 +34,27 @@ class SaleController extends Controller
 
         if (is_numeric($paramArr)){
             //Число - это элемент
-            $model = array();
-            $model['group'] = array();
-            $modelSale = Sale::model()->findByPk((int)$paramArr);
-            if (empty($modelSale)){throw new CHttpException(404,'The page can not be found.');}
-
-            $parent = SaleGroup::model()->findByPk((int)$modelSale->group_id);
-            $this->setSEO(Yii::app()->request->requestUri, 'Акции', $parent);
-
-            $model['page'] = array();
-            if (!empty($parent)){
-                $model['page'][0]['url'] = $parent->url;
-                $model['page'][0]['name'] = $parent->name;
-            }
-
-
+            $model = Sale::model()->findByPk((int)$paramArr);
             //Смотрим, нужно ли вставить фотогалерею
-            $modelSale->description = $this->addPhotogalery($modelSale->description);
-            $model['elements'][] = $modelSale;
+            $model->description = $this->addPhotogalery($model->description);
             $render = 'view';
         }
         else {
             //Список новостей категории
             $modelGroup = SaleGroup::model()->find('url LIKE "'.$paramArr.'"');
-            if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
-
-            $this->setSEO(Yii::app()->request->requestUri, 'Акции', $modelGroup);
-
             $model = array();
-            $model['group'] = $modelGroup;
-            $model['elements'] = Sale::model()->findAll(array(
+            $model['group'] = array();
+            $model['no_group'] = Sale::model()->findAll(array(
                 "condition" => "status!=0 AND group_id = ".$modelGroup->id,
                 "order" => "id DESC",
             ));
 
-            $model['page'] = array();
-            $model['page'][0]['url'] = $modelGroup->url;
-            $model['page'][0]['name'] = $modelGroup->name;
-
-            $render = 'view';
+            $render = 'index';
         }
 
 
         if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
-        $this->render($render, array('model'=>$model, 'param_url' => $paramArr));
+        $this->render($render, array('model'=>$model));
     }
 
 

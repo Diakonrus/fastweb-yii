@@ -1,3 +1,8 @@
+<?
+//$this->pageTitle = 'Интернет магазин перочинных ножей, купить перочинные ножи с доставкой - '.$_SERVER['HTTP_HOST'];
+//Yii::app()->clientScript->registerMetaTag('В интернет магазине '.$_SERVER['HTTP_HOST'].' вы сможете купить перочинные ножи по выгодной цене с доставкой.', 'description');
+?>
+
 <style>
     .alert-error {
         background-color:#f9558b;

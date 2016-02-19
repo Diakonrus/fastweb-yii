@@ -1,8 +1,6 @@
-<main class="all" role="main">
-    <div class="container video-caption">
-        <h1>ВОПРОСЫ - ОТВЕТЫ</h1>
-    </div>
-</main>
+<div class="page_name">
+    <h1>ВОПРОСЫ - ОТВЕТЫ</h1>
+</div>
 
 
 <div class="main-content">
@@ -14,11 +12,13 @@
     <?php } ?>
 
     <!--  Элемент -->
-
-    <div class="autor"><?=$model['elements']->author->name;?></div> / <div class="email"><?=$model['elements']->author->email;?></div> / <div class="date"><?=date('d-m-Y',strtotime($model['elements']->author->created_at));?></div>
-    <div class="question"><h3><?=$model['elements']->question;?></h3></div></br>
-    <div class="answer"><h3><?=$model['elements']->answer;?></h3></div></br>
-    <HR>
+    <div class="question_item">
+         <div class="autor_name">
+                <b><?=$model['elements']->author->name;?></b> <?=date('d-m-Y',strtotime($model['elements']->author->created_at));?>
+                 <div class="question"><?=$model['elements']->question;?></div>
+                <div class="answer">Ответ: <p></p><?=$model['elements']->answer;?></div></br>
+        </div>
+    </div> 
 
 
 

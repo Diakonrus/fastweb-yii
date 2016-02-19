@@ -1,13 +1,5 @@
 <?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
 <h1 class="lined nopaddingtop" style="margin-top: 10px;">Каталог продукции</h1>
-<?
-$this->pageTitle ='Каталог продукции - '.$_SERVER['HTTP_HOST'];
-?>
-
-
-
-
-
 
 
 <div class="tovar_container">
@@ -19,10 +11,10 @@ if (isset($element['url']))
 }
 
 		$url_img = '/images/nophoto_100_100.jpg';
-		$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image;
+		$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/medium-'.$data->id.'.'.$data->image;
 		if (file_exists($filename))
 		{ 
-			$url_img = '/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image; 
+			$url_img = '/uploads/filestorage/catalog/elements/medium-'.$data->id.'.'.$data->image;
 		}
 
 
@@ -41,26 +33,37 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 				<tr><td></td></tr>
 			</table>
 		</a>
-		<a class="items-block-item-name" href="<?=$url;?>"><?=$data->name;?></a>
-		<div class="item-price-count">
-			<div class="items-block-item-price"><?=$data->price;?> руб.</div>
-			<div class="item-count-area">
-				<a href="" class="item-count-inc"></a>
-				<input value="1" class="item-count" type="text">
-				<a href="" class="item-count-dec"></a>
+		<div class="product_info_block">
+			<a class="items-block-item-name" href="<?=$url;?>"><?=$data->name;?></a>
+			<div class="item-price-count">
+				<div class="items-block-item-price"><?=$data->price;?> руб.</div>
+				<div class="old_price_product_cat">
+					199990 руб.
+				</div>
+				<div class="item-count-area">
+					<a href="" class="item-count-inc"></a>
+					<input value="1" class="item-count" type="text">
+					<a href="" class="item-count-dec"></a>
+				</div>
+				<div class="clear"></div>
+			</div>
+
+			<div class="order_one_click">
+				<a href="javascript:void(0)"
+				   class="fastorder"
+				   idx="<?=$data->id;?>"
+				   names="<?=$data->name;?>"
+				   pic="<?=$url_img?>"
+				   price="<?=$data->price?>"
+				   old_price="199990"
+				>
+					Заказать
+				</a>
 			</div>
 		</div>
-		<div class="clearOnly">&nbsp;</div>
-		<div class="order_one_click">
-			<a href="javascript:void(0)" 
-				 class="fastorder"
-				 idx="<?=$data->id;?>"
-				 names="<?=$data->name;?>"
-				 pic="<?=$url_img?>"
-				 >
-				Заказать
-			</a>
-		</div>
+
+
+
 	</div>
 <?php } ?>
 	</div>

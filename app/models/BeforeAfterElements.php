@@ -39,7 +39,7 @@ class BeforeAfterElements extends CActiveRecord
 			array('before_photo, after_photo, parent_id', 'required'),
 			array('parent_id,on_main, status', 'numerical', 'integerOnly'=>true),
 			array('before_photo, after_photo', 'length', 'max'=>50),
-			array('before_text, after_text, briftext, meta_keywords, meta_description', 'safe'),
+			array('before_text, after_text, briftext', 'safe'),
             array('before_photo_file, after_photo_file,', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -71,7 +71,7 @@ class BeforeAfterElements extends CActiveRecord
             'on_main' => 'Отображать как пару раздела в списке групп',
 			'before_photo' => 'Картинка `ДО`',
 			'after_photo' => 'Картинка `ПОСЛЕ`',
-			'briftext' => 'Текст над изображениями',
+			'briftext' => 'Анонс',
             'status' => 'Статус',
 			'before_text' => 'Текст 1 (над изображениями)',
 			'after_text' => 'Текст 2 (под изображениями)',

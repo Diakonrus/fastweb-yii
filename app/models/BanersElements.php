@@ -38,12 +38,12 @@ class BanersElements extends CActiveRecord
 			array('parent_id, status', 'numerical', 'integerOnly'=>true),
 			array('name, url', 'length', 'max'=>450),
 			array('image', 'length', 'max'=>50),
-			array('description', 'safe'),
+
 			array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, name, image, url, status, created_at, description,  created_at_start, created_at_end,
+			array('id, parent_id, name, image, url, status, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -74,7 +74,6 @@ class BanersElements extends CActiveRecord
 			'url' => 'Url адрес',
 			'status' => 'Статус',
 			'created_at' => 'Created At',
-			'description' => 'Описание',
 		);
 	}
 
@@ -106,7 +105,6 @@ class BanersElements extends CActiveRecord
 		$criteria->compare('image',$this->image,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('status',$this->status);
-		$criteria->compare('description',$this->description);
 		$criteria->compare('created_at',$this->created_at);
 
 		return $criteria;

@@ -35,13 +35,13 @@ class SaleGroup extends CActiveRecord
 			array('name', 'required'),
 			array('status, param_design', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>350),
-            array('url, meta_title', 'length', 'max'=>250),
+            array('url', 'length', 'max'=>250),
             array('url','unique', 'message'=>'Такой URL уже занят - введите другой URL-адрес.'),
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
-			array('description, brieftext, meta_keywords, meta_description', 'safe'),
+			array('description, brieftext', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, description, url, brieftext, status, created_at, param_design, meta_title, meta_keywords, meta_description, created_at_start, created_at_end,
+			array('id, name, description, url, brieftext, status, created_at, param_design, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -70,9 +70,6 @@ class SaleGroup extends CActiveRecord
 			'description' => 'Описание',
             'param_design' => 'Стиль оформления',
 			'status' => 'Статус',
-            'meta_title' => 'Meta Title',
-            'meta_keywords' => 'Meta Keywords',
-            'meta_description' => 'Meta Description',
 			'created_at' => 'Дата создания',
 		);
 	}
@@ -102,9 +99,6 @@ class SaleGroup extends CActiveRecord
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('status',$this->status);
         $criteria->compare('param_design',$this->param_design);
-        $criteria->compare('meta_title',$this->meta_title,true);
-        $criteria->compare('meta_keywords',$this->meta_keywords,true);
-        $criteria->compare('meta_description',$this->meta_description,true);
 		$this->compareDate($criteria, 'created_at');
 
         $criteria_param = array(
@@ -131,7 +125,6 @@ class SaleGroup extends CActiveRecord
 
     protected function beforeSave() {
         $this->url = mb_strtolower($this->url);
-        return true;
     }
 
     private $statusArr = array(

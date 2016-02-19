@@ -131,7 +131,7 @@ class DoctorRubrics extends CActiveRecord
         $url_pref = 'doctor/';
         $this->url = mb_strtolower($this->url);
         $module = SiteModule::model()->find('url_to_controller LIKE "/doctor/doctor"');
-        if (!empty($module) && $page = Pages::model()->find('type_module='.$module->id.' AND `status`=2')){
+        if (!empty($module) && $page = Pages::model()->find('type_module='.$module->id.' AND `status`=1')){
             $url_pref = $page->url.'/';
         }
         $this->url = $url_pref.(str_replace("vrachi/", "", $this->url));

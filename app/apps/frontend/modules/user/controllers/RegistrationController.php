@@ -38,6 +38,8 @@ class RegistrationController extends Controller {
 
                 $model->attributes = $form->attributes;
                 $model->role_id = 'user';
+                $model->state = 1;
+                
                 $model->updateSecurity();
 
                 if ($model->save()) {
@@ -47,29 +49,8 @@ class RegistrationController extends Controller {
                     Здравствуйте, '.$model->email.'!<BR>
                     Благодарим Вас за регистрацию на нашем сайте.<BR>
                     Ваш новый пароль: <b>'.$form->password.'</b><BR>
-                    <b>Всегда в наличии:</b><BR>
-                    Запчасти к китайской спецтехнике - XCMG, TOTA, LINGONG, SDLG, XGMA, LIUGONG, LONKING, LONGGONG, CHENGGONG, YUTONG, Changlin, Mitsuber, Foton, Zoomlion, PowerCat, Sany<BR>
-                    Запчасти к бульдозерам – SHANTUI, Shehwа.<BR>
-
-                    Агрегаты и запчасти к ним:<BR>
-                    Weichai (WD10G220E23, WD615G220, TD226B-6IG14, WD10G240E11,WD61567G3-29)<BR>
-                    Cummins (6BT5.9-C130, 6BT5.9-C170, 6BT5.9-C175, 6BT5.9-C215, 6CTA8.3C215, 6CTA8.3C240)<BR>
-                    Shanghai (SC11CB184G2B1, C6121 (CAT), C6121ZG50)<BR>
-                    Yuchai (YC6B125-T11, YC6108G, YC6180)<BR>
-
-                    Запчасти и ремонт коробок передач, мостов – ADVANCE, Kessler, Dana, ZF.<BR>
-                    Расходные материалы (фильтра WIX , смазки TOTAL) для техники- Caterpillar, Komatsu, Terex, Volvo, Liebherr, Hitachi, John Deere, Sandvik, Hyundai<BR>
-                    Автоаксессуары - аккумуляторы, шины 17.5-25; 23.5-25 диски.<BR>
-
-                    <b>С уважением,</b><BR>
-                    <b>ООО "НЗСнаб"</b><BR>
-
-                    Тел.: +7(499) 213 -01-89<BR>
-                    Моб.: +7(926) 160-76-35<BR>
-                    Email: info@nzsnab.ru<BR>
-                    Сайт: www.nzsnab.ru<BR>
                     ';
-                    Yii::app()->mailer->send(array('email'=>$model->email, 'subject'=>'Регистрация на сайте nzsnab.ru', 'body'=>$body));
+                    Yii::app()->mailer->send(array('email'=>$model->email, 'subject'=>'Регистрация на сайте '.$_SERVER['HTTP_HOST'], 'body'=>$body));
 
                     $this->redirect('/register/success');
                 }

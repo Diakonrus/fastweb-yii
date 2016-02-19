@@ -254,4 +254,64 @@ class Pages extends CActiveRecord
 		return Pages::getMenu(3);
 	}
 
+	//возвращает URL страницы на основе текущего URL
+	public static function returnUrl($url){
+		$urlArr = explode("/", (Yii::app()->request->requestUri.'/'.$url.'/'));
+		$urlArr = array_diff($urlArr, array(''));
+
+		$modelPages = Pages::model()->find('url LIKE "'.(array_shift($urlArr)).'"');
+		//Не текстовая страницы - смотрю модуль
+		$complite_url = $modelPages->url.'/'.$url;
+		if ($modelPages->type_module != 0){
+			//Число - ищем в таблице элементов
+			if (is_numeric(end($urlArr))){
+				$tabel_name = SiteModuleSettings::model()->getModelById($modelPages->type_module, 2);
+				$parent_field_name = 'group_id';
+				if ( !Yii::app()->db->createCommand("show columns from ".$tabel_name." where `Field` = '".$parent_field_name."'")->queryRow() ){$parent_field_name = 'parent_id';}
+				$modelElemetn = Yii::app()->db->createCommand()
+					->select('id, '.$parent_field_name)
+					->from($tabel_name)
+					->where('id = '.array_pop($urlArr))
+					->queryRow();
+				$complite_url = $modelPages->url;
+				if ( (int)$modelElemetn[$parent_field_name] > 0 ){
+					$tabel_name = SiteModuleSettings::model()->getModelById($modelPages->type_module, 1);
+					$url_field_name = '';
+					if ( Yii::app()->db->createCommand("show columns from ".$tabel_name." where `Field` = 'url'")->queryRow() ){$url_field_name = 'url';}
+					$modelCatalog = Yii::app()->db->createCommand()
+						->select('id, name'.((!empty($url_field_name))?(', '.$url_field_name):('')) )
+						->from($tabel_name)
+						->where('id = '.(int)$modelElemetn[$parent_field_name])
+						->queryRow();
+					if (isset($modelCatalog['url'])){
+						$complite_url .= '/'.$modelCatalog['url'];
+					}
+				}
+				$complite_url .= '/'.$url;
+
+			}
+			//Текст - ищем в таблице групп
+			else {
+				//Ссылка - таблица групп
+				$tabel_name = SiteModuleSettings::model()->getModelById($modelPages->type_module, 1);
+				if ( Yii::app()->db->createCommand("show columns from ".$tabel_name." where `Field` = 'level'")->queryRow() ){
+					$modelCatalog = Yii::app()->db->createCommand()
+						->select('id, parent_id, level' )
+						->from($tabel_name)
+						->where('url LIKE "'.end($urlArr).'"')
+						->queryRow();
+					$category = CatalogRubrics::model()->findByPk((int)$modelCatalog['id']);
+					foreach ( $category->ancestors()->findAll() as $data){
+						if ($data->level <= 1){ continue; }
+						$complite_url .= '/'.$data->url;
+					}
+					$complite_url .= '/'.$url;
+				}
+			}
+
+		}
+
+		return $complite_url;
+	}
+
 }

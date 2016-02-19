@@ -9,6 +9,7 @@
  * @property string $name
  * @property string $image
  * @property string $url
+ * @property string $description
  * @property integer $status
  * @property string $created_at
  */
@@ -41,9 +42,10 @@ class PhotoElements extends CActiveRecord
 
 			array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 
+			array('description', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, name, image, url, status, created_at, created_at_start, created_at_end,
+			array('id, parent_id, name, image, description, url, status, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -71,6 +73,7 @@ class PhotoElements extends CActiveRecord
 			'name' => 'Название',
 			'imagefile' => 'Картинка',
 			'image' => 'Изображение',
+			'description' => 'Описание',
 			'url' => 'Url адрес',
 			'status' => 'Статус',
 			'created_at' => 'Created At',
@@ -104,6 +107,7 @@ class PhotoElements extends CActiveRecord
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('image',$this->image,true);
 		$criteria->compare('url',$this->url,true);
+		$criteria->compare('description',$this->description,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('created_at',$this->created_at);
 

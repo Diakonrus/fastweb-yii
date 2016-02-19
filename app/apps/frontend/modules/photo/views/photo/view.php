@@ -1,6 +1,6 @@
 <section class="video-block faq mg-top-17 mg-bottom-15">
     <main class="all" role="main">
-        <div class="container">
+        <div class="container video-caption">
             <h1>
                 ОТВЕТЫ
                 <?php

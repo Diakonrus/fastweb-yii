@@ -11,6 +11,17 @@ class NewsController extends Controller
 
 	public function actionIndex()
 	{
+
+        Pages::returnUrl('kategoriya');
+
+
+
+        //Титл и SEO
+        $this->pageTitle =  'Новости -' . $this->pageTitle;
+        foreach ( explode("/", ( parse_url(Yii::app()->request->requestUri, PHP_URL_PATH ))) as $url  ){
+            $this->setSEO($url);
+        }
+
         $model = array();
         //получаем новости в группах
         $model['group'] = NewsGroup::model()->findAll(
@@ -24,10 +35,6 @@ class NewsController extends Controller
             "condition" => "status!=0 AND group_id=0",
             "order" => "id DESC",
         ));
-
-        $this->setSEO(Yii::app()->request->requestUri, 'Новости');
-
-
 		$this->render('index', array('model'=>$model));
 	}
 
@@ -39,26 +46,31 @@ class NewsController extends Controller
         if (is_numeric($paramArr)){
             //Число - это элемент
             $model = News::model()->findByPk((int)$paramArr);
-            if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
-            //Смотрим, нужно ли вставить фотогалерею
-            $model->description = $this->addPhotogalery($model->description);
 
+            //Титл и SEO
             $this->setSEO(Yii::app()->request->requestUri, 'Новости', $model);
 
+            //Смотрим, нужно ли вставить фотогалерею
+            $model->description = $this->addPhotogalery($model->description);
             $render = 'view';
         }
         else {
             //Список новостей категории
             $modelGroup = NewsGroup::model()->find('url LIKE "'.$paramArr.'"');
-            if (empty($modelGroup)){throw new CHttpException(404,'The page can not be found.');}
+
+            //Титл и SEO
+            $this->setSEO(Yii::app()->request->requestUri, 'Новости', $modelGroup);
+
             $model = array();
-            $model['group'] = array();
+            $model['group'] = NewsGroup::model()->findAll(
+				array(
+					"condition" => "status!=0",
+					"order" => "id DESC",
+			));
             $model['no_group'] = News::model()->findAll(array(
                 "condition" => "status!=0 AND group_id = ".$modelGroup->id,
                 "order" => "id DESC",
             ));
-
-            $this->setSEO(Yii::app()->request->requestUri, 'Новости', $modelGroup);
 
             $render = 'index';
         }

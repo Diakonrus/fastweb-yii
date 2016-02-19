@@ -88,11 +88,19 @@ class CatalogController extends Controller
 			exit();
 		}
 
+
+		//Титл и SEO
+		$this->pageTitle =  'Каталог продукции - ' . $this->pageTitle;
+		foreach ( explode("/", ( parse_url(Yii::app()->request->requestUri, PHP_URL_PATH ))) as $url  ){
+			$this->setSEO($url);
+		}
+
+
 		$data = CatalogElements::fn__get_filters($data,0);
 
 
 		$where = "status=1 AND `price`>=".$data['filters']['price_min']." AND `price`<=".$data['filters']['price_max']."";
-		$where = 'status=1';
+		//$where = 'status=1';
 
 //==============================================================================
 		$checks_arr_str = array();
@@ -351,6 +359,7 @@ class CatalogController extends Controller
 
 		if ( $modelRubric = CatalogRubrics::model()->find('url LIKE ("'.$url.'")') )
 		{
+			$this->setSEO(Yii::app()->request->requestUri, 'Каталог продукции', $modelRubric);
 			$data = array();
 			//$modelRubric =  CatalogRubrics::model()->find('url LIKE ("'.$url.'")');
 
@@ -641,6 +650,7 @@ class CatalogController extends Controller
 		//Ищем в товарах
 		elseif ( $model = CatalogElements::model()->find('url LIKE "'.$url.'" OR id = '.(int)$url) )
 		{
+			$this->setSEO(Yii::app()->request->requestUri, 'Каталог продукции', $model);
 			$modelRubric = null;
 			//$model = CatalogElements::model()->findByPk((int)$url);
 			if (!$model)

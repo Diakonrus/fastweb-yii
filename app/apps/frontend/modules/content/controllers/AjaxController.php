@@ -7,6 +7,7 @@ class AjaxController extends Controller
 
 	public function actionIndex()
 	{
+		//echo 123; exit;
 
         //Сравнение товаров
         if ( isset($_GET['e']) && isset($_GET['m']) && $_GET['m']=='47' && isset($_GET['u']) ){
@@ -72,6 +73,7 @@ class AjaxController extends Controller
 
         //Добавление товара в корзину
         if ( isset($_POST['m']) && $_POST['m'] == "31" && isset($_POST['path']) && isset($_POST['module']) && isset($_POST['parent_id']) ){
+        
             $quantity = 1;
             $k = $_POST['path'];
 

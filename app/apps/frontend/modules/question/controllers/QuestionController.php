@@ -13,6 +13,10 @@ class QuestionController extends Controller
     {
         //Общий список категорий вопросов
         $root = FaqRubrics::getRoot(new FaqRubrics);
+
+        //Титл и SEO
+        $this->setSEO(Yii::app()->request->requestUri, 'Вопрос-ответ', $root);
+
         $model['rubrics'] = $root->descendants(1)->findAll($root->id);
 
         $model['elements'] = FaqElements::model()->findAll('parent_id = '.$root->id);
@@ -50,27 +54,38 @@ class QuestionController extends Controller
         $paramArr =  array_pop($paramArr);
 
         if (is_numeric($paramArr)){
+
             //Число - это элемент
-            $model = [];
-            $model['elements'] = FaqElements::model()->findAll('parent_id = '.(int)$paramArr);
-            $model['rubrics'] = FaqRubrics::model()->find('id = '.((int)(current($model['elements'])->id)).' AND level>1');
+            $model = array();
+            $model['elements'] = FaqElements::model()->find('id = '.(int)$paramArr);
+            $model['rubrics'] = FaqRubrics::model()->find('id = '.$model['elements']->parent_id.' AND level>1');
+
+            //Титл и SEO
+            $this->setSEO(Yii::app()->request->requestUri, 'Вопрос-ответ', $model['rubrics']);
+
+            $render = 'view';
 
         }
         else {
             //Список  категории
-            $model = [];
+            $model = array();
             $root = FaqRubrics::model()->find('url LIKE "'.$paramArr.'"');
+
+            //Титл и SEO
+            $this->setSEO(Yii::app()->request->requestUri, 'Вопрос-ответ', $root);
+
             if (empty($root)){throw new CHttpException(404,'The page can not be found.');}
             $model['rubrics'] = $root->descendants(1)->findAll($root->id);
             $model['elements'] = FaqElements::model()->findAll(array(
                 "condition" => "status!=0 AND parent_id = ".$root->id,
                 "order" => "id DESC",
             ));
+            $render = 'list';
         }
 
 
         if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
-        $this->render('view', array('model'=>$model));
+        $this->render($render, array('model'=>$model));
     }
 
 

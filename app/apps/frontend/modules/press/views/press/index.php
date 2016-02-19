@@ -5,7 +5,7 @@
             <ul class="tab-lincks">
             <?php foreach ($model['group'] as $data) { ?>
                 <li>
-                    <a class="<?=($param==$data->id?'active':'');?>" href="/press/press-<?=$data->url;?>"><?=$data->name;?></a>
+                    <a class="<?=($param==$data->id?'active':'');?>" href="<?=Yii::app()->request->requestUri;?>/<?=$data->url;?>"><?=$data->name;?></a>
                 </li>
             <?php } ?>
             </ul>
@@ -29,7 +29,7 @@
 
                     <article>
                         <span><?=Press::model()->getDate($data->maindate);?></span>
-                        <a href="/press/<?=$data->id;?>"><?=$data->name;?></a>
+                        <a href="<?=Yii::app()->request->requestUri;?>/<?=$data->id;?>"><?=$data->name;?></a>
                         <?=$data->brieftext;?>
                     </article>
                 </div>
