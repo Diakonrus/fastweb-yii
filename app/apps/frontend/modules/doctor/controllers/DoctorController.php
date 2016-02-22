@@ -4,10 +4,6 @@ class DoctorController extends Controller
 {
 	public $layout='//layouts/main';
 
-    public function init(){
-        //Проверяю что модуль не отключен
-        if (SiteModuleSettings::model()->find('site_module_id = 10 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
-    }
 
 	public function actionIndex()
 	{

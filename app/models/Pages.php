@@ -210,7 +210,7 @@ class Pages extends CActiveRecord
 			$tree = array();
 			foreach($cats[$parent_id] as $cat){
 				$tree [$cat['id']]['title'] = $cat['title'];
-				$tree [$cat['id']]['url'] = $cat['url'];
+				$tree [$cat['id']]['url'] = (($cat['main_page'] == 1)?('/'):($cat['url']));
 				$tree [$cat['id']]['access_lvl'] = $cat['access_lvl'];
 				$tree [$cat['id']]['image'] = $cat['image'];
 				$tree [$cat['id']]['in_header'] = $cat['in_header'];
@@ -229,7 +229,7 @@ class Pages extends CActiveRecord
 		$pagesArray = $root->descendants(null,1)->findAll($root->id);
 		$cats = array();
 		foreach ( $pagesArray as $data ){
-			if ($data->main_page == 1 || ($type == 2 && $data->in_header != 1) || ($type == 3 && $data->in_footer != 1) ){ continue; /* Главную страницу пропускаю */ }
+			if (($type == 2 && $data->in_header != 1) || ($type == 3 && $data->in_footer != 1) ){ continue; }
 			$cats_ID[$data->id][] = $data;
 			$cats[$data->parent_id][$data->id] =  $data;
 		}
@@ -265,47 +265,55 @@ class Pages extends CActiveRecord
 		if ($modelPages->type_module != 0){
 			//Число - ищем в таблице элементов
 			if (is_numeric(end($urlArr))){
-				$tabel_name = SiteModuleSettings::model()->getModelById($modelPages->type_module, 2);
-				$parent_field_name = 'group_id';
-				if ( !Yii::app()->db->createCommand("show columns from ".$tabel_name." where `Field` = '".$parent_field_name."'")->queryRow() ){$parent_field_name = 'parent_id';}
-				$modelElemetn = Yii::app()->db->createCommand()
-					->select('id, '.$parent_field_name)
-					->from($tabel_name)
-					->where('id = '.array_pop($urlArr))
-					->queryRow();
-				$complite_url = $modelPages->url;
-				if ( (int)$modelElemetn[$parent_field_name] > 0 ){
-					$tabel_name = SiteModuleSettings::model()->getModelById($modelPages->type_module, 1);
-					$url_field_name = '';
-					if ( Yii::app()->db->createCommand("show columns from ".$tabel_name." where `Field` = 'url'")->queryRow() ){$url_field_name = 'url';}
-					$modelCatalog = Yii::app()->db->createCommand()
-						->select('id, name'.((!empty($url_field_name))?(', '.$url_field_name):('')) )
-						->from($tabel_name)
-						->where('id = '.(int)$modelElemetn[$parent_field_name])
-						->queryRow();
-					if (isset($modelCatalog['url'])){
-						$complite_url .= '/'.$modelCatalog['url'];
+				if ( $tabel_name = SiteModuleSettings::model()->getModelById($modelPages->type_module, 2) ) {
+					$parent_field_name = 'group_id';
+					if (!Yii::app()->db->createCommand("show columns from " . $tabel_name . " where `Field` = '" . $parent_field_name . "'")->queryRow()) {
+						$parent_field_name = 'parent_id';
 					}
+					$modelElemetn = Yii::app()->db->createCommand()
+						->select('id, ' . $parent_field_name)
+						->from($tabel_name)
+						->where('id = ' . array_pop($urlArr))
+						->queryRow();
+					$complite_url = $modelPages->url;
+					if ((int)$modelElemetn[$parent_field_name] > 0) {
+						$tabel_name = SiteModuleSettings::model()->getModelById($modelPages->type_module, 1);
+						$url_field_name = '';
+						if (Yii::app()->db->createCommand("show columns from " . $tabel_name . " where `Field` = 'url'")->queryRow()) {
+							$url_field_name = 'url';
+						}
+						$modelCatalog = Yii::app()->db->createCommand()
+							->select('id, name' . ((!empty($url_field_name)) ? (', ' . $url_field_name) : ('')))
+							->from($tabel_name)
+							->where('id = ' . (int)$modelElemetn[$parent_field_name])
+							->queryRow();
+						if (isset($modelCatalog['url'])) {
+							$complite_url .= '/' . $modelCatalog['url'];
+						}
+					}
+					$complite_url .= '/' . $url;
 				}
-				$complite_url .= '/'.$url;
 
 			}
 			//Текст - ищем в таблице групп
 			else {
 				//Ссылка - таблица групп
 				$tabel_name = SiteModuleSettings::model()->getModelById($modelPages->type_module, 1);
-				if ( Yii::app()->db->createCommand("show columns from ".$tabel_name." where `Field` = 'level'")->queryRow() ){
+				if ( !empty($tabel_name) && Yii::app()->db->createCommand("show columns from ".$tabel_name." where `Field` = 'level'")->queryRow() ){
+
 					$modelCatalog = Yii::app()->db->createCommand()
 						->select('id, parent_id, level' )
 						->from($tabel_name)
 						->where('url LIKE "'.end($urlArr).'"')
 						->queryRow();
-					$category = CatalogRubrics::model()->findByPk((int)$modelCatalog['id']);
-					foreach ( $category->ancestors()->findAll() as $data){
-						if ($data->level <= 1){ continue; }
-						$complite_url .= '/'.$data->url;
-					}
-					$complite_url .= '/'.$url;
+					$model = SiteModuleSettings::model()->getClassById($modelPages->type_module, 1);
+					$category = $model::model()->findByPk((int)$modelCatalog['id']);
+					if ( $category = $category->ancestors()->findAll() ){
+						foreach ( $category as $data){
+							if ($data->level <= 1){ continue; }
+							$complite_url .= '/'.$data->url;
+						}
+					} else { $complite_url .= '/'.$url; }
 				}
 			}
 
@@ -314,4 +322,14 @@ class Pages extends CActiveRecord
 		return $complite_url;
 	}
 
+	/**
+	 * @param $url
+	 * Возвращает true если это активная страница
+	 */
+	public static function isActive(){
+		foreach (explode("/", (Yii::app()->request->requestUri.'/')) as $url){
+			if ($model = Pages::model()->find('url LIKE "'.(trim($url)).'"')){ return $model->id;}
+		}
+		return false;
+	}
 }

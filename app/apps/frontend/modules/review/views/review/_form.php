@@ -1,4 +1,12 @@
-<h1>Оставить отзыв</h1><BR>
+<h1>Написать отзыв</h1><BR>
+
+<?=((isset($_POST['ReviewAuthor']))?('
+        <p>
+            <h4>Ваш отзыв передан на одобрение модератору и, после проверки, будет опубликован!</h4>
+        </p>
+    '):(''));?>
+
+
 Поля отмеченные звездочкой (*) - обязательны для заполнения
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
@@ -21,14 +29,14 @@
     <tr>
         <td>Отзыв:</td>
         <td>
-            <?php echo $form->dropDownList($modelQuestion, "parent_id",
-                CHtml::listData( ReviewRubrics::model()->findAll(), "id", "group_name")
+            <?php echo $form->dropDownList($modelReview, "parent_id",
+                CHtml::listData( ReviewRubrics::model()->findAll('level>1'), "id", "name")
             ); ?>
         </td>
     </tr>
     <tr>
         <td>Полный текст сообщения *:</td>
-        <td><?php echo $form->textArea($modelQuestion, 'review',array('rows'=>6, 'cols'=>50)); ?></td>
+        <td><?php echo $form->textArea($modelReview, 'review',array('rows'=>6, 'cols'=>50)); ?></td>
     </tr>
 </table>
 

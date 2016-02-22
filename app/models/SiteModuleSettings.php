@@ -376,7 +376,7 @@ class SiteModuleSettings extends CActiveRecord
 		switch ($site_module_id) {
 			case 1:
 				//Новости
-				return (($type==1)?('{{news_group}}'):('{{news}}'));
+				return (($type==1)?('{{news_rubrics}}'):('{{news_elements}}'));
 				break;
 			case 2:
 				//Карта сайта
@@ -437,6 +437,80 @@ class SiteModuleSettings extends CActiveRecord
 		}
 		return false;
 	}
+
+	/**
+	 * @param $site_module_id
+	 * @param int $type
+	 * Возвращает модель, тип указывает тип таблицы (1-рубрика, 2-элемент)
+	 */
+	public function getClassById($site_module_id, $type=1){
+		switch ($site_module_id) {
+			case 1:
+				//Новости
+				return (($type == 1) ? (new NewsRubrics()) : (new NewsElements()));
+				break;
+			case 2:
+				//Карта сайта
+				return false;
+				break;
+			case 3:
+				//Поиск на сайте
+				return false;
+				break;
+			case 4:
+				//Каталог
+				return (($type==1)?(new CatalogRubrics()):(new CatalogElements()));
+				break;
+			case 5:
+				//Корзина
+				return (($type==1)?(new BasketOrder()):(new BasketItems()));
+				break;
+			case 6:
+				//Статьи
+				return (($type==1)?(new StockGroup()):(new Stock()));
+				break;
+			case 7:
+				//Вопросы-ответы
+				return (($type==1)?(new FaqRubrics()):(new FaqElements()));
+				break;
+			case 8:
+				//URL ссылка (пишите адрес ссылки в Url адрес )
+				return false;
+				break;
+			case 9:
+				//Акции
+				return (($type==1)?(new SaleGroup()):(new Sale()));
+				break;
+			case 10:
+				//Врачи
+				return (($type==1)?(new DoctorRubrics()):(new DoctorElements()));
+				break;
+			case 11:
+				//Фотогалерея
+				return (($type==1)?(new PhotoRubrics()):(new PhotoElements()));
+				break;
+			case 12:
+				//До и После
+				return (($type==1)?(new BeforeAfterRubrics()):(new BeforeAfterElements()));
+				break;
+			case 13:
+				//Таблицы
+				return (($type==1)?(new MainTabel()):(new MainTabel()));
+				break;
+			case 14:
+				//Пресса
+				return (($type==1)?(new PressGroup()):(new Press()));
+				break;
+			case 15:
+				//Банеры
+				return (($type==1)?(new BanersRubrics()):(new BanersElements()));
+				break;
+		}
+		return false;
+	}
+
+
+
 
 	/**
 	 * Создает изображение для раздела

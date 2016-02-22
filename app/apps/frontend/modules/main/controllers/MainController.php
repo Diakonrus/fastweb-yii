@@ -5,17 +5,6 @@ class MainController extends Controller
 	public $layout='//layouts/main';
 
 
-    public function init(){
-    /*
-        //Проверяю что модуль не отключен
-        if (SiteModuleSettings::model()->find('site_module_id = 2 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
-        /*
-        if (Yii::app()->user->isGuest){
-            $this->redirect('/login');
-        }
-        */
-    }
-
 	public function actionIndex()
 	{
 		//echo 123;

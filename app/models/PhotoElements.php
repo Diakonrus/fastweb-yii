@@ -124,4 +124,8 @@ class PhotoElements extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function getCountElements($parent_id){
+		return (int)PhotoElements::model()->count("parent_id=:field AND `status`=1", array("field" => $parent_id));
+	}
 }

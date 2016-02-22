@@ -10,8 +10,7 @@ class PagesController extends Controller
         if (!$model){ throw new CHttpException(404,'The page can not be found.'); }
 
         //Титл и SEO
-        $this->pageTitle = (mb_convert_case($model->title, MB_CASE_UPPER, "UTF-8")). ' - ' . $this->pageTitle;
-        $this->setSEO($model->url, $this->pageTitle);
+        $this->setSEO($model->url, (mb_convert_case($model->title, MB_CASE_UPPER, "UTF-8")));
 
         $this->layout = '//layouts/'.$model->main_template;
 

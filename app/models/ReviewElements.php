@@ -39,10 +39,10 @@ class ReviewElements extends CActiveRecord
 		return array(
 			array('parent_id, review', 'required'),
 			array('parent_id, author_id, status', 'numerical', 'integerOnly'=>true),
-			array('review_data, created_at', 'safe'),
+			array('review, brieftext, review_data, created_at', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, author_id, review, status, review_data, created_at, created_at_start, created_at_end,
+			array('id, parent_id, author_id, review, status, review_data, created_at, brieftext, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -70,6 +70,7 @@ class ReviewElements extends CActiveRecord
 			'parent_id' => 'Категория',
 			'author_id' => 'Автор',
 			'review' => 'Отзыв',
+			'brieftext' => 'Анонс отзыва',
 			'status' => 'Статус',
 			'review_data' => 'Дата создания отзыва',
 			'created_at' => 'Created At',
@@ -99,7 +100,8 @@ class ReviewElements extends CActiveRecord
 		$criteria->compare('author_id',$this->author_id);
 		$criteria->compare('review',$this->review,true);
 		$criteria->compare('status',$this->status);
-		$criteria->compare('review_data',$this->review_data,true);
+		$criteria->compare('review_data',$this->review_data);
+		$criteria->compare('brieftext',$this->brieftext,true);
 		$criteria->compare('created_at',$this->created_at);
 		//$this->compareDate($criteria, 'created_at');
 

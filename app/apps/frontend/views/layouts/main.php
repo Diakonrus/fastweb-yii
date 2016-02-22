@@ -50,7 +50,7 @@
 		<div id="innerPageWrap">
 			<div id="header">
 				<h3 id="masthead" style="width:259px;height:187px;background: url(/images/masthead_title.png) no-repeat;"><a href="./">Меховое ателье Зацепина</a></h3><p class="outOfSight"><a href="#begin-content">Skip navigation and go to main content</a></p>
-				<?=$this->widget('application.apps.frontend.components.TopMenu',array(), TRUE)?>
+				<?=$this->widget('application.apps.frontend.components.TopMenu',array('params'=>$this->curentPageID), TRUE)?>
 			</div>
 
 			<div id="outerContentWrap">

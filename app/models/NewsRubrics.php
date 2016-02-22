@@ -24,7 +24,7 @@ class NewsRubrics extends CActiveRecord
     public $created_at_start;
 	public $created_at_end;
 	public $imagefile;
-    
+
 	/**
 	 * @return string the associated database table name
 	 */

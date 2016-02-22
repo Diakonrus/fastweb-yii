@@ -1,10 +1,10 @@
 <div id="globalMenuWrap">			
 	<!-- begin #globalMenu  -->
 	<ul class="menu" id="globalMenu">
-		<?php foreach (Pages::getMenu() as $val){ ?>
+		<?php foreach (Pages::getMenu() as $id => $val){ ?>
 
 			<li>
-				<a href="<?=$val['url'];?>"><?=$val['title'];?></a>
+				<a href="<?=$val['url'];?>" class="<?=(($curentPageID == $id)?('active;'):(''));?>  "  ><?=$val['title'];?></a>
 				<?php if (isset($val['children'])) { foreach ($val['children'] as $val_children){ ?>
 					<ul>
 						<li>

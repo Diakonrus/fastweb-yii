@@ -2,83 +2,96 @@
 
 class NewsController extends Controller
 {
-	public $layout='//layouts/main';
+    public $layout='//layouts/main';
 
-    public function init(){
-        //Проверяю что модуль не отключен
-        if (SiteModuleSettings::model()->find('site_module_id = 1 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
+    public function actionIndex()
+
+    {
+        $root = NewsRubrics::getRoot(new NewsRubrics);
+        $model = $root->descendants(1)->findAll($root->id);
+
+        $modelElements = NewsElements::model()->findAll('parent_id = '.$root->id.' AND `status` != 0');
+
+
+        $this->setSEO(Yii::app()->request->requestUri, 'Новости');
+
+        $this->render('index', array('model'=>$model, 'modelElements'=>$modelElements));
+
+
     }
 
-	public function actionIndex()
-	{
-
-        Pages::returnUrl('kategoriya');
-
-
-
-        //Титл и SEO
-        $this->pageTitle =  'Новости -' . $this->pageTitle;
-        foreach ( explode("/", ( parse_url(Yii::app()->request->requestUri, PHP_URL_PATH ))) as $url  ){
-            $this->setSEO($url);
-        }
-
-        $model = array();
-        //получаем новости в группах
-        $model['group'] = NewsGroup::model()->findAll(
-            array(
-                "condition" => "status!=0",
-                "order" => "id DESC",
-        ));
-
-        //получаем новости без групп
-        $model['no_group'] = News::model()->findAll(array(
-            "condition" => "status!=0 AND group_id=0",
-            "order" => "id DESC",
-        ));
-		$this->render('index', array('model'=>$model));
-	}
-
     public  function actionElement($param){
-        //Если параметр текст - это каталог, если число - элемент
         $paramArr = explode("/", $param);
         $paramArr =  array_pop($paramArr);
+        $paramArr = strtolower($paramArr);
 
         if (is_numeric($paramArr)){
-            //Число - это элемент
-            $model = News::model()->findByPk((int)$paramArr);
-
-            //Титл и SEO
+            $modelElements = NewsElements::model()->findByPk($paramArr);
+            $model = NewsRubrics::model()->findByPk($modelElements->parent_id);
+            if (!$model){ throw new CHttpException(404,'The page can not be found.'); }
             $this->setSEO(Yii::app()->request->requestUri, 'Новости', $model);
 
-            //Смотрим, нужно ли вставить фотогалерею
-            $model->description = $this->addPhotogalery($model->description);
+            $pageArray = array();
+            $i = 0;
+            foreach ($model->ancestors()->findAll() as $data){
+                if ($data->level == 1){continue;}
+                $pageArray[$i]['url'] = $data->url;
+                $pageArray[$i]['name'] = $data->name;
+                ++$i;
+            }
+            $pageArray[$i]['url'] = $model->url;
+            $pageArray[$i]['name'] = $model->name;
+            if (count($pageArray)>1) { rsort($pageArray); }
+            $model = $model->descendants(1)->findAll($model->id);
             $render = 'view';
-        }
-        else {
-            //Список новостей категории
-            $modelGroup = NewsGroup::model()->find('url LIKE "'.$paramArr.'"');
+        } else {
 
-            //Титл и SEO
-            $this->setSEO(Yii::app()->request->requestUri, 'Новости', $modelGroup);
+            if ( $modelPage = Pages::model()->find('url LIKE "'.$param.'"') ){
+                if ( $modelTabs = PagesTabs::model()->find('pages_id='.$modelPage->id) ){
+                    $module_id = array_diff((explode("|", $modelTabs->site_module_value)), array(''));
+                    if ($tmpParam = NewsRubrics::model()->find('id in ('.(current($module_id)).') AND `status` = 1')){
+                        $paramArr = $tmpParam->url;
+                    }
+                }
+            }
 
-            $model = array();
-            $model['group'] = NewsGroup::model()->findAll(
-				array(
-					"condition" => "status!=0",
-					"order" => "id DESC",
-			));
-            $model['no_group'] = News::model()->findAll(array(
-                "condition" => "status!=0 AND group_id = ".$modelGroup->id,
-                "order" => "id DESC",
-            ));
+
+            $model =  NewsRubrics::model()->find('url LIKE "'.$paramArr.'"');
+            if (!$model){ throw new CHttpException(404,'The page can not be found.'); }
+            $this->setSEO(Yii::app()->request->requestUri, 'Статьи', $model);
+
+
+            $pageArray = array();
+            $pageArray[0]['name'] = ' / '.$model->name;
+            $pageArray[0]['url'] = null;
+            $i = 1;
+            foreach ($model->ancestors()->findAll('level>1') as $data){
+                $pageArray[$i]['name'] = ' / '.$data->name;
+                $pageArray[$i]['url'] = 'news/'.$data->url;
+                ++$i;
+            }
+            rsort($pageArray);
+
+
+
+
+            if (count($pageArray)>1) { rsort($pageArray); }
+
+            $modelElements = NewsElements::model()->findAll('parent_id = '.$model->id.' AND `status`=1 ORDER BY `primary` DESC');
+
+            $model = $model->descendants(1)->findAll($model->id);
 
             $render = 'index';
         }
 
 
-        if (empty($model)){throw new CHttpException(404,'The page can not be found.');}
-        $this->render($render, array('model'=>$model));
+
+
+        $this->render($render, array('model'=>$model, 'modelElements'=>$modelElements,  'pageArray' => $pageArray));
+
     }
+
+
 
 
 }

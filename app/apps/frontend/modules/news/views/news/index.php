@@ -1,29 +1,40 @@
-<table class="moduletable" cellpadding="0" cellspacing="0">
-	<tr>
-		<td>
-			<!-- Выводим группы новостей -->
-			<?php foreach ( $model['group'] as $data ) { ?>
-                <div class="menuinside3"><a href="<?=Pages::returnUrl($data->url);?>"><?=$data->name;?></a></div>
-			<?php } ?>
-		</td>
-	</tr>
-</table>
+<div class="container">
 
-<h1 class="lined nopaddingtop" style="margin-top: 10px;">Новости</h1>
+    <?php foreach ($model as $data) { ?>
+        <b><a href="<?=Pages::returnUrl($data->url);?>">
+                <?=$data->name;?> (
+                <?=NewsElements::model()->getCountElements($data->id);?>)</a></b>
+    <?php } ?>
 
-    <!-- Выводим новости без групп -->
-    <section>
-        <div class="news-block">
-            <main role="main" class="all">
-                <div class="">
-                    <?php $i = 0; ?>
-                    <?php foreach ( $model['no_group'] as $data ) { ?>
-                        <?php ++$i;?>
-                        <?php if ($i%2!=0){ echo '<div class="press-line">'; }?>
-                            <?=NewsGroup::model()->returnDesignElement($data);?>
-                        <?php if ($i%2==0){ echo '</div>'; }?>
-                    <?php } ?>
+</div>
+
+
+<?php
+if (!empty($modelElements)){
+    ?>
+    <?php foreach ($modelElements as $data) { ?>
+
+        <news>
+            <div class="news_block">
+                <a href="<?=Pages::returnUrl($data->id);?>">
+                    <?=$data->name;?>
+                    <span>/ <?=(date('d.m.Y', strtotime($data->maindate)));?></span>
+                </a>
+                <div class="news_block_content">
+                    <?php
+                    if (!empty($data->image)){ ?>
+                        <div style="float:left;">
+                            <img src="/uploads/filestorage/news/elements/small-<?=$data->id;?>.<?=$data->image;?>">
+                        </div>
+                    <?php }
+                    ?>
+                    <div style="padding-left: 120px;">
+                        <?=$data->brieftext;?>
+                    </div>
                 </div>
-            </main>
-        </div>
-    </section>
+            </div>
+        </news>
+
+
+    <?php } ?>
+<?php } ?>

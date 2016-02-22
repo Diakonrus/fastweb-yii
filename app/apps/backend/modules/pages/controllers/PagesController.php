@@ -150,12 +150,8 @@ class PagesController extends Controller
                     $filepatch = '/../uploads/filestorage/menu/elements/';
                     $model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
                     //получаем размер
-                    $image_x = (int)$_POST['image_x'];
-                    if ($image_x == 0){
-                        //Размер не указан либо указан неверно - беру размеры исходной картинки
-                        $size = getimagesize(YiiBase::getPathOfAlias('webroot').$filepatch.$filename);
-                        $image_x = $size[0];
-                    }
+                    $size = getimagesize(YiiBase::getPathOfAlias('webroot').$filepatch.$filename);
+                    $image_x = $size[0];
                     //Создаем копии
                     $this->chgImg(YiiBase::getPathOfAlias('webroot').$filepatch, $filename, 'menu-'.$model->id.'.'.$model->image, $image_x, 100);
                 }

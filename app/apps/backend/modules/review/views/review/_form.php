@@ -67,6 +67,55 @@ else {
 Yii::import('ext.imperavi-redactor-widget-master.ImperaviRedactorWidget');
 
 
+echo $form->labelEx($model,'brieftext');
+
+$this->widget('ImperaviRedactorWidget', array(
+    'model' => $model,
+    'attribute' => 'brieftext',
+
+    'options' => array(
+        'lang' => 'ru',
+        'cleanOnPaste'=>false,
+        'cleanStyleOnEnter'=>true,
+        'cleanSpaces'=>false,
+        'replaceDivs' => false,
+        'imageUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/imageUpload'),
+        'fileUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/fileUpload'),
+        'imageManagerJson'=> Yii::app()->createAbsoluteUrl('/pages/pages/getImageLibray'),
+    ),
+    'plugins' => array(
+        'fullscreen' => array(
+            'js' => array('fullscreen.js',),
+        ),
+        'video' => array(
+            'js' => array('video.js',),
+        ),
+        'table' => array(
+            'js' => array('table.js',),
+        ),
+        'fontcolor' => array(
+            'js' => array('fontcolor.js',),
+        ),
+        'fontfamily' => array(
+            'js' => array('fontfamily.js',),
+        ),
+        'fontsize' => array(
+            'js' => array('fontsize.js',),
+        ),
+        'filemanager' => array(
+            'js' => array('filemanager.js',),
+        ),
+        'myphotogalery' => array(
+            'js' => array('myphotogalery.js',),
+        ),
+        'imagemanager' => array(
+            'js' => array('imagemanager.js',),
+        ),
+    ),
+));
+
+
+
 echo $form->labelEx($model,'review');
 
 $this->widget('ImperaviRedactorWidget', array(
@@ -113,7 +162,6 @@ $this->widget('ImperaviRedactorWidget', array(
         ),
     ),
 ));
-
 
 ?>
 
