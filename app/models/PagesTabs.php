@@ -123,11 +123,14 @@ class PagesTabs extends CActiveRecord
     //Список модулей которые доступны для вкладок
     private $moduleID = array(
         1 =>'{{news_group}}', //Новости
+        6 => '{{article_rubrics}}', //статьи
         7 => '{{faq_rubrics}}', //Вопросы-ответы
         10 => '{{doctor_elements}}',  //Врачи
-        11 => '{{photoalbum}}',  //Фотогалерея
+        11 => '{{photo_rubrics}}',  //Фотогалерея
         12 => '{{before_after_rubrics}}',  //До и После
         13 => '{{main_tabel}}',  //Таблицы
+        16 => '{{review_rubrics}}',  //Таблицы
+        17 => '{{html_code}}',  //HTML код
     );
 
     /**
@@ -151,13 +154,30 @@ class PagesTabs extends CActiveRecord
     public function getModuleValue($id){
         $result = array();
         $tabel_name = $this->moduleID[$id];
-        foreach ( Yii::app()->db->createCommand()
-            ->select('*')
-            ->from($tabel_name)
-            ->queryAll() as $data ){
-            if ( (isset($data['level']) && $data['level']==1) || (isset($data['status']) && $data['status']==0) ){continue;}
-            $result[$data['id']] = $data['name'];
+
+        if ( !Yii::app()->db->createCommand("show columns from ".$tabel_name." where `Field` = 'level'")->queryRow() ){
+            $i = 0;
+            foreach ( Yii::app()->db->createCommand()
+                          ->select('*')
+                          ->from($tabel_name)
+                          ->queryAll() as $data ){
+                if ( (isset($data['level']) && $data['level']==1) || (isset($data['status']) && $data['status']==0) ){continue;}
+                $result[$i]['id'] = $data['id'];
+                $result[$i]['name'] = $data['name'];
+                ++$i;
+            }
+
+        } else {
+            $root =  Yii::app()->db->createCommand()->select('id, left_key, right_key')->from($tabel_name)->where('level = 1')->queryRow();
+            $sql = 'SELECT `id`, `parent_id`, `name`, `level` FROM '.$tabel_name.' WHERE `level`>1 AND left_key >= '.((int)$root['left_key']).' AND right_key <= '.((int)$root['right_key']).' ORDER BY left_key';
+            $i = 0;
+            foreach ( Yii::app()->db->createCommand($sql)->queryAll() as $data) {
+                $result[$i]['id'] = $data['id'];
+                $result[$i]['name'] = ((((int)$data['level']>2))?(str_repeat('&nbsp;&nbsp;&nbsp;', (int)$data['level']).$data['name']):('<b>'.$data['name'].'</b>'));
+                ++$i;
+            }
         }
+
 
         return $result;
     }
@@ -178,12 +198,12 @@ class PagesTabs extends CActiveRecord
      */
     public function addTabs($modelPage, $arrayData){
 
+        //Удаляем все вкладки для этой страницы перед началом
+        PagesTabs::model()->deleteAll('pages_id = '.$modelPage->id);
+
         if (!isset($arrayData['site_module_value']) || !isset($arrayData['site_module_id'])){
             return false;
         }
-
-        //Удаляем все вкладки для этой страницы перед началом
-        PagesTabs::model()->deleteAll('pages_id = '.$modelPage->id);
 
         $insertVal = array();
 
@@ -311,8 +331,39 @@ class PagesTabs extends CActiveRecord
                         ',
                 );
                 break;
-            case 7:
-                //Вопросы-ответы
+            case 6:
+                //Статьи
+                $template = array(
+                    //Белый фон
+                    1 => '
+                        <div class="spisok">
+                            <main class="all" role="main">
+                                <div class="container">
+                                    <h1 class="main-caption mg-bottom-24 caption-big">%title%</h1>
+                                    %module_value%
+                                </div>
+                            </main>
+                        </div>
+                    ',
+                    //Серый фон
+                    2 => '
+                        <main class="all" role="main">
+                            <div class="container">
+                                <h2 class="main-caption mg-bottom-24">%title%</h2>
+                            </div>
+                        </main>
+                        <div class="spisok fogr gray-bg">
+                            <main class="all" role="main" style="padding-top:20px;">
+                                <div class="container">
+                                    %module_value%
+                                </div>
+                            </main>
+                        </div>
+                        ',
+                );
+                break;
+            case 16:
+                //Отзывы
                 $template = array(
                     //Белый фон
                     1 => '
@@ -342,7 +393,37 @@ class PagesTabs extends CActiveRecord
                         ',
                     );
                 break;
-
+            case 7:
+                //Вопросы-ответы
+                $template = array(
+                    //Белый фон
+                    1 => '
+                        <div class="spisok">
+                            <main class="all" role="main">
+                                <div class="container faq" style="background: #ffffff;">
+                                    <h1 class="main-caption mg-bottom-24 caption-big">%title%</h1>
+                                    %module_value%
+                                </div>
+                            </main>
+                        </div>
+                    ',
+                    //Серый фон
+                    2 => '
+                        <main class="all" role="main">
+                            <div class="container">
+                                <h2 class="main-caption mg-bottom-24">%title%</h2>
+                            </div>
+                        </main>
+                        <div class="spisok fogr gray-bg">
+                            <main class="all" role="main" style="padding-top:20px;">
+                                <div class="container faq">
+                                    %module_value%
+                                </div>
+                            </main>
+                        </div>
+                        ',
+                );
+                break;
             case 10:
                 //Врачи
                 $template = array(
@@ -395,38 +476,6 @@ class PagesTabs extends CActiveRecord
 
             case 11:
                 //Фотогалерея
-                /*
-                $template = array(
-                    //Белый фон
-                    1 => '
-                            <main class="all" role="main">
-                                <div class="container video-caption">
-                                    <h1>%title%</h1>
-                                </div>
-                            </main>
-                            <main class="all" role="main">
-                                <div class="container">
-                                    %description%
-                                </div>
-                            </main>
-                            %module_value%
-                        ',
-                    //Серый фон
-                    2 => '
-                            <main class="all" role="main">
-                                <div class="container video-caption">
-                                    <h1>%title%</h1>
-                                </div>
-                            </main>
-                            <main class="all" role="main">
-                                <div class="container">
-                                    %description%
-                                </div>
-                            </main>
-                            %module_value%
-                        ',
-                );
-                */
                 $template = array(
                     //Белый фон
                     1 => '
@@ -522,8 +571,10 @@ class PagesTabs extends CActiveRecord
 
         //Для врачей %module_value% - это карусель, для других вариантов - повторяем темплейт для каждого элемента
         $module_value_array = array();
+        $module_count_elements = 0;
         foreach ( (explode("|", $model->site_module_value)) as $data ){
             if (empty($data)){ continue; }
+            ++$module_count_elements;
             $module_value_array[$data] = $data;
         }
 
@@ -535,19 +586,49 @@ class PagesTabs extends CActiveRecord
                 $tmp_module_value = '';
                 foreach ($module_value_array as $value){
                     if ($modelData = NewsGroup::model()->find('id in ('.$value.') AND `status` = 1') ){
-                        $modelElements = News::model()->find('group_id='.$modelData->id.' AND `status` = 1');
-                        $tmp_module_value .= '
-                        <div class="ot">
-                            <span href="#">'.$modelData->name.' - '.(date("d.m.Y", strtotime($modelElements->maindate))).'</span></span><BR>
-                            '.$modelElements->name.'
-                        ';
-                        if (!empty($modelElements->brieftext)){
-                            $tmp_module_value .= $modelElements->brieftext;
+                        $i = 0;
+                        $count = 5;
+                        foreach (News::model()->findAll('group_id='.$modelData->id.' AND `status` = 1') as $modelElements ) {
+                            ++$i;
+                            if ($i > $count) {continue;}
+                            $tmp_module_value .= '
+                            <div class="ot">
+                                <span href="#">'.$modelData->name.' - '.
+                                    (date("d.m.Y", strtotime($modelElements->maindate))).'</span></span><BR>
+                                '.$modelElements->name.'
+                            ';
+                            if (!empty($modelElements->brieftext)){
+                                $tmp_module_value .= '<BR>'.$modelElements->brieftext;
+                            }
+                            $tmp_module_value .= '</div>';
                         }
-                        $tmp_module_value .= '<a class="all-otv" href="/question/'.$modelData->url.'">Все новости</a>';
+                        if ($i>0) { $tmp_module_value .= '<a class="all-otv" href="/news/'.$modelData->url.'">Все новости</a>'; }
                     }
                 }
 
+                $resultHTML = $template_tmp;
+                $title = $model->title;
+                $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
+                break;
+            case 6:
+                //Статьи
+                $tmp_module_value = '';
+                foreach ($module_value_array as $value){
+                    if ($modelData = ArticleRubrics::model()->find('id in ('.$value.') AND `status` = 1') ){
+                        $i = 0;
+                        $count = 5;
+                        foreach (ArticleElements::model()->findAll('parent_id='.$modelData->id.' AND `status` = 1') as $modelElements ){
+                            ++$i;
+                            if ($i>$count){continue;}
+                            $tmp_module_value .= '
+                            <div class="review_block">
+                                <span>'.$modelElements->name.' - '.(date("d.m.Y", strtotime($modelElements->maindate))).'</span><BR>
+                                <p>'.$modelElements->brieftext.'</p>
+                            </div>';
+                        }
+                        if ($i>0) { $tmp_module_value .= '<a class="all-otv" style="margin-bottom:20px;" href="'.Yii::app()->request->requestUri.'/'.(($module_count_elements>1)?($modelData->url.'/'):('')).'article">Все статьи</a>'; }
+                    }
+                }
                 $resultHTML = $template_tmp;
                 $title = $model->title;
                 $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
@@ -557,20 +638,56 @@ class PagesTabs extends CActiveRecord
                 $tmp_module_value = '';
                 foreach ($module_value_array as $value){
                     if ($modelData = FaqRubrics::model()->find('id in ('.$value.') AND `status` = 1') ){
-                        $modelElements = FaqElements::model()->find('parent_id='.$modelData->id.' AND `status` = 1');
-                        $modelAuthor = FaqAuthor::model()->findByPk($modelElements->author_id);
-                        $tmp_module_value .= '
-                        <div class="ot">
-                            <span href="#">'.$modelAuthor->name.'<span> / '.$modelData->name.' - '.(date("d.m.Y", strtotime($modelElements->created_at))).'</span></span>
-                            '.$modelElements->question.'
-                        ';
-                        if (!empty($modelElements->answer)){
-                            $tmp_module_value .= '<span class="otv" href="#">ОТВЕТ</span>'.$modelElements->answer.'';
+                        $i = 0;
+                        $count = 5;
+                        foreach (FaqElements::model()->findAll('parent_id='.$modelData->id.' AND `status` = 1') as $modelElements ){
+                            ++$i;
+                            if ($i>$count){continue;}
+                            $modelAuthor = FaqAuthor::model()->findByPk($modelElements->author_id);
+                            $tmp_module_value .= '
+                                <article>
+                                    <div class="question">
+                                            <span href="#" style="color:#ed174f; font-size: 16px; font-weight: bold; margin-left: 20px;">'.$modelAuthor->name.'<span> / '.$modelData->name.' - '.(date("d.m.Y", strtotime($modelElements->question_data))).'</span></span>
+                                            <div class="q_data">
+                                                '.$modelElements->question.'
+                                            </div>
+                                    </div>
+                                ';
+                            if (!empty($modelElements->answer)){
+                                $tmp_module_value .= '<div class="unswer"><div class="u_data">'.$modelElements->answer.'</div></div>';
+                            }
+                            $tmp_module_value .= '</article>';
                         }
-                        $tmp_module_value .= '<a class="all-otv" href="/question/'.$modelData->url.'">Все ответы</a>';
+
+                        if ($i>0) { $tmp_module_value .= '<a class="all-otv" href="'.Yii::app()->request->requestUri.'/'.(($module_count_elements>1)?($modelData->url.'/'):('')).'faq" style="position:relative; z-index:99999; margin-bottom:20px;">Все ответы</a>'; }
                     }
                 }
 
+                $resultHTML = $template_tmp;
+                $title = $model->title;
+                $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
+                break;
+            case 16:
+                //Отзывы
+                $tmp_module_value = '';
+                foreach ($module_value_array as $value){
+                    if ($modelData = ReviewRubrics::model()->find('id in ('.$value.') AND `status` = 1') ){
+                        $i = 0;
+                        $count = 5;
+                        foreach (ReviewElements::model()->findAll('parent_id='.$modelData->id.' AND `status` = 1') as $modelElements ) {
+                            ++$i;
+                            if ($i > $count) {continue;}
+                            $modelAuthor = ReviewAuthor::model()->findByPk($modelElements->author_id);
+                            $tmp_module_value .= '
+                            <div class="review_block" style="padding: 10px; margin-bottom: 10px; margin-top:20px;">
+                                <span href="#">'.$modelAuthor->name.'<span> / '.$modelData->name.' - '.(date("d.m.Y", strtotime($modelElements->review_data))).'</span></span><BR>
+                                <p>'.$modelElements->review.'</p>
+                            </div>';
+
+                        }
+                        if ($i>0) { $tmp_module_value .= '<a class="all-otv" href="'.Yii::app()->request->requestUri.'/'.(($module_count_elements>1)?($modelData->url.'/'):('')).'review" style="position:relative; z-index:99999; margin-bottom:20px;">Все отзывы</a>'; }
+                    }
+                }
                 $resultHTML = $template_tmp;
                 $title = $model->title;
                 $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
@@ -600,56 +717,18 @@ class PagesTabs extends CActiveRecord
                 break;
             case 11:
                 //Фотогалерея
-                /*
-                $tmp_module_value = '
-                <main class="all" role="main">
-                    <div class="container video-caption">
-                        <ul class="tab-lincks">
-                ';
-                $tmp_model = Photoalbum::model()->findAll('id in ('.(implode(",", $module_value_array)).')');
-                $i = 0;
-                foreach ($tmp_model as $data){
-                    $tmp_module_value .= '<li><a class="'.($i==0?"active":"").'" href="/photo/'.$data->id.'">'.$data->name.'</a></li>';
-                    ++$i;
-                }
-                $tmp_module_value .= '
-                            </ul>
-                        </div>
-                    </main>
-                ';
 
-                $tmp_module_value .= '
-                <div class="news-block">
-                    <main class="all" role="main">
-                        <div class="container news-all photo">
-                ';
-                foreach ( PhotoalbumElements::model()->findAll() as $data ){
-                    $tmp_module_value .= '
-                    <figure class="title-show" title="Процедура омоложения">
-                        '.((!empty($data->image))?('<img src="/uploads/filestorage/photoalbum/photos/medium-'.$data->id.'.'.$data->image.'">'):('')).'
-                    </figure>
-                ';
-                }
-                $tmp_module_value .= '
-                        </div>
-                    </main>
-                </div>
-                ';
-
-
-                $resultHTML = $template_tmp;
-                $title = $model->title;
-                $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
-                break;
-                */
                 $tmp_module_value = '';
 
-                foreach ( PhotoalbumElements::model()->findAll('photoalbum_id in ('.(implode(",", $module_value_array)).')') as $data ){
+                foreach ( PhotoElements::model()->findAll('parent_id in ('.(implode(",", $module_value_array)).')') as $data ){
                     $tmp_module_value .= '
                     <div class="item">
                             <div class="doctor">
                                 <figure>
-                                    '.( (!empty($data->image))?('<a href="/photo/'.$data->photoalbum_id.'"><img src="/uploads/filestorage/photoalbum/photos/medium-'.$data->id.'.'.$data->image.'"></a>'):'' ).'
+                                    '.( (!empty($data->image))?('<a href="/photo/'.$data->parent->url.'">
+                                    <div style="height: 212px; background: url(/uploads/filestorage/photo/elements/medium-'.$data->id.'.'.$data->image.') 100% 100% no-repeat; background-size: cover;">
+                                    </div>
+                                    </a>'):'' ).'
                                 </figure>
                             </div>
                     </div>
@@ -672,6 +751,7 @@ class PagesTabs extends CActiveRecord
                             foreach ($modelTop->ancestors()->findAll('level>1') as $dataTop){
                                 $parent_url[] = $dataTop->url;
                             }
+                            $parent_url[] = $modelTop->url;
                         }
                         $tmp_module_value .= '
                         <div class="container">
@@ -680,11 +760,11 @@ class PagesTabs extends CActiveRecord
                                 <a href="/before-after/'.(!empty($parent_url)?(implode("/", $parent_url)):'').'">
                                 <div class="after">
                                     <figure>
-                                        <img src="/uploads/filestorage/beforeafter/elements/large-before_' . $modelImage->id . '.' . $modelImage->before_photo . '">
+                                        <img src="/uploads/filestorage/beforeafter/elements/medium2-before_' . $modelImage->id . '.' . $modelImage->before_photo . '">
                                         <figcaption> ДО </figcaption>
                                     </figure>
                                     <figure>
-                                        <img src="/uploads/filestorage/beforeafter/elements/large-after_' . $modelImage->id . '.' . $modelImage->before_photo . '">
+                                        <img src="/uploads/filestorage/beforeafter/elements/medium2-after_' . $modelImage->id . '.' . $modelImage->before_photo . '">
                                         <figcaption> ПОСЛЕ </figcaption>
                                     </figure>
                                 </div>
@@ -697,6 +777,16 @@ class PagesTabs extends CActiveRecord
 
                 $resultHTML = $template_tmp;
                 $title = $model->title;
+                $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
+                break;
+            case 17:
+                //HTML код
+                $tmp_module_value = '';
+                foreach ( HtmlCode::model()->findAll('id in ('.(implode(",", $module_value_array)).') AND `status`=1') as $data ) {
+                    $tmp_module_value .= $data->code;
+                }
+                $resultHTML = $template_tmp;
+                $title = '';
                 $resultHTML = str_replace("%module_value%", $tmp_module_value, $resultHTML);
                 break;
             default:
