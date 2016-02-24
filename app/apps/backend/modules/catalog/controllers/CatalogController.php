@@ -638,13 +638,33 @@ class CatalogController extends Controller
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
             if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
             if ($model->save()){
+				$filepatch = '/../uploads/filestorage/catalog/elements/';
+
                 if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 4')){
                     $filename = $model->id.'.'.$model->image;
-                    $filepatch = '/../uploads/filestorage/catalog/elements/';
                     $model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
                     //Обработка изображения
                     SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 2,$model->id);
                 }
+
+				//загрузка дополнительных картинок
+				$files = CUploadedFile::getInstances($model, 'imagefiles');
+				if (!empty($files)){
+					foreach($files as $file)
+					{
+						$modelImages = new CatalogElementsImages();
+						$modelImages->elements_id = $model->id;
+						$modelImages->image_name = $model->id.'_'.(md5((date('Y-m-d H:i:s')).'-'.rand()));
+						$ext = pathinfo($file->getName());
+						$modelImages->image = $ext['extension'];
+						$modelImages->save();
+						$uplod_file_url = YiiBase::getPathOfAlias('webroot').$filepatch.'/'.$modelImages->image_name.'.'.$modelImages->image;
+						$uplod_file_url = $file->saveAs($uplod_file_url);
+					}
+					SiteModuleSettings::model()->chgImgagesCatalogModel($model->id, 'GD');
+				}
+
+
                $this->redirect(array('updateproduct','id'=>$model->id));
             }
         }
@@ -674,14 +694,35 @@ class CatalogController extends Controller
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
             if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
             if ($model->save()){
+
+				$filepatch = '/../uploads/filestorage/catalog/elements/';
+
                 if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 4')){
                     $filename = $model->id.'.'.$model->image;
-                    $filepatch = '/../uploads/filestorage/catalog/elements/';
                     $model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
                     //Обработка изображения
                     SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 2,$model->id);
 
                 }
+
+				//загрузка дополнительных картинок
+				$files = CUploadedFile::getInstances($model, 'imagefiles');
+				if (!empty($files)){
+					foreach($files as $file)
+					{
+						$modelImages = new CatalogElementsImages();
+						$modelImages->elements_id = $model->id;
+						$modelImages->image_name = $model->id.'_'.(md5((date('Y-m-d H:i:s')).'-'.rand()));
+						$ext = pathinfo($file->getName());
+						$modelImages->image = $ext['extension'];
+						$modelImages->save();
+						$uplod_file_url = YiiBase::getPathOfAlias('webroot').$filepatch.'/'.$modelImages->image_name.'.'.$modelImages->image;
+						$uplod_file_url = $file->saveAs($uplod_file_url);
+					}
+					SiteModuleSettings::model()->chgImgagesCatalogModel($model->id, 'GD');
+				}
+
+
                 $this->redirect(array('updateproduct','id'=>$model->id));
             }
         }
@@ -693,6 +734,20 @@ class CatalogController extends Controller
 
     }
 
+	//Удаляет изображения  загруженные группой
+	public function actionDeleteimages($id){
+		if($model = CatalogElementsImages::model()->findByPk((int)$id)){
+			$id = $model->elements_id;
+			foreach (array('admin','small','medium','large') as $name){
+				$url_to_file = YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/elements/'.$name.'-'.$model->image_name.'.'.$model->image;
+				if (file_exists( $url_to_file )){
+					unlink($url_to_file);
+				}
+			}
+			$model->delete();
+		}
+		$this->redirect(array('updateproduct','id'=>$id));
+	}
 
 
 

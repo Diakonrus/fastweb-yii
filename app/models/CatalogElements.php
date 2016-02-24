@@ -25,6 +25,8 @@ class CatalogElements extends CActiveRecord
 
     public $serch_name_code;
     public $imagefile;
+	public $imagefiles;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -51,6 +53,7 @@ class CatalogElements extends CActiveRecord
 			array('brieftext', 'length', 'max'=>1000),
 
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
+			array('imagefiles', 'file', 'types'=>'jpg, gif, png, jpeg', 'maxFiles'=>10, 'allowEmpty' => true),
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -85,6 +88,8 @@ class CatalogElements extends CActiveRecord
 			'ansvtype' => 'Ansvtype',
 			'hit' => 'Hit',
 			'image' => 'Изображение',
+			'imagefile' => 'Основное (главное) изображение товара',
+			'imagefiles' => 'Дополнительные изображения товара',
 			'page_name' => 'Page Name',
 			'description' => 'Описание',
 			'fkey' => 'Fkey',

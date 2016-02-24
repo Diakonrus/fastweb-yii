@@ -21,61 +21,57 @@
 			$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/'.$model->id.'.'.$model->image;
 			if (file_exists($filename)){ $url_img = '/uploads/filestorage/catalog/elements/'.$model->id.'.'.$model->image; }
 			if (file_exists($filename)){ $url_img_small = '/uploads/filestorage/catalog/elements/small-'.$model->id.'.'.$model->image; }
-			if (file_exists($filename)){ $url_img_medium = '/uploads/filestorage/catalog/elements/medium2-'.$model->id.'.'.$model->image; }
+			if (file_exists($filename)){ $url_img_medium = '/uploads/filestorage/catalog/elements/large-'.$model->id.'.'.$model->image; }
 
 		?>
 
 		
 
-		<div class="item-page-img-additional">
-			<ul class="bxslider">
-				<li>
-					<a class="example-image-link-additional group" href="<?=$url_img?>" data-lightbox="example-1" rel="gallery-2">
-						<img src="<?=$url_img_small?>" style="max-width: 300px;" alt=""/>
+		<div class="item-page-img-additional thumb_pager">
+			<ul class="th_slide">
+				<li class="active">
+					<a class="fancy_slide" href="<?=$url_img?>" data-slide-index="0" data-lightbox="example-1" rel="gallery-2">
+						<img src="<?=$url_img_small?>"  alt=""/>
             		</a>
-            	</li>	
+            	</li>
 
-            	<li>
-					<a class="example-image-link-additional group" href="<?=$url_img?>" data-lightbox="example-1" rel="gallery-2">
-							<img src="<?=$url_img_small?>" style="max-width: 300px;" alt=""/>
-	            	</a>
-				</li>
+				<!-- Дополнительные картинки -->
+				<?php foreach ($modelImages as $data) { ?>
+					<?php
+						$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/'.$data->image_name.'.'.$data->image;
+						if (file_exists($filename)){ $url_imgs = '/uploads/filestorage/catalog/elements/'.$data->image_name.'.'.$data->image; }
+						if (file_exists($filename)){ $url_imgs_small = '/uploads/filestorage/catalog/elements/small-'.$data->image_name.'.'.$data->image; }
+						if (file_exists($filename)){ $url_imgs_medium = '/uploads/filestorage/catalog/elements/large-'.$data->image_name.'.'.$data->image; }
+					?>
 
-				<li>
-					<a class="example-image-link-additional group" href="<?=$url_img?>" data-lightbox="example-1" rel="gallery-2">
-							<img src="<?=$url_img_small?>" style="max-width: 300px;" alt=""/>
-	            	</a>
-				</li>
+					<li>
+						<a class="fancy_slide" href="<?=$url_imgs?>" data-slide-index="1" data-lightbox="example-1" rel="gallery-2">
+							<img src="<?=$url_imgs_small?>" alt=""/>
+						</a>
+					</li>
 
-				<li>
-					<a class="example-image-link-additional group" href="<?=$url_img?>" data-lightbox="example-1" rel="gallery-2">
-							<img src="<?=$url_img_small?>" style="max-width: 300px;" alt=""/>
-	            	</a>
-				</li>
+				<?php } ?>
 
-				<li>
-					<a class="example-image-link-additional group" href="<?=$url_img?>" data-lightbox="example-1" rel="gallery-2">
-							<img src="<?=$url_img_small?>" style="max-width: 300px;" alt=""/>
-	            	</a>
-				</li>
-
-				<li>
-					<a class="example-image-link-additional group" href="<?=$url_img?>" data-lightbox="example-1" rel="gallery-2">
-							<img src="<?=$url_img_small?>" style="max-width: 300px;" alt=""/>
-	            	</a>
-				</li>
 				
 			</ul>
 
-			<?php if ($model->shares == 1){ ?>
-				<h1>НА ЭТОТ ТОВАР ДЕЙСТВУЕТ АКЦИЯ!</h1>
-			<?php } ?>
+
+
+
 			
 		</div>
-		<div class="item-page-img">
-            <a class="example-image-link group" href="<?=$url_img?>" data-lightbox="example-1" rel="gallery-2">
-				<img src="<?=$url_img_medium?>" style="max-width: 300px;" alt=""/>
-            </a>
+		<div class="item-page-img thumb_slider">
+			<div class="img_slide">
+				<a class="example-image-link group product_big_img" href="<?=$url_img?>" data-lightbox="example-1" rel="gallery-2">
+					<?php if ($model->shares==1){ ?>
+						<div class="shares">
+
+						</div>
+					<?php } ?>
+					<img src="<?=$url_img_medium?>" class="product_cart_big_img"  alt=""/>
+				</a>
+			</div>
+
         </div>		
         <div class="item-page-params">
             <div class="item-detail-text" style="display:none;">
@@ -93,12 +89,14 @@
 				<?endif; ?>
 				
 				<div class="product_price_block">
-					<div class="product_price">
+					<div class="product_price <?php if ($model->price_old > 0){ ?>product_old_price_active<?php } ?>">
 	            		<?=$model->price;?> руб
 	           	 	</div>
+					<?php if ($model->price_old > 0){ ?>
 	           	 	<div class="product_old_price">
 						<?=$model->price_old;?> руб.
 	           	 	</div>
+					<?php } ?>
 				</div>
 	            
 
@@ -109,7 +107,8 @@
 						 names="<?=$model->name;?>"
 						 pic="<?=$url_img?>"
 						 price="<?=$model->price?>"
-					     old_price="199990"
+					     old_price="<?=$model->price_old;?>"
+					     sales="<?php if ($model->shares==1){ ?>1<?php } ?>"
 						 >
 						Заказать
 					</a>

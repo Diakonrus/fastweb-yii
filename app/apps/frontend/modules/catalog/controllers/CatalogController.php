@@ -5,6 +5,7 @@ class CatalogController extends Controller
 
     public $layout='//layouts/main';
 
+
 	/*
 		Функция для дыстрого заказа в 1 клик товара
 	*/
@@ -74,6 +75,7 @@ class CatalogController extends Controller
 
 	//ToDo Не забыть про 404 страницу
 	public function actionIndex($param = null){
+		if (SiteModuleSettings::model()->find('site_module_id = 4 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
 		$data = array();
 		$filters='';
 
@@ -340,6 +342,7 @@ class CatalogController extends Controller
 
 	public function actionList($param)
 	{
+		if (SiteModuleSettings::model()->find('site_module_id = 4 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
 		$filters='';
 		$pages=false;
 		
@@ -655,6 +658,7 @@ class CatalogController extends Controller
 			$render = 'show';
 			$data['modelChars'] = $modelChars;
 			$data['model'] = $model;
+			$data['modelImages'] = CatalogElementsImages::model()->findAll('elements_id = '.$model->id);
 		}
 		//Ищем в URL как катаог
 		elseif (Pages::model()->find('url LIKE "'.$url.'"')){

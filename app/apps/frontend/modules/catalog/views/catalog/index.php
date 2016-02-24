@@ -27,25 +27,23 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 	?>
 	<div class="items-block-item">
 		<a href="<?=$url;?>" class="items-block-item-img">
-			<table>
-				<tr><td></td></tr>
-				<tr><td class="rollover"><img src="<?=$url_img?>" alt=""></td></tr>
-				<tr><td></td></tr>
-			</table>
+			<div class="rollover">
+				<?php if ($data->shares==1){ ?>
+					<div class="shares"></div>
+				<?php } ?>
+				<img src="<?=$url_img?>" alt="">
+			</div>
 		</a>
 		<div class="product_info_block">
 			<a class="items-block-item-name" href="<?=$url;?>"><?=$data->name;?></a>
 			<div class="item-price-count">
-				<div class="items-block-item-price"><?=$data->price;?> руб.</div>
-				<div class="old_price_product_cat">
-					<?=$data->price_old;?> руб.
-				</div>
-
-				<?php if ($data->shares==1){ ?>
-					<div class="shares">
-						<p>НА ЭТОТ ТОВАР ДЕЙСТВУЕТ АКЦИЯ!</p>
+				<div class="items-block-item-price <?php if ($data->price_old > 0){ ?> old_price_active <?php } ?>"><span><?=$data->price;?> руб.</span></div>
+				<?php if ($data->price_old > 0){ ?>
+					<div class="old_price_product_cat">
+						<span><?=$data->price_old;?> руб.</span>
 					</div>
 				<?php } ?>
+
 
 				<div class="item-count-area">
 					<a href="" class="item-count-inc"></a>
@@ -65,7 +63,9 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 				   pic="<?=$url_img?>"
 				   price="<?=$data->price?>"
 				   old_price="<?=$data->price_old;?>"
+				   sales="<?php if ($data->shares==1){ ?>1<?php } ?>"
 				>
+
 					Заказать
 				</a>
 			</div>

@@ -1,0 +1,516 @@
+<?php
+
+class CatalogController extends Controller
+{
+
+    public $layout='//layouts/main';
+
+    public function init(){
+        //Проверяю что модуль не отключен
+        if (SiteModuleSettings::model()->find('site_module_id = 4 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//ToDo Не забыть про 404 страницу
+	public function actionIndex(){
+		$data = array();
+		$filters='';
+
+		$data = CatalogElements::fn__get_filters($data,0);
+
+		
+		$where = "status=1 AND `price`>=".$data['price_cur_min']." AND `price`<=".$data['price_cur_max']."";
+
+
+//==============================================================================
+			$checks_arr_str = array();
+			if ((isset($data['checks1']))&&(is_array($data['checks1']))&&(count($data['checks1'])))
+			{
+				foreach ($data['checks1'] as $checks_key => $checks_arr)
+				{
+					foreach ($checks_arr as $checks_arr_item)
+					{
+						$checks_arr_str[]="
+						(
+								`name` = '".CatalogElements::sql_valid($checks_key)."' 
+							AND 
+								`scale` = '".CatalogElements::sql_valid($checks_arr_item)."' 
+								AND
+									`filter_use` = 1
+								AND
+									`filter_range` = 0
+								AND
+									`type_parent` = 2
+						)";
+					}
+				}
+			}
+
+			if (count($checks_arr_str))
+			{
+				$_where = implode(' OR ',$checks_arr_str);
+				$where.= "
+					AND
+						`id` IN (
+							SELECT `parent_id` FROM `tbl_catalog_chars` WHERE ".$_where."
+						)
+					";
+			}
+			
+			
+			
+			$checks_arr_str2 = array();
+			$checks_arr_str3 = array();
+			if ((isset($data['checks2']))&&(is_array($data['checks2']))&&(count($data['checks2'])))
+			{
+				foreach ($data['checks2'] as $checks_key => $checks_value)
+				{
+					if (isset($checks_value['min']))
+					{
+						$checks_arr_str2[]="
+							(
+									`name` = '".CatalogElements::sql_valid($checks_key)."' 
+								AND 
+									`scale` >= ".intval($checks_value['min'])." 
+								AND
+									`filter_use` = 1
+								AND
+									`filter_range` = 1
+								AND
+									`type_parent` = 2
+							)";
+					}
+					if (isset($checks_value['max']))
+					{
+						$checks_arr_str2[]="
+							( 
+									`name` = '".CatalogElements::sql_valid($checks_key)."' 
+								AND
+									`scale` <= ".intval($checks_value['max'])." 
+								AND
+									`filter_use` = 1
+								AND
+									`filter_range` = 1
+								AND
+									`type_parent` = 2
+							)
+							";
+					}
+					
+					
+					if (isset($checks_value['nofilter']))
+					{
+						$checks_arr_str3[]="
+					OR `id` NOT IN (
+								SELECT 
+									`parent_id` 
+								FROM 
+									`tbl_catalog_chars` 
+								WHERE 
+									`name` = '".CatalogElements::sql_valid($checks_key)."' 
+								AND
+									`filter_use` = 1
+								AND
+									`filter_range` = 1
+								AND
+									`type_parent` = 2
+								)
+							";
+					}
+				}
+			}
+			//print_r($checks_arr_str2); exit;
+			
+			if (count($checks_arr_str2))
+			{
+				$_where = implode(' AND ',$checks_arr_str2);
+				$where.= "
+					AND
+					(
+						`id` IN (
+							SELECT `parent_id` FROM `tbl_catalog_chars` WHERE ".$_where."
+						)
+						".implode(' ',$checks_arr_str3)."
+					)
+					";
+			}
+//==============================================================================
+
+		
+		
+		$model = Yii::app()->db->createCommand()
+			->select('count(id) as count')
+			->from('{{catalog_elements}}')
+			->where($where)
+			->queryRow();
+		$count = ((current($model))-1);   //вычитае из резуьтата сам узел
+		
+		$criteria = new CDbCriteria();
+    $pages=new CPagination($count);
+    // элементов на страницу
+    $pages->pageSize=12;
+    $pages->applyLimit($criteria);
+    $data['pages']=$pages;
+    
+    $modelChars = CatalogChars::model()->findAll('
+    parent_id IN 
+   		(SELECT `id` FROM `tbl_catalog_elements` WHERE status = 1) 
+		AND
+			`type_scale` = 1
+		AND
+			`type_parent` = 2
+    AND 
+    	status = 1
+		AND
+			`filter_use` = 1
+    ');
+    $chars = array();
+    foreach ($modelChars as $item)
+    {
+			$chars[$item->name][]=array(
+				'scale'      => $item->scale,
+				'filter_range' => $item->filter_range,
+				);
+    }
+
+
+
+    
+    $params['uniqueid']=$this->uniqueid;
+    $params['data']=$data;
+    $params['chars']=$chars;
+    $filters=$this->widget('application.apps.frontend.components.Filters',array('params'=>$params), TRUE); 
+    $data['filters'] = $filters;
+		
+		$start = ((isset($_GET['page']))?intval($_GET['page']):0);
+		$model_elements = CatalogElements::model()->findAll(array(
+    'condition' => $where,
+    'order' => 'order_id',
+    'offset' => $start*12,
+    'limit' => 12,
+		));
+		//
+		$data['model_elements']=$model_elements;
+		$this->render('index', $data);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public function actionList($param)
+	{
+		$filters='';
+		$pages=false;
+		
+
+		//разбираем URL
+		$paramArr = explode("/", $param);
+		$url = array_pop($paramArr);
+
+		//есди URL - число, то мы на странице товара, если нет - список
+		if ((int)$url==0)
+		{
+			$data = array();
+			$modelRubric =  CatalogRubrics::model()->find('url LIKE ("'.$url.'")');
+			
+			if (!$modelRubric)
+			{ 
+				throw new CHttpException(404,'The page can not be found.'); 
+			}
+			
+			$data  = CatalogElements::fn__get_filters($data,$modelRubric->id);
+			$where = "
+					parent_id IN 
+						(
+							SELECT 
+								`id` 
+							FROM 
+								`tbl_catalog_rubrics`
+							WHERE
+								`left_key` >=".$modelRubric->left_key." 
+								AND 
+								`right_key` <= ".$modelRubric->right_key."
+						)
+					AND 
+						status=1 
+					AND 
+						`price`>=".$data['price_cur_min']." 
+					AND 
+						`price`<=".$data['price_cur_max']."";
+						
+			$checks_arr_str = array();
+			if ((isset($data['checks1']))&&(is_array($data['checks1']))&&(count($data['checks1'])))
+			{
+				foreach ($data['checks1'] as $checks_key => $checks_arr)
+				{
+					foreach ($checks_arr as $checks_arr_item)
+					{
+						$checks_arr_str[]="
+						(
+								`name` = '".CatalogElements::sql_valid($checks_key)."' 
+							AND 
+								`scale` = '".CatalogElements::sql_valid($checks_arr_item)."' 
+								AND
+									`filter_use` = 1
+								AND
+									`filter_range` = 0
+								AND
+									`type_parent` = 2
+						)";
+					}
+				}
+			}
+
+			if (count($checks_arr_str))
+			{
+				$_where = implode(' OR ',$checks_arr_str);
+				$where.= "
+					AND
+						`id` IN (
+							SELECT `parent_id` FROM `tbl_catalog_chars` WHERE ".$_where."
+						)
+					";
+			}
+			
+			
+			
+			$checks_arr_str2 = array();
+			$checks_arr_str3 = array();
+			if ((isset($data['checks2']))&&(is_array($data['checks2']))&&(count($data['checks2'])))
+			{
+				foreach ($data['checks2'] as $checks_key => $checks_value)
+				{
+					if (isset($checks_value['min']))
+					{
+						$checks_arr_str2[]="
+							(
+									`name` = '".CatalogElements::sql_valid($checks_key)."' 
+								AND 
+									`scale` >= ".intval($checks_value['min'])." 
+								AND
+									`filter_use` = 1
+								AND
+									`filter_range` = 1
+								AND
+									`type_parent` = 2
+							)";
+					}
+					if (isset($checks_value['max']))
+					{
+						$checks_arr_str2[]="
+							( 
+									`name` = '".CatalogElements::sql_valid($checks_key)."' 
+								AND
+									`scale` <= ".intval($checks_value['max'])." 
+								AND
+									`filter_use` = 1
+								AND
+									`filter_range` = 1
+								AND
+									`type_parent` = 2
+							)
+							";
+					}
+					
+					
+					if (isset($checks_value['nofilter']))
+					{
+						$checks_arr_str3[]="
+					OR `id` NOT IN (
+								SELECT 
+									`parent_id` 
+								FROM 
+									`tbl_catalog_chars` 
+								WHERE 
+									`name` = '".CatalogElements::sql_valid($checks_key)."' 
+								AND
+									`filter_use` = 1
+								AND
+									`filter_range` = 1
+								AND
+									`type_parent` = 2
+								)
+							";
+					}
+				}
+			}
+			//print_r($checks_arr_str2); exit;
+			
+			if (count($checks_arr_str2))
+			{
+				$_where = implode(' AND ',$checks_arr_str2);
+				$where.= "
+					AND
+					(
+						`id` IN (
+							SELECT `parent_id` FROM `tbl_catalog_chars` WHERE ".$_where."
+						)
+						".implode(' ',$checks_arr_str3)."
+					)
+					";
+			}
+			
+
+			
+			$model = Yii::app()->db->createCommand()
+				->select('count(id) as count')
+				->from('{{catalog_elements}}')
+				->where($where)
+				->queryRow();
+			$count = ((current($model))-1);   //вычитае из резуьтата сам узел
+			$criteria = new CDbCriteria();
+			$pages=new CPagination($count);
+			// элементов на страницу
+			$pages->pageSize=12;
+			$pages->applyLimit($criteria);
+			$data['pages']=$pages;
+			$start = ((isset($_GET['page']))?intval($_GET['page']):0);
+			
+			
+			//получаем товары
+			
+			$model = CatalogElements::model()->findAll(array(
+				'condition' => $where,
+				'order' => 'order_id',
+				'offset' => $start*12,
+				'limit' => 12,
+				));
+
+			
+
+			//$modelChars = CatalogChars::model()->findAll("parent_id=".$modelRubric->id." AND status = 1");
+			$render = 'list';
+			$modelChars = CatalogChars::model()->findAll('
+					parent_id IN 
+						(SELECT `id` FROM `tbl_catalog_elements` WHERE 
+							parent_id IN 
+								(
+									SELECT 
+										`id` 
+									FROM 
+										`tbl_catalog_rubrics`
+									WHERE
+										`left_key` >='.$modelRubric->left_key.' 
+										AND 
+										`right_key` <= '.$modelRubric->right_key.'
+								)
+							AND 
+								status=1 
+						) 
+				AND
+					`type_scale` = 1
+				AND
+					`type_parent` = 2
+				AND
+					status = 1
+				AND
+					`filter_use` = 1
+				');
+			$chars = array();
+			foreach ($modelChars as $item)
+			{
+				$chars[$item->name][]=array(
+					'scale'      => $item->scale,
+					'filter_range' => $item->filter_range,
+					);
+			}
+			
+
+			$params['uniqueid']= $this->uniqueid;
+			$params['data']    = $data;
+			$params['chars']=$chars;
+			$filters=$this->widget('application.apps.frontend.components.Filters',array('params'=>$params), TRUE); 
+
+		}
+		else
+		{
+			$modelRubric = null;
+			$model = CatalogElements::model()->findByPk((int)$url);
+			if (!$model)
+			{
+				throw new CHttpException(404,'The page can not be found.'); 
+			}
+			$modelChars = CatalogChars::model()->findAll('parent_id='.$model->id.' AND status = 1');
+			$render = 'show';
+		}
+
+
+		//SEO
+		if (isset($paramArr[0]) && !empty($paramArr[0])) 
+		{
+			if ( $modelRubricSEO =  CatalogRubrics::model()->find('url LIKE ("'.$paramArr[0].'")') )
+			{
+				if (isset($modelRubricSEO->meta_title) && !empty($modelRubricSEO->meta_title))
+				{
+					$this->pageMetaTitle = $modelRubricSEO->meta_title; 
+				}
+				if (isset($modelRubricSEO->meta_keywords) && !empty($modelRubricSEO->meta_keywords))
+				{
+					$this->pageKeywords = $modelRubricSEO->meta_keywords;
+				}
+				if (isset($modelRubricSEO->meta_description) && !empty($modelRubricSEO->meta_description))
+				{
+					$this->pageDescription = $modelRubricSEO->meta_description;
+				}
+			}
+		}
+
+
+
+		$this->render($render, array('model'       =>$model, 
+				                         'modelRubric' =>$modelRubric, 
+				                         'modelChars'  =>$modelChars, 
+				                         'filters'     =>$filters, 
+				                         'param'       =>$param,
+				                         'pages'       =>$pages));
+	}
+
+
+
+}

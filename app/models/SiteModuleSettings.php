@@ -376,7 +376,7 @@ class SiteModuleSettings extends CActiveRecord
 		switch ($site_module_id) {
 			case 1:
 				//Новости
-				return (($type==1)?('{{news_rubrics}}'):('{{news_elements}}'));
+				return (($type==1)?('{{news_group}}'):('{{news}}'));
 				break;
 			case 2:
 				//Карта сайта
@@ -437,80 +437,6 @@ class SiteModuleSettings extends CActiveRecord
 		}
 		return false;
 	}
-
-	/**
-	 * @param $site_module_id
-	 * @param int $type
-	 * Возвращает модель, тип указывает тип таблицы (1-рубрика, 2-элемент)
-	 */
-	public function getClassById($site_module_id, $type=1){
-		switch ($site_module_id) {
-			case 1:
-				//Новости
-				return (($type == 1) ? (new NewsRubrics()) : (new NewsElements()));
-				break;
-			case 2:
-				//Карта сайта
-				return false;
-				break;
-			case 3:
-				//Поиск на сайте
-				return false;
-				break;
-			case 4:
-				//Каталог
-				return (($type==1)?(new CatalogRubrics()):(new CatalogElements()));
-				break;
-			case 5:
-				//Корзина
-				return (($type==1)?(new BasketOrder()):(new BasketItems()));
-				break;
-			case 6:
-				//Статьи
-				return (($type==1)?(new StockGroup()):(new Stock()));
-				break;
-			case 7:
-				//Вопросы-ответы
-				return (($type==1)?(new FaqRubrics()):(new FaqElements()));
-				break;
-			case 8:
-				//URL ссылка (пишите адрес ссылки в Url адрес )
-				return false;
-				break;
-			case 9:
-				//Акции
-				return (($type==1)?(new SaleGroup()):(new Sale()));
-				break;
-			case 10:
-				//Врачи
-				return (($type==1)?(new DoctorRubrics()):(new DoctorElements()));
-				break;
-			case 11:
-				//Фотогалерея
-				return (($type==1)?(new PhotoRubrics()):(new PhotoElements()));
-				break;
-			case 12:
-				//До и После
-				return (($type==1)?(new BeforeAfterRubrics()):(new BeforeAfterElements()));
-				break;
-			case 13:
-				//Таблицы
-				return (($type==1)?(new MainTabel()):(new MainTabel()));
-				break;
-			case 14:
-				//Пресса
-				return (($type==1)?(new PressGroup()):(new Press()));
-				break;
-			case 15:
-				//Банеры
-				return (($type==1)?(new BanersRubrics()):(new BanersElements()));
-				break;
-		}
-		return false;
-	}
-
-
-
 
 	/**
 	 * Создает изображение для раздела
@@ -653,4 +579,115 @@ class SiteModuleSettings extends CActiveRecord
 
 	}
 
+
+	/**
+	 * Создает изображения для  загруженых дополнительных изображений (мультизагрузка) в каталоге товаров(элементы)
+	 * @param null $id_element_model
+	 * @param string $driver
+	 * @return bool
+	 */
+	public function chgImgagesCatalogModel($id_element_model = null, $driver='GD'){
+		$filepatch = '../uploads/filestorage/catalog/elements/';
+		$model = SiteModuleSettings::model()->find('site_module_id = 4');
+		set_time_limit(0);
+
+		$param = array();
+		$param['small'] = array( 'coords'=>$model->e_cover_small, 'crop'=>$model->e_cover_small_crop, 'color'=>$model->e_small_color   );
+		$param['medium'] = array( 'coords'=>$model->e_cover_medium, 'crop'=>$model->e_cover_medium_crop, 'color'=>$model->e_medium_color   );
+		$param['large'] = array( 'coords'=>$model->e_cover_large, 'crop'=>$model->e_cover_large_crop, 'color'=>$model->e_large_color   );
+		$param['admin'] = array( 'coords'=>'100x100', 'crop'=>'Resize', 'color'=>'ffffff'   );
+
+		foreach (CatalogElementsImages::model()->findAll(((!empty($id_element_model))?('elements_id = '.$id_element_model):(''))) as $dataModel){
+
+			foreach ($param as $name => $data){
+
+				if (!file_exists($filepatch.$dataModel->image_name.'.'.$dataModel->image)) continue;
+
+				$image = new EasyImage($filepatch.$dataModel->image_name.'.'.$dataModel->image, $driver); //$image = new EasyImage($fileOrigin, 'Imagick');  - для Imagic
+
+
+				//Накладываем возяной знак
+				$watermark = YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/watermark.png';
+
+				if ( $model->watermark_type == 1 && file_exists($watermark) && $name != 'admin'  ){
+					$opacity = 20;
+					$watermark_pos = $model->watermark_pos;
+
+					//Получаем размеры водяного знака
+					$mark = new EasyImage($watermark);
+
+					//Позиции водной марки
+					$sizeWm = getimagesize($watermark);
+					$size = getimagesize($filepatch.$dataModel->image_name.'.'.$dataModel->image);
+					switch ($watermark_pos) {
+						case 1: //Замостить
+							for ($y_i=0; $y_i<$size[1]; $y_i = $y_i+$sizeWm[1]){
+								for ($x_i=0; $x_i<$size[0]; $x_i = $x_i+$sizeWm[0]){
+									$image->watermark($mark, $x_i, $y_i, $opacity);
+								}
+							}
+							break;
+						case 2: //Изображение в нижнем левом углу
+							$x_i = 0;
+							$y_i = $size[1] - $sizeWm[1];
+							$image->watermark($mark, $x_i, $y_i, $opacity);
+							break;
+						case 3: //Изображение внизу по центру
+							$x_i = ($size[0]/2)-($sizeWm[0]/2);
+							$y_i = $size[1]-$sizeWm[1];
+							$image->watermark($mark, $x_i, $y_i, $opacity);
+							break;
+						case 4: //Изображение в центре
+							//$x_i =($x/2)-($sizeWm[0]/2);
+							$x_i =($size[0]/2)-($sizeWm[0]/2);
+							$y_i =($size[1]/2)-($sizeWm[1]/2);
+							$image->watermark($mark, $x_i, $y_i, $opacity);
+							break;
+						case 5: //Изображение в левом верхнем углу
+							$image->watermark($mark, 0, 0, $opacity);
+							break;
+						case 6:  //Изображение в нижнем правом углу
+							$x_i = $size[0] - $sizeWm[0];
+							$y_i = $size[1] - $sizeWm[1];
+							$image->watermark($mark, $x_i, $y_i, $opacity);
+							break;
+						default:
+							$image->watermark($mark, 0, 0, $opacity);
+					}
+
+				}
+
+				$coords = explode("x", (strtolower($data['coords'])));
+				$x = $coords[0];
+				$y = $coords[1];
+				switch ($data['crop']) {
+					case 'Resize':
+						$image->resize($x,$y, EasyImage::RESIZE_AUTO);
+						break;
+					case 'horResize':
+						$image->resize($x,$y, EasyImage::RESIZE_WIDTH);
+						break;
+					case 'verResize':
+						$image->resize($x,$y, EasyImage::RESIZE_HEIGHT);
+						break;
+					case 'insertResize':
+						$image->resize($x,$y, EasyImage::RESIZE_AUTO);
+						$image->background('#'.(str_replace("#", "", $data['color'])), 100);
+						break;
+					case 'exactResize':
+						$image->crop($x,$y);
+						break;
+					default:
+						$image->resize($x,$y, EasyImage::RESIZE_AUTO);
+				}
+				//$filepatch.$dataModel->image_name.'.'.$dataModel->image
+				$image->save($filepatch.$name.'-'.$dataModel->image_name.'.'.$dataModel->image);
+			}
+
+
+		}
+
+		return true;
+
+	}
 }

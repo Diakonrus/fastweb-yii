@@ -15,9 +15,10 @@ class PagesController extends Controller
         $this->layout = '//layouts/'.$model->main_template;
 
         $modelCatalog = null;
-        //Если главная - добавляю товары помеченые как на главную
+        //Если главная - добавляю товары помеченые как на главную и новости
         if($model->main_page == 1){
             $modelCatalog = CatalogElements::model()->findAll('`status` = 1 AND `primary` = 1');
+            $modelNews = NewsElements::model()->findAll('`status` = 1 AND `primary` = "1"');
         }
 
 
@@ -37,7 +38,7 @@ class PagesController extends Controller
         //Получаем вкладки если есть;
         $modelTabs = PagesTabs::model()->getTabsContent($id);
 
-        $this->render('index', array('model'=>$model, 'modelTabs'=>$modelTabs, 'modelCatalog'=>$modelCatalog));
+        $this->render('index', array('model'=>$model, 'modelTabs'=>$modelTabs, 'modelCatalog'=>$modelCatalog, 'modelNews'=>$modelNews));
     }
 
 

@@ -18,6 +18,7 @@
 )); ?>
 <?php echo $form->errorSummary($model); ?>
 
+
 <div class="main_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
 <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">Основное</span></a>
 </div>
@@ -145,54 +146,23 @@
 </div>
 
 
-<div class="settings_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
-    <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">Настройки</span></a>
+
+<div class="main_block_url block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />Настройки</span></a>
 </div>
 
-<div id="settings_block" style="margin-top: 10px; padding: 10px;">
-<?php /*
-    <?php if (!$model->isNewRecord) { ?>
-        <div class="control-group">
-            <label class="control-label" for="CatalogElements_lastupdate">Обновлено</label>
-            <div class="controls">
-                <?=(date("H:i:s d-m-Y", strtotime($model->lastupdate)));?>
-            </div>
-        </div>
-    <?php } ?>
-*/?>
+<div id="settings_block" style="display: none; margin-top: 10px; padding: 10px;">
+
+
+    <?php echo $form->dropDownListRow($model, 'status', array(0=>'Ожидание', 1=>'Активно'), array('class'=>'span5')); ?>
+
+    <?php echo $form->dropDownListRow($model, 'primary', array(0=>'Нет', 1=>'Да'), array('class'=>'span5')); ?>
+
+    <?php echo $form->dropDownListRow($model, 'shares', array(0=>'Нет', 1=>'Да'), array('class'=>'span5')); ?>
+
 
     <div class="control-group">
-        <?=CHtml::activeLabel($model,'status');?>
-        <div class="controls">
-            <select class="inputselect span5" name="CatalogElements[status]"  style="font-weight: bold;">
-                <option style="color: red;" value="0"  <?php if (!$model->isNewRecord && $model->status==0){echo 'selected';} ?> >Ожидание</option>
-                <option style="color: darkgreen;" value="1" <?php if (!$model->isNewRecord && $model->status==1){echo 'selected';} ?> >Активно</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <?=CHtml::activeLabel($model,'primary');?>
-        <div class="controls">
-            <select class="inputselect span5" name="CatalogElements[primary]"  style="font-weight: bold;">
-                <option style="color: red;" value="0"  <?php if (!$model->isNewRecord && $model->primary==0){echo 'selected';} ?> >Нет</option>
-                <option style="color: darkgreen;" value="1" <?php if (!$model->isNewRecord && $model->primary==1){echo 'selected';} ?> >Да</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <?=CHtml::activeLabel($model,'shares');?>
-        <div class="controls">
-            <select class="inputselect span5" name="CatalogElements[shares]"  style="font-weight: bold;">
-                <option style="color: red;" value="0"  <?php if (!$model->isNewRecord && $model->shares==0){echo 'selected';} ?> >Нет</option>
-                <option style="color: darkgreen;" value="1" <?php if (!$model->isNewRecord && $model->shares==1){echo 'selected';} ?> >Да</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label" for="CatalogElements_status">Картинка</label>
+        <?php echo CHtml::activeLabel($model,'imagefile'); ?>
         <div class="controls">
             <?php if ($model->isNewRecord) { ?><img src="/images/nophoto_100_100.jpg"><?php } else {
                 //Проверяем файл, если нет картинки - ставим заглушку
@@ -206,6 +176,45 @@
             <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
         </div>
     </div>
+
+<style>
+    .deleteBlock {
+        background: red none repeat scroll 0 0;
+        border-radius: 10px;
+        color: white;
+        margin-left: -10px;
+        margin-top: -10px;
+        position: absolute;
+    }
+</style>
+
+    <div class="control-group">
+    <?php echo CHtml::activeLabel($model,'imagefiles'); ?>
+        <div class="controls">
+            <?php
+                if (!$model->isNewRecord){
+                    foreach (CatalogElementsImages::model()->findAll('elements_id = '.$model->id) as $data){
+                        if (!file_exists( YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/elements/admin-'.$data->image_name.'.'.$data->image )){ continue; }
+                        $url_img = '/../uploads/filestorage/catalog/elements/admin-'.$data->image_name.'.'.$data->image;
+                        echo '
+                            <div style="float:left; padding-left: 15px;">
+                             <a href="/../uploads/filestorage/catalog/elements/'.$data->image_name.'.'.$data->image.'" target="_blank"><img src="'.$url_img.'"></a>
+                            <a class="btn-mini deleteBlock"  href="/admin/catalog/catalog/deleteimages?id='.$data->id.'">X</a>
+                            </div>
+
+                        ';
+                    }
+                    echo '<div style="clear: left"></div>';
+                }
+            ?>
+            <br>
+            <?php echo CHtml::activeFileField($model, "imagefiles[]", array('multiple'=>true)); ?>
+        </div>
+    </div>
+
+
+
+
 
 <?php /*
     <div class="control-group">
