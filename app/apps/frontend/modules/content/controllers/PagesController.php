@@ -15,6 +15,7 @@ class PagesController extends Controller
         $this->layout = '//layouts/'.$model->main_template;
 
         $modelCatalog = null;
+        $modelNews = null;
         //Если главная - добавляю товары помеченые как на главную и новости
         if($model->main_page == 1){
             $modelCatalog = CatalogElements::model()->findAll('`status` = 1 AND `primary` = 1');
