@@ -7,7 +7,9 @@
 $element = CatalogElements::model()->getProduct($data->id);
 if (isset($element['url']))
 {
-	$url = Yii::app()->request->requestUri.$element['url'].'/'.(SiteModuleSettings::getUrl($data,4));
+	//$url = Yii::app()->request->requestUri.$element['url'].'/'.(SiteModuleSettings::getUrl($data,4));
+	$modelPages = Pages::model()->find('type_module = 4');
+	$url = '/'.$modelPages->url.'/'.$data->id;
 }
 
 		$url_img = '/images/nophoto_100_100.jpg';
@@ -77,7 +79,7 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 <?php } ?>
 	</div>
 	
-	
+
 <div class="panel panel-default paginator-panel">
   <div class="panel-body">
     <?$this->widget('CLinkPager', array('pages' => $pages));?>

@@ -19,7 +19,7 @@
         <span class="required">*</span>
     </label>
     <div class="controls">
-        <select name="Pages[parent_id]" id="Pages_parent_id" class="span5" <?=!$model->isNewRecord?'disabled':'';?>>
+        <select name="Pages[parent_id]" id="Pages_parent_id" class="span5" <?=!$model->isNewRecord?'d-isabled':'';?>>
 
             <?php echo '<option value="'.$root->id.'">/</option>'; ?>
             <? if (!empty($categories)) : ?>
@@ -55,6 +55,8 @@ echo $form->dropDownListRow($model,'type_module',Pages::model()->getTypeModule()
     </label>
 </div>
 <?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>250)); ?>
+
+<?php echo $form->textFieldRow($model,'header',array('class'=>'span5','maxlength'=>350));; ?>
 
 <?php
     echo $form->dropDownListRow($model,'status',array(0=>'Отключено', 1=>'Активно'),

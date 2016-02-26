@@ -8,6 +8,8 @@ class PhotoController extends Controller
     public function actionIndex()
 
     {
+        if (SiteModuleSettings::model()->find('site_module_id = 11 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
+
         $root = PhotoRubrics::getRoot(new PhotoRubrics);
         $model = $root->descendants(1,1)->findAll($root->id);
 
@@ -17,6 +19,10 @@ class PhotoController extends Controller
     }
 
     public  function actionElement($param){
+
+        if (SiteModuleSettings::model()->find('site_module_id = 11 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
+
+
         $paramArr = explode("/", $param);
         $paramArr =  array_pop($paramArr);
         $paramArr = strtolower($paramArr);

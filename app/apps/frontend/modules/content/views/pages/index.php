@@ -1,4 +1,4 @@
-<h1 class="lined nopaddingtop" style="margin-top: 10px;"><?=$model->title?></h1>
+<h1 class="lined nopaddingtop" style="margin-top: 10px;"><?=Pages::getTitle($model->id)?></h1>
 
 <div>
     <?=$model->content;?>

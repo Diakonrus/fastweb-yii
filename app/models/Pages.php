@@ -46,7 +46,7 @@ class Pages extends CActiveRecord
 			array('parent_id, url, title, type_module', 'required'),
 			array('parent_id, level, left_key, right_key, access_lvl, type_module, main_page, status, in_footer, in_header', 'numerical', 'integerOnly'=>true),
 			array('url, title, main_template, meta_title', 'length', 'max'=>250),
-			array('image', 'length', 'max'=>350),
+			array('image, header', 'length', 'max'=>350),
 
 			array('url','unique',
 				'caseSensitive'=>true,
@@ -57,7 +57,7 @@ class Pages extends CActiveRecord
 			array('content, meta_keywords, meta_description, created_at', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, level, left_key, right_key, url, title, image, access_lvl, main_template, type_module, content, main_page, status, created_at, created_at_start, created_at_end,
+			array('id, parent_id, level, left_key, right_key, url, title, image, access_lvl, header, main_template, type_module, content, main_page, status, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -85,13 +85,14 @@ class Pages extends CActiveRecord
 			'left_key' => 'Left Key',
 			'right_key' => 'Right Key',
 			'url' => 'Url адрес',
-			'title' => 'Заголовок',
+			'title' => 'Название',
 			'image' => 'Изображение для ссылки',
 			'access_lvl' => 'Минимальный уровень прав для доступа к странице',
 			'main_template' => 'Имя основного шаблона',
 			'type_module' => 'Модуль страницы',
 			'content' => 'Содержимое',
 			'status' => 'Статус',
+			'header' => 'Заголовок',
 			'main_page' => 'Главная страница',
 			'meta_title' => 'Meta Title',
 			'meta_keywords' => 'Meta Keywords',
@@ -129,6 +130,7 @@ class Pages extends CActiveRecord
 		$criteria->compare('title',$this->title,true);
 		$criteria->compare('image',$this->image,true);
 		$criteria->compare('access_lvl',$this->access_lvl);
+		$criteria->compare('header',$this->header);
 		$criteria->compare('main_template',$this->main_template,true);
 		$criteria->compare('type_module',$this->type_module);
 		$criteria->compare('content',$this->content,true);
@@ -253,6 +255,19 @@ class Pages extends CActiveRecord
 	public static function getMenuFooter(){
 		return Pages::getMenu(3);
 	}
+
+	public static function getTitle($id_page = null){
+		if (!empty($id_page) && $model = Pages::model()->findByPk((int)$id_page)){
+			return ((!empty($model->header))?($model->header):($model->title));
+		}
+		foreach (explode("/", (Yii::app()->request->requestUri.'/')) as $url){
+			if ($model = Pages::model()->find('url LIKE "'.(trim($url)).'"')){
+				return ((!empty($model->header))?($model->header):($model->title));
+			}
+		}
+		return true;
+	}
+
 
 	//возвращает URL страницы на основе текущего URL
 	public static function returnUrl($url){

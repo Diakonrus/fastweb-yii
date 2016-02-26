@@ -323,7 +323,7 @@ class CatalogController extends Controller
 		$model_elements = CatalogElements::model()->findAll(array(
     'condition' => $where,
     'order' => 'order_id',
-    'offset' => $start*12,
+	'offset' => (($start>0)?($start+12):(0)),
     'limit' => 12,
 		));
 		//

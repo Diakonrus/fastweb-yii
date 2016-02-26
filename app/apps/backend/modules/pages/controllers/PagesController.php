@@ -127,6 +127,9 @@ class PagesController extends Controller
             $model->attributes = $_POST['Pages'];
             $parent_id = (int)$model->parent_id;
             $root = Pages::model()->findByPk($parent_id);
+
+            $model->moveAsLast($root);
+
             $model->url = mb_strtolower($model->url);
 
             //Может быть только 1 главная страница
@@ -399,6 +402,18 @@ class PagesController extends Controller
                     //Смена статуса
                     $model = $this->loadModel((int)$_POST['id']);
                     $model->status = (($model->status==1)?0:1);
+                    $model->saveNode();
+                    break;
+                case 2:
+                    //Страницу в футер
+                    $model = $this->loadModel((int)$_POST['id']);
+                    $model->in_footer = (($model->in_footer==1)?0:1);
+                    $model->saveNode();
+                    break;
+                case 3:
+                    //Страницу в шапку
+                    $model = $this->loadModel((int)$_POST['id']);
+                    $model->in_header = (($model->in_header==1)?0:1);
                     $model->saveNode();
                     break;
             }

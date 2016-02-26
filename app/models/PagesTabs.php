@@ -256,45 +256,13 @@ class PagesTabs extends CActiveRecord
         $template = array(
             //Белый фон
             1 => '
-            <section>
-                <main class="all" role="main">
-                    <div class="container">
-                        <h1 class="main-caption mg-bottom-24 caption-big">%title%</h1>
-                    </div>
-                    <div class="container">
-                        <div class="top-text">
-                            %description%
-                        </div>
-                    </div>
-                    <div class="price">
-                        <div class="container tred">
-                            %module_value%
-                        </div>
-                    </div>
-                </main>
-            </section>
+                %description%
+                %module_value%
             ',
             //Серый фон
             2 => '
-            <section>
-                <main class="all" role="main">
-                    <div class="container video-caption">
-                        <h2 class="main-caption mg-bottom-24">%title%</h2>
-                    </div>
-                </main>
-                <div class="container">
-                    <div class="top-text">
-                    %description%
-                    </div>
-                </div>
-                <div class="news-block price">
-                    <main class="all" role="main">
-                        <div class="container">
-                            %module_value%
-                        </div>
-                    </main>
-                </div>
-            </section>
+                %description%
+                %module_value%
             ',
         );
 

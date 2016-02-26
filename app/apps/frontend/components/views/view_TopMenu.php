@@ -1,7 +1,7 @@
 <div id="globalMenuWrap">			
 	<!-- begin #globalMenu  -->
 	<ul class="menu" id="globalMenu">
-		<?php foreach (Pages::getMenu() as $id => $val){ ?>
+		<?php foreach (Pages::getMenu(2) as $id => $val){ ?>
 
 			<li>
 				<a href="<?=$val['url'];?>" class="<?=(($curentPageID == $id)?('active;'):(''));?>  "  ><?=$val['title'];?></a>

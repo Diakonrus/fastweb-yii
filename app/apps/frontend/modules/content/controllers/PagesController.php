@@ -7,7 +7,7 @@ class PagesController extends Controller
 
     public function actionIndex($id){
         $model = Pages::model()->findByPk($id);
-        if (!$model){ throw new CHttpException(404,'The page can not be found.'); }
+        if (!$model || $model->status == 0){ throw new CHttpException(404,'The page can not be found.'); }
 
         //Титл и SEO
         $this->setSEO($model->url, (mb_convert_case($model->title, MB_CASE_UPPER, "UTF-8")));
@@ -19,7 +19,7 @@ class PagesController extends Controller
         //Если главная - добавляю товары помеченые как на главную и новости
         if($model->main_page == 1){
             $modelCatalog = CatalogElements::model()->findAll('`status` = 1 AND `primary` = 1');
-            $modelNews = NewsElements::model()->findAll('`status` = 1 AND `primary` = "1"');
+            $modelNews = NewsElements::gatPrimaryNews();
         }
 
 

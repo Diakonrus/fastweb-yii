@@ -127,6 +127,10 @@ class NewsElements extends CActiveRecord
 		));
 	}
 
+	public static function gatPrimaryNews(){
+		return NewsElements::model()->findAll('`status` = 1 AND `primary` = "1"');
+	}
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
