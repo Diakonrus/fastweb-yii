@@ -9,7 +9,7 @@ Breadcrumbs
 
 
 ##Как использовать
-Extract the `EasyImage` folder under `protected/extensions`
+Установить расширение "Breadcrumbs" в директорию с алиасом `application.extensions`
 
 ```php
 $this->widget(
