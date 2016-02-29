@@ -1,15 +1,6 @@
 <?php
 
-class CatalogController extends Controller
-{
-
-
-
-
-
-
-
-
+class CatalogController extends Controller {
 
 	public function actionFilters($id=null){
 

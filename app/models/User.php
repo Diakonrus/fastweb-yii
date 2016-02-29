@@ -34,6 +34,7 @@
  */
 class User extends CActiveRecord {
 
+
     const STATE_NEW = 0;
     const STATE_ACTIVE = 1;
     const STATE_BLOCKED = 2;
@@ -90,7 +91,7 @@ class User extends CActiveRecord {
             array('role_id, sex, profile_info, birthday, score, id, email_group, created_at', 'safe' ),
 
             array('first_name, last_name, middle_name', 'match', 'pattern' => '/[А-Яа-я\-\s]+/', 'message'=>'Поле "{attribute}" должно содержать только русские буквы, пробел, знак тире.'),
-            array('phone', 'match', 'pattern' => '~^\+7[0-9]{10}$~', 'message' => 'Номер должен соответствовать формату "+7XXXXXXXXXX", например "+71234567890"'),
+            array('phone', 'match', 'pattern' => '/^((8|\+\d)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/', 'message' => 'Номер должен соответствовать формату "+7XXXXXXXXXX", например "+71234567890"'),
 
             //array( 'address_index, address_street, address_street_type', 'safe' ),
             //array( 'address_apart, address_building, address_corp, address_poss, address_house', 'safe' ),
@@ -266,8 +267,10 @@ class User extends CActiveRecord {
 
         $this->_oldPassword = $this->password;
 
-        if( !empty($this->phone) ){
-            $this->phone = '+' . $this->phone;
+        if ( !empty($this->phone) ) {
+            if ($this->phone[0] != '+' && $this->phone[0] != '8') {
+                $this->phone = '+' . $this->phone;
+            }
         }
     }
 
