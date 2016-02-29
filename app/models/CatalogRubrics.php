@@ -202,5 +202,17 @@ class CatalogRubrics extends CActiveRecord
         return $result;
     }
 
+	/**
+	 * @param null $model
+	 * @param null $level
+	 * Возвращает список категорий
+	 * Уровень вложенности
+	 */
+	public static function getCatalogList($model = null, $level = null){
+		$return_data = array();
+		if (empty($model)){ $model = CatalogRubrics::getRoot(new CatalogRubrics); }
+		return $model->descendants($level,1)->findAll($model->id);
+	}
+
 
 }

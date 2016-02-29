@@ -159,35 +159,30 @@ class CatalogElements extends CActiveRecord
 		return parent::model($className);
 	}
 
-    public function getProduct($id){
-        $modelElements = CatalogElements::model()->findByPk($id);
-        $result = array();
-        if ($modelElements){
-            //Получаем ссылку на товар
-            $modelRubrics = CatalogRubrics::model()->findByPk($modelElements->parent_id);
-            if ($modelRubrics){
-                $i = $modelRubrics->id;
-                $array = array();
-                do {
+    public function getProductUrl($modelElements){
 
-                    $model = CatalogRubrics::model()->findByPk((int)$i);
-                    if(isset($model->id))$array[] = $model->id;
-                    $i = (int)$model->parent_id;
+		$url = '';
+		//Ссылка на товар
+		$modelRubrics = CatalogRubrics::model()->findByPk($modelElements->parent_id);
+		if ($modelRubrics){
+			$i = $modelRubrics->id;
+			$array = array();
+			do {
+				$model = CatalogRubrics::model()->findByPk((int)$i);
+				if(isset($model->id))$array[] = $model->id;
+				$i = (int)$model->parent_id;
 
-                } while ($i != 0);
+			} while ($i != 0);
 
-                $array = array_reverse($array);
-                unset($array[0]);
-                $base_patch = "";
-                foreach ($array as $value){
-                    $base_patch .= '/'.(CatalogRubrics::model()->findByPk((int)$value)->url);
-                }
-                $result['url'] = $base_patch;
-            }
-            //Данные о товаре
-            $result['product'] = $modelElements;
-        }
-        return $result;
+			$array = array_reverse($array);
+			unset($array[0]);
+			$base_patch = "";
+			foreach ($array as $value){
+				$base_patch .= '/'.(CatalogRubrics::model()->findByPk((int)$value)->url);
+			}
+			$url = $base_patch;
+		}
+		return $url.'/'.$modelElements->id;
     }
 
 

@@ -347,4 +347,16 @@ class Pages extends CActiveRecord
 		}
 		return false;
 	}
+
+	public static function getBaseUrl($module_id){
+		$base_url = null;
+		foreach (explode("/", (Yii::app()->request->requestUri.'/')) as $url){
+			if ($modelPages = Pages::model()->find('url LIKE "'.(trim($url)).'"')){
+				$base_url = $modelPages->url;
+				break;
+			}
+		}
+		if (empty($base_url)){ $base_url = Pages::model()->find('type_module = '.$module_id.' AND `status` = 1')->url; }
+		return $base_url;
+	}
 }

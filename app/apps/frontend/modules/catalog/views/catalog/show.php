@@ -17,7 +17,10 @@
     <div class="row item-detail-parts">
 		<?php
 			//Проверяю существование файла
-			$url_img = '/images/nophoto_100_100.jpg';
+			$url_img_small = '/images/nophoto_100_100.jpg';
+			$url_img_medium = $url_img_small;
+			$url_img_small = $url_img_small;
+			$url_img = $url_img_small;
 			$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/'.$model->id.'.'.$model->image;
 			if (file_exists($filename)){ $url_img = '/uploads/filestorage/catalog/elements/'.$model->id.'.'.$model->image; }
 			if (file_exists($filename)){ $url_img_small = '/uploads/filestorage/catalog/elements/small-'.$model->id.'.'.$model->image; }

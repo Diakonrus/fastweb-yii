@@ -1,34 +1,38 @@
 <?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
 <h1 class="lined nopaddingtop" style="margin-top: 10px;">Каталог продукции</h1>
 
+<div class="menu_inside">
+	<?php foreach ($catalogs as $data) { ?>
+		<div class="menuinside item">
+			<a  href="<?=$base_url;?>/<?=$data['url']?>"><?=$data['name'];?></a>
+		</div>
+	<?php } ?>
+	<div class="clear"></div>
+</div>
+
+
 
 <div class="tovar_container">
-<?php foreach ($model_elements as $data){
-$element = CatalogElements::model()->getProduct($data->id);
-if (isset($element['url']))
-{
-	//$url = Yii::app()->request->requestUri.$element['url'].'/'.(SiteModuleSettings::getUrl($data,4));
-	$modelPages = Pages::model()->find('type_module = 4');
-	$url = '/'.$modelPages->url.'/'.$data->id;
-}
+<?php foreach ($elements as $data){
+	$url_product = $base_url.CatalogElements::model()->getProductUrl($data);
 
-		$url_img = '/images/nophoto_100_100.jpg';
-		$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/medium-'.$data->id.'.'.$data->image;
-		if (file_exists($filename))
-		{ 
-			$url_img = '/uploads/filestorage/catalog/elements/medium-'.$data->id.'.'.$data->image;
-		}
+	$url_img = '/images/nophoto_100_100.jpg';
+	$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/medium-'.$data->id.'.'.$data->image;
+	if (file_exists($filename))
+	{
+		$url_img = '/uploads/filestorage/catalog/elements/medium-'.$data->id.'.'.$data->image;
+	}
 
 
-$name_noqoutes = $data->name;
-$name_noqoutes = str_replace("'",'',$name_noqoutes);
-$name_noqoutes = str_replace('"','',$name_noqoutes);
-$name_noqoutes = htmlspecialchars($name_noqoutes,ENT_QUOTES);
-$name_noqoutes = str_replace('&#039;','',$name_noqoutes);
+	$name_noqoutes = $data->name;
+	$name_noqoutes = str_replace("'",'',$name_noqoutes);
+	$name_noqoutes = str_replace('"','',$name_noqoutes);
+	$name_noqoutes = htmlspecialchars($name_noqoutes,ENT_QUOTES);
+	$name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 
 	?>
 	<div class="items-block-item">
-		<a href="<?=$url;?>" class="items-block-item-img">
+		<a href="<?=$url_product;?>" class="items-block-item-img">
 			<div class="rollover">
 				<?php if ($data->shares==1){ ?>
 					<div class="shares"></div>
@@ -37,7 +41,7 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 			</div>
 		</a>
 		<div class="product_info_block">
-			<a class="items-block-item-name" href="<?=$url;?>"><?=$data->name;?></a>
+			<a class="items-block-item-name" href="<?=$url_product;?>"><?=$data->name;?></a>
 			<div class="item-price-count">
 				<div class="items-block-item-price <?php if ($data->price_old > 0){ ?> old_price_active <?php } ?>"><span><?=$data->price;?> руб.</span></div>
 				<?php if ($data->price_old > 0){ ?>
@@ -86,6 +90,6 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
   </div>
 </div>
 
-
-
+<?/*
 <?=$filters?>
+*/?>
