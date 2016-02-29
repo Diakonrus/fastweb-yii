@@ -97,16 +97,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'name'=> "serch_name_code",
             'type'=>'raw',
             'value' => function($dataProvider){
-                $result = CatalogElements::model()->getProduct($dataProvider->id);
-                $result_str = "";
-                if (!empty($result)){
-                    $result_str .= '<b style="margin-left: 20px;">'.$result['product']->name.'</b></BR>';
-                    if (isset($result['url'])){
-                        $url = SITE_NAME_FULL.'/catalog'.$result['url'].'/'.$dataProvider->id;
-                        $result_str .= '<a class="page_url" href="'.$url.'" style="margin-left: 20px;" target="_preview">'.$url.'</a></BR>';
-                    }
-                 }
-                return $result_str;
+                $result = '<a class="page_url" href="/'.(Pages::getBaseUrl(4)).(CatalogElements::model()->getProductUrl($dataProvider)).'" style="margin-left: 20px;" target="_preview">'.$dataProvider->name.'</a></BR>';
+                return $result;
             },
             'filter' => CHtml::textField('CatalogElements[serch_name_code]', '', array('style'=>'width:100%', 'placeholder'=>'Введите название')),
         ),

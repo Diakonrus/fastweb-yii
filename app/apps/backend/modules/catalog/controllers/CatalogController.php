@@ -638,8 +638,9 @@ class CatalogController extends Controller
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
             if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
             if ($model->save()){
-				$filepatch = '/../uploads/filestorage/catalog/elements/';
 
+				$filepatch = '/../uploads/filestorage/catalog/elements/';
+				
                 if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 4')){
                     $filename = $model->id.'.'.$model->image;
                     $model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
@@ -663,7 +664,6 @@ class CatalogController extends Controller
 					}
 					SiteModuleSettings::model()->chgImgagesCatalogModel($model->id, 'GD');
 				}
-
 
                $this->redirect(array('updateproduct','id'=>$model->id));
             }
@@ -694,7 +694,6 @@ class CatalogController extends Controller
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
             if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
             if ($model->save()){
-
 				$filepatch = '/../uploads/filestorage/catalog/elements/';
 
                 if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 4')){
@@ -716,7 +715,7 @@ class CatalogController extends Controller
 						$ext = pathinfo($file->getName());
 						$modelImages->image = $ext['extension'];
 						$modelImages->save();
-						$uplod_file_url = YiiBase::getPathOfAlias('webroot').$filepatch.'/'.$modelImages->image_name.'.'.$modelImages->image;
+                        $uplod_file_url = YiiBase::getPathOfAlias('webroot').$filepatch.'/'.$modelImages->image_name.'.'.$modelImages->image;
 						$uplod_file_url = $file->saveAs($uplod_file_url);
 					}
 					SiteModuleSettings::model()->chgImgagesCatalogModel($model->id, 'GD');
@@ -734,6 +733,7 @@ class CatalogController extends Controller
 
     }
 
+
 	//Удаляет изображения  загруженные группой
 	public function actionDeleteimages($id){
 		if($model = CatalogElementsImages::model()->findByPk((int)$id)){
@@ -748,8 +748,6 @@ class CatalogController extends Controller
 		}
 		$this->redirect(array('updateproduct','id'=>$id));
 	}
-
-
 
 
 
