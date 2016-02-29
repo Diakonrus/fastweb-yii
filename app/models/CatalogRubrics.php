@@ -16,6 +16,9 @@
  * @property string $meta_keywords
  * @property string $meta_description
  * @property integer $execute
+ *
+ * @method deleteNode
+ * @method saveNode
  */
 class CatalogRubrics extends CActiveRecord
 {
@@ -135,7 +138,7 @@ class CatalogRubrics extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return WarehouseRubrics the static model class
+	 * @return CatalogRubrics the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -215,5 +218,11 @@ class CatalogRubrics extends CActiveRecord
 		return $model->descendants($level,1)->findAll($model->id);
 	}
 
+
+	protected function afterDelete() {
+		//Удаляем связанные с категорией товары (1 запрос)
+		CatalogElements::model()->deleteAll('parent_id = :parent_id', array(':parent_id' => $this->id));
+		parent::afterDelete();
+	}
 
 }

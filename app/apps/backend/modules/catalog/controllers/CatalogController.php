@@ -771,7 +771,7 @@ class CatalogController extends Controller
     public function actionMove($id, $move){
 
         $model = $this->loadModel((int)$id);
-
+		//@todo Ох уж эти magic number's. Надо исправить
         if ((int)$move == 1){
             //переместить вверх  - надо получить узел идущий выше $moveModel = $model->prev()->find();
             $moveModel = $model->prev()->find();
@@ -786,7 +786,7 @@ class CatalogController extends Controller
     }
 
 
-    public function actionAjax(){
+    public function actionAjax() {
         if (isset($_POST)){
         
 					
@@ -812,32 +812,44 @@ class CatalogController extends Controller
 								}
 							}
 						}
-        
-        
+
             switch ((int)$_POST['type']) {
                 case 1:
                     //Смена статуса (ДЛЯ КАТАЛОГА)
                     $model = $this->loadModel((int)$_POST['id']);
-                    $model->status = (($model->status==1)?0:1);
+                    $model->status = (($model->status==1)?0:1); //@todo Ох уж эти magic number's. Надо исправить
                     $model->saveNode();
                     break;
                 case 2:
                     //Удаление
                     foreach ($_POST['id'] as $id){
-                        $this->loadModel((int)$id)->deleteNode();
+						if ((int) $id > 0) {
+							/** @var $model CatalogRubrics */
+							$model = CatalogRubrics::model()->findByPk((int) $id);
+							if (!empty($model)) {
+								$model->deleteNode();
+							}
+						}
                     }
                     echo CJavaScript::jsonEncode('ok');
                     break;
                 case 3:
                     //Смена статуса (ДЛЯ ТОВАРА)
                     $model = $this->loadModelProduct((int)$_POST['id']);
-                    $model->status = (($model->status==1)?0:1);
-                    $model->save();
+					if (!empty($model)) {
+						$model->status = (($model->status==1)?0:1); //@todo Ох уж эти magic number's. Надо исправить
+						$model->save();
+					}
                     break;
                 case 4:
                     //Удаление (ДЛЯ ТОВАРА)
-                    foreach ($_POST['id'] as $id){
-                        $this->loadModelProduct((int)$id)->delete();
+                    foreach ($_POST['id'] as $key => $id) {
+						if ((int) $id > 0) {
+							$model = CatalogElements::model()->findByPk((int) $id);
+							if (!empty($model)) {
+								$model->delete();
+							}
+						}
                     }
                     echo CJavaScript::jsonEncode('ok');
                     break;
@@ -868,7 +880,7 @@ class CatalogController extends Controller
                 case 6:
                     //Смена статуса (ДЛЯ свойства объекта)
                     $model = $this->loadModelChars((int)$_POST['id']);
-                    $model->status = (($model->status==1)?0:1);
+                    $model->status = (($model->status==1)?0:1); //@todo Ох уж эти magic number's. Надо исправить
                     $model->save();
                     echo CJavaScript::jsonEncode('ok');
                     break;
@@ -903,6 +915,11 @@ class CatalogController extends Controller
     }
 
 
+	/**
+	 * @param $id
+	 * @return CatalogRubrics
+	 * @throws CHttpException
+	 */
     public function loadModel($id)
     {
         $model=CatalogRubrics::model()->findByPk($id);
