@@ -2,6 +2,7 @@ www/upload/*
 www/uploads/filestorage/*
 www/admin/assets/*
 www/assets/*
+www_shyba
 app/config/settings.php
 upload
 app/runtime/*

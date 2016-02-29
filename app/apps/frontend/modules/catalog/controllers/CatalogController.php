@@ -153,6 +153,7 @@ class CatalogController extends Controller
 
 
 		$data['catalogs'] = $this->getChaildCategory($model);
+		$data['model'] = $model;
 
 		$start = ((isset($_GET['page']))?intval($_GET['page']):0);
 		$data['elements'] = CatalogElements::model()->findAll(array(
@@ -162,8 +163,6 @@ class CatalogController extends Controller
 			'limit' => 12,
 		));
 		//
-
-
 
 
 		/* Пагинация */

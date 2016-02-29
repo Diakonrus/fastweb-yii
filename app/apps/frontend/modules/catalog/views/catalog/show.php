@@ -1,18 +1,7 @@
 <!-- Товар -->
 <div class="catalog-item-detail catalog-item-detail2">
-	<ul class="crosh">
-		<li>
-			<a href="">Главная</a>
-		</li>
-		<li>></li>
-		<li>
-			<a href="">Шубы и меха</a>
-		</li>
-		<li>></li>
-		<li>
-			<a href="">Шуба из норки</a>
-		</li>
-	</ul>
+	<?php $this->widget('application.extensions.Breadcrumbs.Breadcrumbs', array('params'=>array('model'=>$model))); ?>
+
 	<div class="clear"></div>
     <div class="row item-detail-parts">
 		<?php
