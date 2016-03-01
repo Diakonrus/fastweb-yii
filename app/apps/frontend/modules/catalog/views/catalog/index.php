@@ -16,6 +16,7 @@
 
 
 <div class="tovar_container">
+
 <?php foreach ($elements as $data){
 	$url_product = $base_url.CatalogElements::model()->getProductUrl($data);
 

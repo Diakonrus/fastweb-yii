@@ -166,18 +166,18 @@ class CatalogRubrics extends CActiveRecord
     public static function getRoot(CatalogRubrics $model){
         $root = $model->roots()->find();
         if (! $root){
-            $model->name = 'Каталог Корнеаое Дерево';
-            $model->url = 'RootTreeStock';
+            $model->name = 'Каталог Корневое Дерево';
+            $model->url = 'RootTreeCatalogs';
             $model->level = 1;
             //$model->image = 'jpeg';
             $model->parent_id = 0;
             //$model->description = 'Категории';
             //$model->lastupdate = date('Y-m-d H:i:s');
             $model->status = 1;
-            $model->meta_title = 'Склад Корнеаое Дерево';
-            $model->meta_title = 'Склад Корнеаое Дерево';
-            $model->meta_keywords = 'Склад Корнеаое Дерево';
-            $model->meta_description = 'Склад Корнеаое Дерево';
+            $model->meta_title = 'Каталог Корневое Дерево';
+            $model->meta_title = 'Каталог Корневое Дерево';
+            $model->meta_keywords = 'Каталог Корневое Дерево';
+            $model->meta_description = 'Каталог Корневое Дерево';
             $model->saveNode();
             $root = $model->roots()->find();
         }
@@ -217,6 +217,19 @@ class CatalogRubrics extends CActiveRecord
 		if (empty($model)){ $model = CatalogRubrics::getRoot(new CatalogRubrics); }
 		return $model->descendants($level,1)->findAll($model->id);
 	}
+
+	/**
+	 * @param $model
+	 * Возвращает полный путь к каталогу
+	 */
+	public static function urlCatalog($model){
+		$url = Pages::getBaseUrl(4).'/';
+		foreach ( CatalogRubrics::getCatalogList($model) as $data ){
+			$url .= $data->url.'/';
+		}
+		return $url;
+	}
+
 
 
 	protected function afterDelete() {
