@@ -183,7 +183,7 @@ class PagesController extends Controller
 	public function actionUpload(){
 
         $webFolder = '/uploads/pages/';
-        $tempFolder = Yii::app()->basePath . '/../www' . $webFolder;
+        $tempFolder = Yii::app()->basePath . '/../' . trim(SITE_PUBLIC_NAME, '/') . $webFolder;
 
         @mkdir($tempFolder, 0777, TRUE);
         @mkdir($tempFolder.'chunks', 0777, TRUE);
@@ -318,7 +318,7 @@ class PagesController extends Controller
     public function actionImageUpload() {
 
         $webFolder = '/uploads/filestorage/photoalbum/upload/';
-        $tempFolder = Yii::app()->basePath . '/../'.SITE_PUBLIC_NAME . $webFolder;
+        $tempFolder = Yii::app()->basePath . '/../'.trim(SITE_PUBLIC_NAME, '/') . $webFolder;
 
         @mkdir($tempFolder, 0777, TRUE);
         @mkdir($tempFolder.'chunks', 0777, TRUE);
@@ -340,27 +340,30 @@ class PagesController extends Controller
         else $dim = Image::WIDTH; $image_open->resize(100, 100, $dim)->crop(100, 100);
             $image_open->save($tempFolder.$filename); }
         */
-        $array = array( 'filelink' => Yii::app()->request->hostInfo.$webFolder.$filename, 'filename' => $filename );
+        $array = array( 'filelink' => $webFolder.$filename, 'filename' => $filename );
         echo stripslashes(json_encode($array));
     }
 
 
     public function actionGetImageLibray() {
         $webFolder = '/uploads/filestorage/photoalbum/upload/';
-        $tempFolder = Yii::app()->basePath . '/../'.SITE_PUBLIC_NAME . $webFolder;
+        $tempFolder = Yii::app()->basePath . '/../'. trim(SITE_PUBLIC_NAME, '/') . $webFolder;
+
+        $array = array();
 
         //Отдаем массив с картинками загружеными ранеее
-        $dir = scandir($tempFolder);
-        $array = array();
-        $i = 0;
-        foreach ($dir as $key=>$val ){
-            if ($val == '.' || $val == '..' || $val == 'chunks'){
-                continue;
+        if (is_dir($tempFolder)) {
+            $dir = scandir($tempFolder);
+            $i = 0;
+            foreach ($dir as $key=>$val ){
+                if ($val == '.' || $val == '..' || $val == 'chunks'){
+                    continue;
+                }
+                $array[$i]["thumb"] = $webFolder . $val;
+                $array[$i]["image"] = $webFolder . $val;
+                $array[$i]["title"] = $val;
+                ++$i;
             }
-            $array[$i]["thumb"] = $webFolder . $val;
-            $array[$i]["image"] = $webFolder . $val;
-            $array[$i]["title"] = $val;
-            ++$i;
         }
 
 
