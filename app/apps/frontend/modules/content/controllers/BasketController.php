@@ -88,7 +88,7 @@ class BasketController extends Controller
 
                 }
                 //отправляем письмо админу о заказе
-                $this->sendEmail($modelBasketOrder->id);
+                $this->sendEmailAdmin($modelBasketOrder->id);
                 $this->redirect('/basket/success');
             }
 
@@ -160,19 +160,19 @@ class BasketController extends Controller
     
     //пересчет товаров в корзине
     public function actionAjaxgettotal(){
+        $total = 0;
 
-      $cookies = Yii::app()->request->cookies;
-      $basket = $cookies['basket']->value;
-      $basket = unserialize($basket);
+        $cookies = Yii::app()->request->cookies;
 
-      $total = 0;
-      foreach ($basket as $item)
-      {
-      	$total+=$item['quantity']*$item['price'];
-      }
+        if (!empty($cookies['basket'])) {
+            $basket = $cookies['basket']->value;
+            $basket = unserialize($basket);
+            foreach ($basket as $item) {
+                $total+=$item['quantity']*$item['price'];
+            }
+        }
+
       echo $total;
-      //print_r($basket); exit;
-      
     }
 
 
@@ -232,7 +232,7 @@ class BasketController extends Controller
 
 
     //Отправляет письмо админу
-    public function sendEmail($id){
+    public function sendEmailAdmin($id){
         $email = "info@nzsnab.ru";
         $subject = "Новый заказ товаров";
 
