@@ -252,6 +252,10 @@ class SiteModuleSettings extends CActiveRecord
 	 * Проверяет есть ли папка модуля. Если нет - создает ее с правами $permission
 	 */
 	public  function createFolders($id = null, $permission = 0777){
+
+		if (!file_exists(YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage')) { mkdir(YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage', $permission, true); }
+
+
 		foreach (SiteModuleSettings::model()->getFolderModule() as $key=>$val){
 			if (!empty($id) && (int)$id!=$key){continue;}
 			if (SiteModuleSettings::model()->chkFolder($key)){ continue; }
@@ -266,6 +270,22 @@ class SiteModuleSettings extends CActiveRecord
 				mkdir($patch_tmph, $permission, true);
 			}
 		}
+
+
+		//Добавляем меню
+		$patch = array();
+		$patch[] = '/../uploads/filestorage/menu';
+		$patch[] = '/../uploads/filestorage/menu/elements';
+		$patch[] = '/../uploads/filestorage/menu/photos';
+		$patch[] = '/../uploads/filestorage/menu/rubrics';
+		foreach ($patch as $data){
+			$patch_tmph = YiiBase::getPathOfAlias('webroot').$data;
+			if (file_exists($patch_tmph)) { continue; }
+			mkdir($patch_tmph, $permission, true);
+		}
+
+
+
 		return true;
 	}
 
