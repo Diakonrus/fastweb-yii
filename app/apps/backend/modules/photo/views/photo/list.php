@@ -1,3 +1,8 @@
+<?php
+Yii::app()->clientScript->registerScriptFile('/js/bootstrap-fileinput/js/fileinput.min.js', CClientScript::POS_END);
+Yii::app()->clientScript->registerScriptFile('/js/bootstrap-fileinput/js/fileinput_locale_ru.js', CClientScript::POS_END);
+Yii::app()->clientScript->registerCssFile('/js/bootstrap-fileinput/css/fileinput.min.css');
+?>
 
 <legend><?php echo Yii::t("Bootstrap", "LIST.Photoalbum" ) ?></legend>
 
@@ -114,11 +119,15 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 	),
 )); ?>
 <? if (!empty($parent_id)) : ?>
-	<input type="file" name="file_upload" id="file_upload" />
+
+    <?php
+    echo CHtml::beginForm(Yii::app()->urlManager->createUrl(Yii::app()->controller->module->id . '/' . Yii::app()->controller->id . '/multiUpload', array('parent_id'=>$parent_id)), 'POST', array('enctype'=>'multipart/form-data')); ?>
+    <?php echo CHtml::label('Добавить несколько фото', 'multi-images'); ?>
+    <?php echo CHtml::fileField('images[]', '', array('class'=>'file-loading act-add-new-file', 'id'=>'multi-images', 'multiple'=>true)); ?>
+
+    <?php echo CHtml::endForm(); ?>
 <? endif;?>
 
-
-<div id="ajax_loader" style="display: none;"><img width="40px;" style="position:absolute; margin-top:10px; margin-left:-40px;" src="/images/admin/ajaxloader.gif"></div>
 <div class="buttons">
     <a class="btn btn-primary" style="margin-top:14px; float:left; margin-left:15px" href="/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/create"> Добавить фото в альбом</a>
 </div>
@@ -143,5 +152,17 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
         var url = '/admin/photo/photo/index';
         if (param!='0'){ url += '?PhotoElements[parent_id]='+param; }
         location.href = url;
+    });
+
+    jQuery(function($) {
+        //На поле загрузки картинок навешиваем плагин fileinput
+        if (jQuery.fn.fileinput) {
+            $(".act-add-new-file").fileinput({
+                language: "ru",
+                showCaption: false,
+                overwriteInitial: false,
+                showCancel: false
+            });
+        }
     });
 </script>

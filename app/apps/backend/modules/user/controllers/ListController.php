@@ -127,20 +127,11 @@ class ListController extends Controller {
 		{
 		    $id = Yii::app()->request->getParam('id', array());
 		    $list = is_array($id) ? $id : array($id);
-			foreach($list as $id){
-                //удаляем сообщения пользователя
-                WebsiteMessages::model()->deleteAll('recipient_id = '.$id.' OR author_id = '.$id);
-                //удаляем из  tbl_user_access
-                UserAccess::model()->deleteAll('user_id = '.$id);
-                //удаляем обращения пользователя
-                UserRequests::model()->deleteAll('from_user_id = '.$id);
-                //удаляем контактные данные пользователя
-                UserContact::model()->deleteAll('user_id = '.$id);
-                //Удаляем коментарии
-                UserComment::model()->deleteAll('user_id = '.$id);
-
+			foreach($list as $id) {
                 //удаляем самого пользователя
-			    $this->loadModel($id)->delete();
+                if ((int) $id > 0) {
+                    $this->loadModel($id)->delete();
+                }
             }
 		}
 		else {
@@ -327,21 +318,8 @@ class ListController extends Controller {
 
                 //Удаляем пользователей с этой ролью
                 foreach ( User::model()->findAll('role_id = "'.$modelRole->name.'"') as $data ){
-
-                    //удаляем сообщения пользователя
-                    WebsiteMessages::model()->deleteAll('recipient_id = '.$data->id.' OR author_id = '.$data->id);
-                    //удаляем из  tbl_user_access
-                    UserAccess::model()->deleteAll('user_id = '.$data->id);
-                    //удаляем обращения пользователя
-                    UserRequests::model()->deleteAll('from_user_id = '.$data->id);
-                    //удаляем контактные данные пользователя
-                    UserContact::model()->deleteAll('user_id = '.$data->id);
-                    //Удаляем коментарии
-                    UserComment::model()->deleteAll('user_id = '.$data->id);
-
                     //удаляем самого пользователя
                     $this->loadModel($data->id)->delete();
-
                 }
 
                 //удаляем роль

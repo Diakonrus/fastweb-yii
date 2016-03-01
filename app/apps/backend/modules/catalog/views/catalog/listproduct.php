@@ -47,13 +47,12 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 	'columns'=>array(
 
         array(
-            'header'=> '',
-            'name'=> "id",
-            'type'=>'raw',
-            'value' => function($data){ return '<input class="selectProduct" type="checkbox" style="margin-left:5px;" data-id="'.$data->id.'">'; },
-            'filter' => CHtml::CheckBox('on-off-products-list',false, array( 'onclick'=>'if(this.checked) {selectall()} else {unselectall();}' )),
+            'class' => 'CCheckBoxColumn',
+            'selectableRows'=>2,
+            'checkBoxHtmlOptions' => array(
+                'class' => 'selectProduct',
+            )
         ),
-
 
             /*
         array(
@@ -219,10 +218,11 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
     //Удаляем отмеченые
     function deleteselected(){
         var arr = [];
-        $('table tbody input:checkbox:checked').each(function(){
-            arr.push($(this).data('id'));
+        $('table tbody td.checkbox-column input:checkbox:checked').each(function() {
+            arr.push($(this).val());
         });
-        if ( arr.length != 0 ){
+
+        if ( arr.length > 0 ) {
             $('#ajax_loader').show();
             $.ajax({
                 type: 'POST',
@@ -230,7 +230,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
                 dataType: "json",
                 data: {type:4, id:arr},
                 success: function(data) {
-                    $("#productlist-grid").load(document.location.href+" #productlist-grid");
+                    $("#productlist-grid").yiiGridView('update');
                     $('#ajax_loader').hide();
                     alert('Записи удалены');
                 }

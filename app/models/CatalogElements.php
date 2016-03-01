@@ -153,7 +153,7 @@ class CatalogElements extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return WarehouseElements the static model class
+	 * @return CatalogElements the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

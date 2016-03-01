@@ -169,6 +169,42 @@ class PhotoController extends Controller
 	}
 
 	/**
+	 * Загрузка множества картинок
+	 * @param $parent_id
+	 */
+	public function actionMultiUpload($parent_id) {
+		$images = CUploadedFile::getInstancesByName('images');
+
+		if(!empty($images)) {
+			foreach ($images as $image) {
+				$model = new PhotoElements();
+				$model->parent_id = (int) $parent_id;
+				$model->imagefile = $image;
+
+				if (isset($model->imagefile)){
+					$ext=pathinfo($model->imagefile);
+					$model->image = $ext['extension'];
+				}
+
+				if ($model->save()) {
+					//@todo Было бы замечательно провести рефакторинг и вынести эти действия в afterSave модели PhotoElements
+					if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 11')) {
+						$filename = $model->id.'.'.$model->image;
+						$filepatch = '/../uploads/filestorage/photo/elements/';
+						$model->imagefile->saveAs( YiiBase::getPathOfAlias('webroot').$filepatch.$filename );
+						//Обработка изображения
+						SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 2,$model->id);
+					}
+				}
+			}
+		}
+
+		$this->redirect( $this->listUrl('index') );
+	}
+
+
+
+	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
