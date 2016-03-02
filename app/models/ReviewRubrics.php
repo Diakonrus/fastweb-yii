@@ -7,11 +7,18 @@
  * @property integer $id
  * @property integer $left_key
  * @property integer $level
+ * @property integer $parent_id
  * @property integer $right_key
  * @property string $name
+ * @property string $title
  * @property string $url
+ * @property string $image
  * @property string $description
+ * @property string $description_short
  * @property integer $status
+ * @property string $meta_title
+ * @property string $meta_keywords
+ * @property string $meta_description
  * @property string $created_at
  *
  * The followings are the available model relations:
@@ -42,13 +49,13 @@ class ReviewRubrics extends CActiveRecord
 			array('name, parent_id, url', 'required'),
 			array('left_key, level, right_key, status, parent_id', 'numerical', 'integerOnly'=>true),
 			array('name, image', 'length', 'max'=>350),
-			array('url, meta_title', 'length', 'max'=>250),
+			array('url, meta_title, title', 'length', 'max'=>250),
             array('url','unique', 'message'=>'Такой URL-адрес уже занят'),
-			array('description, meta_keywords, meta_description', 'safe'),
+			array('description, description_short, meta_keywords, meta_description', 'safe'),
 			array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, left_key, level, right_key, name, url, description, status, image, meta_title, meta_keywords, meta_description, parent_id, created_at, created_at_start, created_at_end,
+			array('id, left_key, level, right_key, name, title, url, description, description_short, status, image, meta_title, meta_keywords, meta_description, parent_id, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -76,9 +83,11 @@ class ReviewRubrics extends CActiveRecord
 			'level' => 'Level',
 			'right_key' => 'Right Key',
 			'name' => 'Название',
+			'title' => 'Заголовок',
 			'url' => 'Url вдрес',
             'parent_id' => 'Категория',
 			'description' => 'Описание',
+			'description_short' => 'Короткое описание',
 			'status' => 'Статус',
 			'image' => 'Изображение',
 			'meta_title' => 'Meta Title',
@@ -112,9 +121,11 @@ class ReviewRubrics extends CActiveRecord
         $criteria->compare('parent_id',$this->parent_id);
 		$criteria->compare('right_key',$this->right_key);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('title',$this->title,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('image',$this->image,true);
 		$criteria->compare('description',$this->description,true);
+		$criteria->compare('description_short',$this->description_short,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('meta_title',$this->meta_title,true);
 		$criteria->compare('meta_keywords',$this->meta_keywords,true);

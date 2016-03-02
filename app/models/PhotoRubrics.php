@@ -7,10 +7,14 @@
  * @property integer $id
  * @property integer $left_key
  * @property integer $level
+ * @property integer $parent_id
  * @property integer $right_key
+ * @property string $image
  * @property string $name
+ * @property string $title
  * @property string $url
  * @property string $description
+ * @property string $description_short
  * @property integer $status
  * @property string $created_at
  *
@@ -42,16 +46,16 @@ class PhotoRubrics extends CActiveRecord
 			array('name, parent_id, url', 'required'),
 			array('left_key, level, right_key, status, parent_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>350),
-			array('url', 'length', 'max'=>250),
+			array('url, title', 'length', 'max'=>250),
             array('url','unique', 'message'=>'Такой URL-адрес уже занят'),
 			array('image', 'length', 'max'=>50),
 
 			array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 
-			array('description', 'safe'),
+			array('description, description_short', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, left_key, level, right_key, name, url, image, description, status, parent_id, created_at, created_at_start, created_at_end,
+			array('id, left_key, level, right_key, name, title, url, image, description, description_short, status, parent_id, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -81,9 +85,11 @@ class PhotoRubrics extends CActiveRecord
 			'image' => 'Картинка альбома',
 			'right_key' => 'Right Key',
 			'name' => 'Название',
+			'title' => 'Заголовок',
 			'url' => 'Url адрес',
             'parent_id' => 'Категория',
 			'description' => 'Описание',
+			'description_short' => 'Короткое описание',
 			'status' => 'Статус',
 			'created_at' => 'Created At',
 		);
@@ -114,8 +120,10 @@ class PhotoRubrics extends CActiveRecord
 		$criteria->compare('right_key',$this->right_key);
 		$criteria->compare('image',$this->image,true);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('title',$this->title,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('description',$this->description,true);
+		$criteria->compare('description_short',$this->description_short,true);
 		$criteria->compare('status',$this->status);
         $criteria->compare('created_at',$this->created_at);
 

@@ -6,6 +6,9 @@
  * The followings are the available columns in table '{{doctor_rubrics}}':
  * @property integer $id
  * @property string $name
+ * @property string $title
+ * @property string $description
+ * @property string $description_short
  * @property string $url
  * @property integer $status
  * @property string $meta_title
@@ -40,11 +43,12 @@ class DoctorRubrics extends CActiveRecord
 			array('name, url', 'required'),
 			array('status', 'numerical', 'integerOnly'=>true),
 			array('name, meta_title', 'length', 'max'=>350),
-			array('url', 'length', 'max'=>250),
+			array('url, title', 'length', 'max'=>250),
 			array('meta_keywords, meta_description, created_at', 'safe'),
+			array('description, description_short', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, url, status, meta_title, meta_keywords, meta_description, created_at, created_at_start, created_at_end,
+			array('id, name, title, description, description_short, url, status, meta_title, meta_keywords, meta_description, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -69,6 +73,9 @@ class DoctorRubrics extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Название',
+			'title' => 'Заголовок',
+			'description' => 'Описание',
+			'description_short' => 'Короткое описание',
 			'url' => 'Url адрес',
 			'status' => 'Статус',
 			'meta_title' => 'Meta Title',
@@ -98,6 +105,9 @@ class DoctorRubrics extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('title',$this->title,true);
+		$criteria->compare('description',$this->description,true);
+		$criteria->compare('description_short',$this->description_short,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('meta_title',$this->meta_title,true);

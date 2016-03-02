@@ -6,6 +6,7 @@
  * The followings are the available columns in table '{{sale_group}}':
  * @property integer $id
  * @property string $name
+ * @property string $title
  * @property string $description
  * @property integer $status
  * @property string $created_at
@@ -35,13 +36,13 @@ class SaleGroup extends CActiveRecord
 			array('name', 'required'),
 			array('status, param_design', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>350),
-            array('url', 'length', 'max'=>250),
+            array('url, title', 'length', 'max'=>250),
             array('url','unique', 'message'=>'Такой URL уже занят - введите другой URL-адрес.'),
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			array('description, brieftext', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, description, url, brieftext, status, created_at, param_design, created_at_start, created_at_end,
+			array('id, name, title, description, url, brieftext, status, created_at, param_design, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -65,6 +66,7 @@ class SaleGroup extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Название',
+			'title' => 'Заголовок',
             'url' => 'Url адрес',
             'brieftext' => 'Анонс (короткий текст)',
 			'description' => 'Описание',
@@ -94,6 +96,7 @@ class SaleGroup extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('title',$this->title,true);
         $criteria->compare('url',$this->url,true);
         $criteria->compare('brieftext',$this->brieftext,true);
 		$criteria->compare('description',$this->description,true);

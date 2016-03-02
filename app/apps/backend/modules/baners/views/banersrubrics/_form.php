@@ -1,4 +1,10 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php
+/**
+ * @var $form TbActiveForm
+ * @var $model BanersRubrics
+ */
+
+$form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'baners-rubrics-form',
 	'enableAjaxValidation'=>false,
 	'enableClientValidation'=>false,
@@ -41,12 +47,61 @@
     </div>
 </div>
 
-<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>350));; ?>
-<?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>150));; ?>
+<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>350)); ?>
+<?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>250)); ?>
+<?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>150)); ?>
 
 <?php
 
 Yii::import('ext.imperavi-redactor-widget-master.ImperaviRedactorWidget');
+
+
+echo $form->labelEx($model,'description_short');
+
+$this->widget('ImperaviRedactorWidget', array(
+    'model' => $model,
+    'attribute' => 'description_short',
+
+    'options' => array(
+        'lang' => 'ru',
+        'cleanOnPaste'=>false,
+        'cleanStyleOnEnter'=>true,
+        'cleanSpaces'=>false,
+        'replaceDivs' => false,
+        'imageUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/imageUpload'),
+        'fileUpload' => Yii::app()->createAbsoluteUrl('/pages/pages/fileUpload'),
+        'imageManagerJson'=> Yii::app()->createAbsoluteUrl('/pages/pages/getImageLibray'),
+    ),
+    'plugins' => array(
+        'fullscreen' => array(
+            'js' => array('fullscreen.js',),
+        ),
+        'video' => array(
+            'js' => array('video.js',),
+        ),
+        'table' => array(
+            'js' => array('table.js',),
+        ),
+        'fontcolor' => array(
+            'js' => array('fontcolor.js',),
+        ),
+        'fontfamily' => array(
+            'js' => array('fontfamily.js',),
+        ),
+        'fontsize' => array(
+            'js' => array('fontsize.js',),
+        ),
+        'filemanager' => array(
+            'js' => array('filemanager.js',),
+        ),
+        'myphotogalery' => array(
+            'js' => array('myphotogalery.js',),
+        ),
+        'imagemanager' => array(
+            'js' => array('imagemanager.js',),
+        ),
+    ),
+));
 
 
 echo $form->labelEx($model,'description');
