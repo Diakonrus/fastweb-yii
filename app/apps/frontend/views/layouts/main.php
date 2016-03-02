@@ -23,10 +23,10 @@
 
     <script src="/js/script.js"></script>
     <script src="/js/main.js"></script>
-    <link rel="stylesheet" href="/public/themes/wengerland/components/lightbox2-master/dist/css/lightbox.min.css"/>
+
 	<link rel="stylesheet" href="/css/Fancybox.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="/js/jquery.fancybox-1.3.4.js"></script>
-	<script type="text/javascript" src="/js/jquery.jquery.easing-1.3.pack.js"></script>
+	<script type="text/javascript" src="/js/jquery.easing-1.3.pack.js"></script>
 	<script type="text/javascript" src="/js/jquery.mousewheel-3.0.4.pack.js"></script>
     
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
@@ -130,7 +130,6 @@
 			</script>
 		</div>
 	</div>
-	<!--script src="/public/themes/wengerland/components/lightbox2-master/dist/js/lightbox.min.js"></script-->
 
 	<div class="modal fade" tabindex="-1" role="dialog" id="modal_fastorder">
 	  <div class="modal-dialog">

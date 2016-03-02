@@ -7,7 +7,7 @@
 <?php
 /* @var $this CategoryController */
 /* @var $model Category */
-/* @var $form CActiveForm */
+/* @var $form TbActiveForm */
 ?>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
     'id'=>'product-form',
@@ -141,7 +141,7 @@
         ),
     ));
 
-
+    echo $form->textAreaRow($model, 'code_3d',array('class'=>'span5','maxlength'=>150));
     ?>
 </div>
 

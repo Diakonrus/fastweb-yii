@@ -19,6 +19,7 @@
  * @property string $code
  * @property double $price
  * @property double $price_entering
+ * @property double $code_3d
  */
 class CatalogElements extends CActiveRecord
 {
@@ -50,14 +51,14 @@ class CatalogElements extends CActiveRecord
 			array('image', 'length', 'max'=>5),
 			array('code', 'length', 'max'=>100),
 			array('description', 'length', 'min'=>50),
-			array('brieftext', 'length', 'max'=>1000),
+			array('brieftext, code_3d', 'length', 'max'=>1000),
 
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			array('imagefiles', 'file', 'types'=>'jpg, gif, png, jpeg', 'maxFiles'=>10, 'allowEmpty' => true),
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, order_id, name, brieftext, status, ansvtype, qty, shares, primary, hit, image, page_name, description, fkey, code, serch_name_code, price, price_old, price_entering,
+			array('id, parent_id, order_id, name, brieftext, code_3d, status, ansvtype, qty, shares, primary, hit, image, page_name, description, fkey, code, serch_name_code, price, price_old, price_entering,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -100,6 +101,7 @@ class CatalogElements extends CActiveRecord
 			'primary' => 'На главную',
 			'price_old' => 'Старая цена',
 			'price_entering' => 'Price Entering',
+			'code_3d' => '3D',
 		);
 	}
 
@@ -144,6 +146,7 @@ class CatalogElements extends CActiveRecord
 		$criteria->compare('price_old',$this->price_old);
         $criteria->compare('qty',$this->qty);
 		$criteria->compare('price_entering',$this->price_entering);
+		$criteria->compare('code_3d',$this->code_3d, true);
 
         return $criteria;
 

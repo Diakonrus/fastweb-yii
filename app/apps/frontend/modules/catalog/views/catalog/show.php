@@ -52,7 +52,11 @@
 
 				<?php } ?>
 
-				
+				<li>
+					<a href="<?php echo Yii::app()->urlManager->createUrl('/catalog/catalog/getcodethreed', array('id' => $model->id)); ?>" class="act-get-code-3d">
+						<img src="/images/3d-small.jpg"  alt=""/>
+					</a>
+				</li>
 			</ul>
 
 
@@ -71,7 +75,9 @@
 					<img src="<?=$url_img_medium?>" class="product_cart_big_img"  alt=""/>
 				</a>
 			</div>
+			<div class="code-3d">
 
+			</div>
         </div>		
         <div class="item-page-params">
             <div class="item-detail-text" style="display:none;">
@@ -214,5 +220,19 @@
     </div>
     
 
-
+<script>
+	$(document).ready(function() {
+		$('.act-get-code-3d').click(function() {
+			$.ajax({
+				url: $(this).attr('href'),
+				type: "GET",
+				dataType: "JSON",
+				success: function(data) {
+					$('.code-3d').html(data);
+				}
+			});
+			return false;
+		});
+	});
+</script>
 
