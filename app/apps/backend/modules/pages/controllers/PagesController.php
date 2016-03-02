@@ -317,8 +317,9 @@ class PagesController extends Controller
 
     public function actionImageUpload() {
 
-        $webFolder = '/uploads/filestorage/photoalbum/upload/';
-        $tempFolder = Yii::app()->basePath . '/../'.trim(SITE_PUBLIC_NAME, '/') . $webFolder;
+        $webFolder = '/../uploads/filestorage/photoalbum/upload/';
+
+        $tempFolder =  YiiBase::getPathOfAlias('webroot').$webFolder;
 
         @mkdir($tempFolder, 0777, TRUE);
         @mkdir($tempFolder.'chunks', 0777, TRUE);
@@ -330,9 +331,11 @@ class PagesController extends Controller
         $path = $tempFolder.$filename;
         $image->saveAs($tempFolder.$filename);
 
+        /*
         if ( $result = $this->widget('application.extensions.kyimages.KYImages',array('patch'=>$webFolder, 'file'=>$filename)) ){
             //ToDo Вернет данные о ресайзеном изображении (патч и имя файла). Если надо использовать - то тут
         }
+        */
 
         /*
         $image_open = Yii::app()->image->load($tempFolder.$filename);
@@ -346,8 +349,9 @@ class PagesController extends Controller
 
 
     public function actionGetImageLibray() {
-        $webFolder = '/uploads/filestorage/photoalbum/upload/';
-        $tempFolder = Yii::app()->basePath . '/../'. trim(SITE_PUBLIC_NAME, '/') . $webFolder;
+        $webFolder = '/../uploads/filestorage/photoalbum/upload/';
+
+        $tempFolder =  YiiBase::getPathOfAlias('webroot').$webFolder;
 
         $array = array();
 
