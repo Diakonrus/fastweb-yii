@@ -158,7 +158,7 @@ class CatalogController extends Controller
 		$data['elements'] = CatalogElements::model()->findAll(array(
 			'condition' => 'parent_id='.$model->id.' AND `status`=1',
 			'order' => 'order_id',
-			'offset' => (($start>0)?($start+12):(0)),
+			'offset' => (($start>0)?(($start-1)*12):(0)),
 			'limit' => 12,
 		));
 		//
@@ -215,7 +215,7 @@ class CatalogController extends Controller
 
 	private function getChaildCategory($model){
 		$menu_top = array();
-		foreach ( CatalogRubrics::getCatalogList($model) as $data ){
+		foreach ( CatalogRubrics::getCatalogList($model,1) as $data ){
 			$menu_top[$data->id]['name'] = $data->name;
 			$menu_top[$data->id]['url'] = $data->url;
 		}
