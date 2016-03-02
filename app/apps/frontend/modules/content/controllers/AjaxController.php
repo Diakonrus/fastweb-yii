@@ -39,7 +39,7 @@ class AjaxController extends Controller
         if ( isset($_GET['basket']) && $_GET['basket'] == "getcount" ){
             $result = 0;
             $cookies = Yii::app()->request->cookies;
-            if ($basket = $cookies['basket']->value){
+            if (!empty($cookies['basket']) && $basket = $cookies['basket']->value){
                 $basket = unserialize($basket);
                 foreach ($basket as $key=>$value){
                     $result = (int)$result + (int)$value['quantity'];

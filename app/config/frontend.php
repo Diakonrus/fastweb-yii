@@ -10,8 +10,11 @@ $url = array(
     //'/' => 'user/login/index',
     //'/' => 'content/default/index',
 
+    '/basket' => 'content/basket/index',
+
     //ajax
-    '/ajax' => 'content/ajax',
+    '/ajax' => 'content/ajax/index',
+    '/ajax.php' => 'content/ajax/index',
 
     // регистрация
     'registration' => 'user/registration/index',
@@ -20,6 +23,7 @@ $url = array(
 
     //каталог
     '/catalog' => '/catalog/catalog/index',
+    '/catalogfastorder/<id>' => '/catalog/catalog/ajaxfastorder',
     '/catalog/<param:.+>' => '/catalog/catalog/list',
 
 

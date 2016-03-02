@@ -64,3 +64,5 @@ define('SOCIAL_INSTAGRAM_SECRET', '7f4799ebd3f14f7797cfa625ba434e3a');
 
 define('SOCIAL_GOOGLEPLUS_ID', '859443960254-9lhildvbbl6moukc47lmokln1l2e5d6m.apps.googleusercontent.com');
 define('SOCIAL_GOOGLEPLUS_SECRET', 'pLdQ2LL_ISbpMO-y682P_-kD');
+
+define('SITE_PUBLIC_NAME', ''); //Директория публичной части домена

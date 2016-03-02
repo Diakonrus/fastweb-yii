@@ -4,7 +4,7 @@
 <?php
 
 $assetsDir = Yii::app()->basePath;
-$labels = NewsGroup::model()->attributeLabels();
+$labels = StockGroup::model()->attributeLabels();
 
 
 $this->widget('bootstrap.widgets.TbExtendedGridView',array(
