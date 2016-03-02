@@ -52,11 +52,13 @@
 
 				<?php } ?>
 
+				<?php if(!empty($model->code_3d)): ?>
 				<li>
 					<a href="<?php echo Yii::app()->urlManager->createUrl('/catalog/catalog/getcodethreed', array('id' => $model->id)); ?>" class="act-get-code-3d">
 						<img src="/images/3d-small.jpg"  alt=""/>
 					</a>
 				</li>
+				<?php endif; ?>
 			</ul>
 
 
