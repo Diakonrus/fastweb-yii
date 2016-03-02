@@ -93,6 +93,18 @@ $this->widget('ImperaviRedactorWidget', array(
 
 ?>
 
+<style>
+
+    .deleteBlock {
+        background: red none repeat scroll 0 0;
+        border-radius: 10px;
+        color: white;
+        margin-left: -10px;
+        margin-top: -10px;
+        position: absolute;
+    }
+</style>
+
 <div class="control-group">
     <label class="control-label" for="CatalogRubrics_status">Картинка</label>
     <div class="controls">
@@ -106,6 +118,7 @@ $this->widget('ImperaviRedactorWidget', array(
                 $url_img = $base_url_img.'small-'.$model->id.'.'.$model->image;
             }
             echo '<a href="'.$base_url_img.$model->id.'.'.$model->image.'" target="_blank"><img src="'.$url_img.'"></a>';
+            if (file_exists( YiiBase::getPathOfAlias('webroot').$base_url_img.$model->id.'.'.$model->image )){ echo '<a class="btn-mini deleteBlock" href="/admin/'.Yii::app()->controller->module->id.'/'.Yii::app()->controller->id.'/deleteimages?id='.$model->id.'">X</a>'; }
         } ?>
         <br>
         <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>

@@ -176,6 +176,24 @@ class StockController extends Controller
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
+
+    //Удалить картинку
+    public function actionDeleteimages($id){
+        $model = $this->loadModel($id);
+        $img = $model->image;
+        $model->image = NULL;
+        if ($model->save()){
+            foreach (array('','small-','medium-','admin-','large-') as $f_name){
+                $this->__deleteFile('/uploads/filestorage/stock/elements/'.$f_name.$model->id.'.'.$img);
+            }
+        }
+        $url = $this->itemUrl('update', $model->id);
+        $this->redirect( $url );
+    }
+
+
+
+
 	/**
 	 * Lists all models.
 	 *

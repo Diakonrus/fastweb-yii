@@ -301,4 +301,15 @@ class Controller extends CController
     }
 
 
+    //Удаляет файл
+    public function __deleteFile($url){
+        $url = YiiBase::getPathOfAlias('webroot').'/../'.$url;
+        if (file_exists($url)) {
+            unlink($url);
+        }
+        return true;
+    }
+
+
+
 }

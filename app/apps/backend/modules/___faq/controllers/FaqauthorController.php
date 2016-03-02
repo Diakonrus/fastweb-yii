@@ -1,6 +1,6 @@
 <?php
 
-class FaqController extends Controller
+class FaqauthorController extends Controller
 {
 
 	/**
@@ -9,8 +9,8 @@ class FaqController extends Controller
 	public function actionView($id)
 	{
 		// set attributes from get
-		if(isset($_GET['FaqElements'])){
-			$model->attributes=$_GET['FaqElements'];
+		if(isset($_GET['FaqAuthor'])){
+			$model->attributes=$_GET['FaqAuthor'];
         }
 
 	    $model = $this->loadModel($id);
@@ -27,29 +27,19 @@ class FaqController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new FaqElements;
-		$modelAuthor = new FaqAuthor;
-
-        $root = FaqRubrics::getRoot(new FaqRubrics);
-        $catalog = $root->descendants()->findAll($root->id);
+		$model=new FaqAuthor;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		// set attributes from get
-		if(isset($_GET['FaqElements'])){
-			$model->attributes=$_GET['FaqElements'];
+		if(isset($_GET['FaqAuthor'])){
+			$model->attributes=$_GET['FaqAuthor'];
         }
 
-		if(isset($_POST['FaqElements']))
+		if(isset($_POST['FaqAuthor']))
 		{
-			$model->attributes=$_POST['FaqElements'];
-
-			if (isset($_POST['FaqAuthor'])){
-				$modelAuthor->attributes=$_POST['FaqAuthor'];
-				$modelAuthor->save();
-				$model->author_id = $modelAuthor->id;
-			}
+			$model->attributes=$_POST['FaqAuthor'];
 
 			if($model->save()){
 				$url = isset($_POST['go_to_list'])
@@ -61,9 +51,6 @@ class FaqController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
-            'root'=>$root,
-            'catalog' => $catalog,
-			'modelAuthor' => $modelAuthor,
 		));
 	}
 
@@ -76,21 +63,17 @@ class FaqController extends Controller
 	{
 		$model=$this->loadModel($id);
 
-        $root = FaqRubrics::getRoot(new FaqRubrics);
-        $catalog = $root->descendants()->findAll($root->id);
-
-
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		// set attributes from get
-		if(isset($_GET['FaqElements'])){
-			$model->attributes=$_GET['FaqElements'];
+		if(isset($_GET['FaqAuthor'])){
+			$model->attributes=$_GET['FaqAuthor'];
         }
 
-		if(isset($_POST['FaqElements']))
+		if(isset($_POST['FaqAuthor']))
 		{
-			$model->attributes=$_POST['FaqElements'];
+			$model->attributes=$_POST['FaqAuthor'];
 
 			if($model->save()){
 					$url = isset($_POST['go_to_list'])
@@ -102,8 +85,6 @@ class FaqController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
-            'root'=>$root,
-            'catalog' => $catalog,
 		));
 	}
 
@@ -112,7 +93,7 @@ class FaqController extends Controller
      */
 	public function actionUpload(){
 
-        $webFolder = '/uploads/faqelements/';
+        $webFolder = '/uploads/faqauthor/';
         $tempFolder = Yii::app()->basePath . '/../www' . $webFolder;
 
         @mkdir($tempFolder, 0777, TRUE);
@@ -149,6 +130,9 @@ class FaqController extends Controller
             $id = Yii::app()->request->getParam('id', array());
             $list = is_array($id) ? $id : array($id);
             foreach($list as $id){
+                //Удаляем вопросы пользователя
+                FaqElements::model()->deleteAll('author_id = '.$id);
+                //Удаляем самого пользователя
                 $this->loadModel($id)->delete();
             }
 		}
@@ -161,7 +145,7 @@ class FaqController extends Controller
 	 *
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('FaqElements');
+		$dataProvider=new CActiveDataProvider('FaqAuthor');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -173,17 +157,16 @@ class FaqController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$model=new FaqElements('search');
+		$model=new FaqAuthor('search');
         $model->attachBehavior('dateComparator', array(
             'class' => 'DateComparator',
         ));
 		$model->unsetAttributes();  // clear any default values
 
 		// set attributes from get
-		if(isset($_GET['FaqElements'])){
-			$model->attributes=$_GET['FaqElements'];
+		if(isset($_GET['FaqAuthor'])){
+			$model->attributes=$_GET['FaqAuthor'];
         }
-
 
         $param = array();
         $data['sort'] = array(
@@ -198,9 +181,10 @@ class FaqController extends Controller
 			);
 		}
 
-        $provider=new CActiveDataProvider('FaqElements', $data);
+        $provider=new CActiveDataProvider('FaqAuthor', $data);
         $param = implode(" AND ", $param);
         $provider->criteria = $model->search($param);
+
 
 		$this->render('list',array(
 			'model'=>$model,
@@ -215,7 +199,7 @@ class FaqController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=FaqElements::model()->findByPk($id);
+		$model=FaqAuthor::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -227,31 +211,10 @@ class FaqController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='faq-elements-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='faq-author-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
 	}
-
-    public function actionAjax()
-    {
-        if (isset($_POST)) {
-            switch ((int)$_POST['type']) {
-                case 1:
-                    //Смена статуса вопросов
-                    $model = $this->loadModel((int)$_POST['id']);
-                    $model->status = (($model->status==1)?0:1);
-                    $model->save();
-                    break;
-            }
-
-            echo CJavaScript::jsonEncode('ok');
-        }
-
-        Yii::app()->end();
-    }
-
-
-
 }

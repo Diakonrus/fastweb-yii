@@ -4,7 +4,7 @@
 <?php
 
 $assetsDir = Yii::app()->basePath;
-$labels = News::model()->attributeLabels();
+$labels = Stock::model()->attributeLabels();
 
 
 $this->widget('bootstrap.widgets.TbExtendedGridView',array(
@@ -70,8 +70,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
         array(
                 'header'=> $labels["primary"],
                 'name'=> "primary",
-                'value' => 'News::model()->getDownliststatus($data->primary)',
-                'filter' => News::model()->getStatuslist(),
+                'value' => 'Stock::model()->getDownliststatus($data->primary)',
+                'filter' => Stock::model()->getStatuslist(),
         ),
 
         
