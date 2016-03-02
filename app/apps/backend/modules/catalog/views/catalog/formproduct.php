@@ -141,7 +141,7 @@
         ),
     ));
 
-    echo $form->textAreaRow($model, 'code_3d',array('class'=>'span5','maxlength'=>150));
+    echo $form->textAreaRow($model, 'code_3d',array('class'=>'span5'));
     ?>
 </div>
 
