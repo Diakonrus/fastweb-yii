@@ -7,6 +7,7 @@
 /* @var $this CatalogController */
 /* @var $model CatalogRubrics */
 /* @var $form TbActiveForm */
+/* @var $categories array */
 ?>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
     'id'=>'category-form',
@@ -22,31 +23,11 @@
 </div>
 
 <div id="main_block" style="margin-top: 10px; padding: 10px;">
-    <div class="control-group">
-        <label class="control-label required" for="CatalogRubrics_name">
-            Категория
-            <span class="required">*</span>
-        </label>
-        <div class="controls">
-            <select name="CatalogRubrics[parent_id]" id="CatalogRubrics_parent_id" class="span5">
-
-                <?php echo '<option value="'.$root->id.'">/</option>'; ?>
-                <? if (!empty($categories)) : ?>
-                    <? foreach ($categories as $category) : ?>
-                        <option value="<?=$category->id ?>"
-                            <?=!empty($_POST['parent']) && $_POST['parent']== $category->id || (isset($_GET['id']) && $category->id==(int)$_GET['id'])? 'selected="selected"' : ''?>>
-                            <?=str_repeat('-', $category->level), $category->name?>
-                        </option>
-                    <? endforeach; ?>
-                <? endif;?>
-
-            </select>
-        </div>
-    </div>
 
 
-<?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>150));; ?>
-<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>150));; ?>
+    <?php echo $form->dropDownListRow($model,'parent_id', $categories, array('class'=>'span5', 'encode'=>false)); ?>
+    <?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>150)); ?>
+    <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>150)); ?>
     <div class="control-group">
         <label>
             <a style="margin-left:560px;" class="translits_href" href="#">транслит url</a>
@@ -229,7 +210,7 @@
     <?php $this->widget('bootstrap.widgets.TbButton', array(
         'buttonType'=>'link',
         'label'=>Yii::t('Bootstrap', 'PHRASE.BUTTON.RETURN'),
-        'url' =>$this->listUrl('listgroup?id='.$_GET['id']),
+        'url' =>$this->listUrl('listgroup' . (!empty($id) ? '?id=' . $id : '')),
     )); ?>
 
 </div>

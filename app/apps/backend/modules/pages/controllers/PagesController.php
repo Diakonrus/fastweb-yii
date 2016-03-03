@@ -21,24 +21,25 @@ class PagesController extends Controller
 	}
 	*/
 
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'update' page.
-	 */
-	public function actionCreate()
-	{
+    /**
+     * Creates a new model.
+     * If creation is successful, the browser will be redirected to the 'update' page.
+     * @param null $id
+     */
+	public function actionCreate($id = null) {
         $this->breadcrumbs = array(
             'Дерево'=>array('/pages/pages'),
             'Новая запись'
         );
 
         $model = new Pages;
-        $root = Pages::getRoot($model);
-        $descendants = $root->descendants()->findAll($root->id);
+        $root = Pages::getRoot();
+        $descendants = CMap::mergeArray(
+            array($root->id => $root->title),
+            $root->getFormattedDescendants($root->id)
+        );
 
-        if(isset($_POST['Pages']))
-        {
-            $model = new Pages;
+        if (isset($_POST['Pages'])) {
             $parent_id = (int)$_POST['Pages']['parent_id'];
             $root = Pages::model()->findByPk($parent_id);
             $model->attributes = $_POST['Pages'];
@@ -56,7 +57,7 @@ class PagesController extends Controller
 
             if (!$root){
                 //Создаю родительскую категорию
-                $result = Pages::getRoot(new Pages);
+                $result = Pages::getRoot();
                 $model->id = (int)$result->id;
             }
             else {
@@ -89,6 +90,10 @@ class PagesController extends Controller
 
                 $this->redirect(array('update','id'=>$model->id));
             }
+        } else {
+            if ($id > 0) {
+                $model->parent_id = (int) $id;
+            }
         }
 
         $this->render('create',array(
@@ -114,16 +119,17 @@ class PagesController extends Controller
         );
 
 
-
-        $root = Pages::getRoot(new Pages);
-
         $model = $this->loadModel($id);
-        $descendants = $root->descendants()->findAll($root->id);
+        $root = Pages::getRoot();
+
+        $descendants = CMap::mergeArray(
+            array($root->id => $root->title),
+            $root->getFormattedDescendants($root->id)
+        );
 
         $modelTabs = PagesTabs::model()->findAll('pages_id = '.$model->id.' ORDER BY order_id ASC');
 
-        if(isset($_POST['Pages']))
-        {
+        if (isset($_POST['Pages'])) {
             $model->attributes = $_POST['Pages'];
             $parent_id = (int)$model->parent_id;
             $root = Pages::model()->findByPk($parent_id);

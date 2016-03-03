@@ -13,7 +13,7 @@ class CatalogController extends Controller {
 		$data['action'] = $action;
 		
 		
-		
+
 		
 		if ($action=='list')
 		{
@@ -383,7 +383,7 @@ class CatalogController extends Controller {
 
 
 
-    public function actionListgroup($id=null){
+    public function actionListgroup($id=null) {
 
         $this->breadcrumbs = array(
             'Каталоги'=>array('/catalog/catalog/listgroup'),
@@ -411,69 +411,58 @@ class CatalogController extends Controller {
             }
         }
 
-
-
-        if (!empty($id)){
-
-            $model = CatalogRubrics::model()->findByPk((int)$id);
-            $root = CatalogRubrics::getRoot($model);
+        if (!empty($id)) {
             $category = CatalogRubrics::model()->findByPk((int)$id); //Получаем нужный узел
             $descendants = $category->descendants(1)->findAll();
-
         }
         else {
-            $model = new CatalogRubrics;
-            $category = CatalogRubrics::getRoot($model);
-            $category = CatalogRubrics::model()->findByPk($category->id);
+            $categoryRoot = CatalogRubrics::getRoot();
+            $category = CatalogRubrics::model()->findByPk($categoryRoot->id);
             $descendants = $category->descendants(1)->findAll();
-            $root = "";
         }
 
         $this->render('listgroup',array(
-            'root' => $root,
             'categories' => $descendants,
             'base_patch' => $base_patch,
         ));
     }
 
 
-    public function actionCreate($id = null)
-    {
+    public function actionCreate($id = null) {
         $this->breadcrumbs = array(
             'Каталоги'=>array('/catalog/catalog/listgroup'),
             'Новая запись'
         );
 
         $model = new CatalogRubrics;
-        $root = CatalogRubrics::getRoot($model);
-        $descendants = $root->descendants()->findAll($root->id);
+		$root = CatalogRubrics::getRoot();
+		$descendants = CMap::mergeArray(
+			array($root->id => $root->name),
+			$root->getFormattedDescendants($root->id)
+		);
 
 
-        if(isset($_POST['CatalogRubrics']))
-        {
+        if (isset($_POST['CatalogRubrics'])) {
 
-            $model = new CatalogRubrics;
             $parent_id = (int)$_POST['CatalogRubrics']['parent_id'];
             $root = CatalogRubrics::model()->findByPk($parent_id);
             $model->attributes = $_POST['CatalogRubrics'];
 
-            $model->meta_title = $_POST['CatalogRubrics']['meta_title'];
-            $model->meta_keywords = $_POST['CatalogRubrics']['meta_keywords'];
-            $model->meta_description = $_POST['CatalogRubrics']['meta_description'];
-
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
-            if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
+            if (isset($model->imagefile)) {
+				$ext=pathinfo($model->imagefile);
+				$model->image = $ext['extension'];
+			}
 
             if (!$root){
                 //Создаю родительскую категорию
-                $result = CatalogRubrics::getRoot(new CatalogRubrics);
+                $result = CatalogRubrics::getRoot();
                 $model->id = (int)$result->id;
-            }
-            else {
+            }  else {
                 $model->appendTo($root);
             }
 
-            if(!empty($model->id)){
+            if (!empty($model->id)) {
 
                 if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 4')){
                     $filename = $model->id.'.'.$model->image;
@@ -486,49 +475,50 @@ class CatalogController extends Controller {
                 
                 $this->redirect(array('listgroup'));
             }
-        }
-
-        $this->render('form',array(
+        } else {
+			if ($id > 0) {
+				$model->parent_id = (int) $id;
+			}
+		}
+		$this->render('form',array(
             'model'=>$model,
             'root' => $root,
             'categories' => $descendants,
-            'id' => null,
+            'id' => $id,
         ));
     }
 
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
 
         $this->breadcrumbs = array(
             'Каталоги'=>array('/catalog/catalog/listgroup'),
             'Редактирование'
         );
 
-        $model = new CatalogRubrics;
-        $root = CatalogRubrics::getRoot($model);
-        $descendants = $root->descendants()->findAll($root->id);
+		$model = $this->loadModel($id);
 
-        $model = $this->loadModel($id);
+        $root = CatalogRubrics::getRoot();
+		$descendants = CMap::mergeArray(
+			array($root->id => $root->name),
+			$root->getFormattedDescendants($root->id)
+		);
 
-        if(isset($_POST['CatalogRubrics']))
-        {
+
+        if (isset($_POST['CatalogRubrics'])) {
 
             $parent_id = (int)$_POST['CatalogRubrics']['parent_id'];
             $root = CatalogRubrics::model()->findByPk($parent_id);
             $model->attributes = $_POST['CatalogRubrics'];
-            $model->parent_id = ($root->id == $parent_id)?$root->parent_id:$parent_id;
-
-            $model->meta_title = $_POST['CatalogRubrics']['meta_title'];
-            $model->meta_keywords = $_POST['CatalogRubrics']['meta_keywords'];
-            $model->meta_description = $_POST['CatalogRubrics']['meta_description'];
 
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
-            if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
-
+            if (isset($model->imagefile)) {
+				$ext=pathinfo($model->imagefile);
+				$model->image = $ext['extension'];
+			}
 
             $model->saveNode();
 
-            if(!empty($model->id)){
+            if(!empty($model->id)) {
                 if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 4') ){
                     $filename = $model->id.'.'.$model->image;
                     $filepatch = '/../uploads/filestorage/catalog/rubrics/';
@@ -537,11 +527,9 @@ class CatalogController extends Controller {
                     SiteModuleSettings::model()->chgImgModel($modelSettings, 'GD', 1,$model->id);
 
                 }
-                // $this->redirect(array('listgroup','id'=>$model->id));
 
                 //Возращаемся в каталог где были
                 $this->redirect(array('update','id'=>$model->id));
-                //$this->redirect(array('listgroup?id='.$model->parent_id));
             }
 
 
@@ -556,7 +544,10 @@ class CatalogController extends Controller {
     }
 
 
-    /** Товары: Список товаров  */
+	/**
+	 * Товары: Список товаров
+	 * @param null $filterData
+	 */
     public function actionListelement($filterData = null){
 
         $this->breadcrumbs = array(
@@ -598,8 +589,11 @@ class CatalogController extends Controller {
 
         $provider->criteria = $model->search($param);
 
-        $root = CatalogRubrics::getRoot(new CatalogRubrics);
-        $catalog = $root->descendants()->findAll($root->id);
+		$root = CatalogRubrics::getRoot();
+		$catalog = CMap::mergeArray(
+			array($root->id => $root->name),
+			$root->getFormattedDescendants($root->id)
+		);
 
         $this->render('listproduct',array(
             'model'=>$model,
@@ -611,19 +605,20 @@ class CatalogController extends Controller {
 
 
     /** Товары: Создание нового товара */
-    public function actionCreateproduct()
-    {
+    public function actionCreateproduct() {
         $this->breadcrumbs = array(
             'Товары'=>array('/catalog/catalog/listelement'),
             'Новая запись'
         );
 
         $model = new CatalogElements;
-        $root = CatalogRubrics::getRoot(new CatalogRubrics);
-        $catalog = $root->descendants()->findAll($root->id);
+		$root = CatalogRubrics::getRoot();
+		$catalog = CMap::mergeArray(
+			array($root->id => $root->name),
+			$root->getFormattedDescendants($root->id)
+		);
 
-        if(isset($_POST['CatalogElements']))
-        {
+        if (isset($_POST['CatalogElements'])) {
             $model->attributes = $_POST['CatalogElements'];
             $model->page_name = $model->name;
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
@@ -676,10 +671,13 @@ class CatalogController extends Controller {
         );
 
         $model = $this->loadModelProduct($id);
-        $root = CatalogRubrics::getRoot(new CatalogRubrics);
-        $catalog = $root->descendants()->findAll($root->id);
-        if(isset($_POST['CatalogElements']))
-        {
+
+		$root = CatalogRubrics::getRoot();
+		$catalog = CMap::mergeArray(
+			array($root->id => $root->name),
+			$root->getFormattedDescendants($root->id)
+		);
+        if(isset($_POST['CatalogElements'])) {
             $model->attributes = $_POST['CatalogElements'];
             $model->page_name = $model->name;
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
@@ -1229,13 +1227,16 @@ class CatalogController extends Controller {
         $param = implode(" AND ", $param);
         $provider->criteria = $model->search($param);
 
-        $root = CatalogRubrics::getRoot(new CatalogRubrics);
-        $catalog = $root->descendants()->findAll($root->id);
+		$root = CatalogRubrics::getRoot();
+		$catalog = CMap::mergeArray(
+			array($root->id => $root->name),
+			$root->getFormattedDescendants($root->id)
+		);
 
         $this->render('sharechars',array(
             'model'=>$model,
             'provider'=>$provider,
-            'categories'=>$catalog,
+            'catalog'=>$catalog,
             'root' => $root,
         ));
     }

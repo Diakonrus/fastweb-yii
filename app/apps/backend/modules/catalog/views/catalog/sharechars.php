@@ -32,24 +32,7 @@
 
         <?php echo $form->textFieldRow($model,'name',array('class'=>'span2','maxlength'=>150));; ?>
         <?php echo $form->dropDownListRow($model,'type_scale',CatalogChars::model()->getTypeScale(), array('class'=>'span2')); ?>
-
-        <div class="control-group">
-            <label class="control-label" for="CatalogChars_parent_id"><?php echo $labels['parent_id']; ?></label>
-            <div class="controls">
-                <select name="CatalogChars[parent_id]" id="CatalogChars_parent_id" class="span2">
-                    <?php echo '<option value="'.$root->id.'">/</option>'; ?>
-                    <? if (!empty($categories)) : ?>
-                        <? foreach ($categories as $category) : ?>
-                            <option value="<?=$category->id ?>">
-                                <?=str_repeat('-', $category->level), $category->name?>
-                            </option>
-                        <? endforeach; ?>
-                    <? endif;?>
-
-                </select>
-            </div>
-        </div>
-
+        <?php echo $form->dropDownListRow($model,'parent_id', $catalog, array('class'=>'span2', 'encode'=>false)); ?>
         <?php echo $form->dropDownListRow($model,'inherits',array('0'=>'Нет','1'=>'Да'), array('class'=>'span2')); ?>
 
     </div>

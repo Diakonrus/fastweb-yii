@@ -45,23 +45,27 @@
                     <li class="left-menu-title"><span><img src="/images/admin/icons/ic1.gif" alt="" /></span> <a href="#" title="">Пользователи сайта</a></li>
                     <li class="no">
                         <ul>
+                            <li><a href="/admin/user/list/role" title=""><img src="/images/admin/strela2.gif" alt="" /> Группы пользователей </a></li>
                             <li><a href="/admin/user/" title=""><img src="/images/admin/strela2.gif" alt="" /> Списки пользователей  </a></li>
                             <li><a href="/admin/user/list/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить пользователя  </a></li>
-                            <li><a href="/admin/user/list/role" title=""><img src="/images/admin/strela2.gif" alt="" /> Группы пользователей </a></li>
+
                         </ul>
                     </li>
                     <li class="left-menu-title"><span><img src="/images/admin/icons/ic6.gif" alt="" /></span> <a href="#" title="">Структура сайта  </a></li>
                     <li class="no">
                         <ul>
                             <li><a href="/admin/pages/pages" title=""><img src="/images/admin/strela2.gif" alt="" /> Дерево</a></li>
+                            <li><a href="/admin/pages/pages/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить раздел</a></li>
                         </ul>
                     </li>
 
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 4 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic3.gif" alt="" /></span> <a href="#" title="">Каталог  </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/catalog/catalog/listgroup" title=""><img src="/images/admin/strela2.gif" alt="" />Каталоги</a></li>
-                            <li><a href="/admin/catalog/catalog/listelement" title=""><img src="/images/admin/strela2.gif" alt="" />Товары</a></li>
+                            <li><a href="/admin/catalog/catalog/listgroup" title=""><img src="/images/admin/strela2.gif" alt="" />Группы товаров</a></li>
+                            <li><a href="/admin/catalog/catalog/create" title=""><img src="/images/admin/strela2.gif" alt="" />Добавить группу</a></li>
+                            <li><a href="/admin/catalog/catalog/listelement" title=""><img src="/images/admin/strela2.gif" alt="" />Список товаров</a></li>
+                            <li><a href="/admin/catalog/catalog/createproduct" title=""><img src="/images/admin/strela2.gif" alt="" />Добавить товар</a></li>
                             <li><a href="/admin/catalog/catalog/sharechars" title=""><img src="/images/admin/strela2.gif" alt="" />Общие характеристики</a></li>
                             <li>
                                 <a href="/admin/catalog/catalog/filters" title="">
@@ -77,8 +81,8 @@
                     <li class="no">
                         <ul>
                             <li><a href="/admin/basket/basket/orders" title=""><img src="/images/admin/strela2.gif" alt="" />Заказы</a></li>
-                            <li><a href="/admin/basket/basket/stat" title=""><img src="/images/admin/strela2.gif" alt="" />Статистика</a></li>
                             <li><a href="/admin/catalog/CatalogElementsDiscount" title=""><img src="/images/admin/strela2.gif" alt="" />Скидки</a></li>
+                            <li><a href="/admin/basket/basket/stat" title=""><img src="/images/admin/strela2.gif" alt="" />Статистика</a></li>
                         </ul>
                     </li>
 
@@ -93,9 +97,10 @@
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 7 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic25.png" alt="" /></span> <a href="#" title="">Вопрос-ответ  </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/faq/faqrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список тем вопросов</a></li>
-                            <li><a href="/admin/faq/faqauthor/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список авторов вопросов</a></li>
-                            <li><a href="/admin/faq/faq/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список вопросов-ответов</a></li>
+                            <li><a href="/admin/faq/faqrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" />Категории вопросов</a></li>
+                            <li><a href="/admin/faq/faqauthor/index" title=""><img src="/images/admin/strela2.gif" alt="" />Авторы вопросов</a></li>
+                            <li><a href="/admin/faq/faq/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список вопросов</a></li>
+                            <li><a href="/admin/faq/faq/create" title=""><img src="/images/admin/strela2.gif" alt="" />Добавить вопрос</a></li>
                         </ul>
                     </li>
 
@@ -109,24 +114,28 @@
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 7 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic31.png" alt="" /></span> <a href="#" title="">Отзывы  </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/review/reviewrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список категорий</a></li>
-                            <li><a href="/admin/review/reviewauthor/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список авторов отзывов</a></li>
+                            <li><a href="/admin/review/reviewrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" />Категории отзывов</a></li>
+                            <li><a href="/admin/review/reviewrubrics/create?id=0" title=""><img src="/images/admin/strela2.gif" alt="" />Добавить категорию</a></li>
+                            <li><a href="/admin/review/reviewauthor/index" title=""><img src="/images/admin/strela2.gif" alt="" />Авторы отзывов</a></li>
                             <li><a href="/admin/review/review/index" title=""><img src="/images/admin/strela2.gif" alt="" />Список отзывов</a></li>
+                            <li><a href="/admin/review/review/create" title=""><img src="/images/admin/strela2.gif" alt="" />Добавить отзыв</a></li>
                         </ul>
                     </li>
 
                     <li class="left-menu-title"><span><img src="/images/admin/icons/ic12.gif" alt="" /></span> <a href="#" title="">Сервисы почты </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/messages/messages" title=""><img src="/images/admin/strela2.gif" alt="" /> Отправить письмо на Email  </a></li>
-                            <li><a href="/admin/messages/emailtemplate" title=""><img src="/images/admin/strela2.gif" alt="" /> Шаблоны  </a></li>
+                            <li><a href="/admin/messages/emailtemplate" title=""><img src="/images/admin/strela2.gif" alt="" /> Системные шаблоны</a></li>
+                            <li><a href="/admin/messages/messages" title=""><img src="/images/admin/strela2.gif" alt="" /> Отправить сообщение </a></li>
                         </ul>
                     </li>
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 1 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic2.gif" alt="" /></span> <a href="#" title="">Новости </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/news/newsrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп новостей  </a></li>
+                            <li><a href="/admin/news/newsrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Группы новостей  </a></li>
+                            <li><a href="/admin/news/newsrubrics/create?id=0" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить группу  </a></li>
                             <li><a href="/admin/news/newselements/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список новостей  </a></li>
+                            <li><a href="/admin/news/newselements/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить новость  </a></li>
                         </ul>
                     </li>
 
@@ -141,24 +150,30 @@
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 9 AND `status`=0'))?(' display:none; '):(''));?>"  class="left-menu-title"><span><img src="/images/admin/icons/ic28.png" alt="" /></span> <a href="#" title="">Акции </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/sale/salegroup/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп акций  </a></li>
+                            <li><a href="/admin/sale/salegroup/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Групп акций  </a></li>
+                            <li><a href="/admin/sale/salegroup/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить группу  </a></li>
                             <li><a href="/admin/sale" title=""><img src="/images/admin/strela2.gif" alt="" /> Список акций  </a></li>
+                            <li><a href="/admin/sale/sale/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить акцию  </a></li>
                         </ul>
                     </li>
 
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 10 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic29.png" alt="" /></span> <a href="#" title="">Врачи </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/doctor/doctorrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список специализаций врачей  </a></li>
+                            <li><a href="/admin/doctor/doctorrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Специализации врачей</a></li>
+                            <li><a href="/admin/doctor/doctorrubrics/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить специализацию</a></li>
                             <li><a href="/admin/doctor/doctorelements/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список врачей  </a></li>
+                            <li><a href="/admin/doctor/doctorelements/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить врача  </a></li>
                         </ul>
                     </li>
 
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 6 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/articles.gif" alt="" /></span> <a href="#" title="">Статьи </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/stock/stockgroup/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп статей  </a></li>
+                            <li><a href="/admin/stock/stockgroup/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Категории статей  </a></li>
+                            <li><a href="/admin/stock/stockgroup/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить категорию  </a></li>
                             <li><a href="/admin/stock" title=""><img src="/images/admin/strela2.gif" alt="" /> Список статей  </a></li>
+                            <li><a href="/admin/stock/stock/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить статью  </a></li>
                         </ul>
                     </li>
 
@@ -174,8 +189,10 @@
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 11 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic5.gif" alt="" /></span> <a href="#" title="">Фотоальбом </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/photo/photorubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список альбомов  </a></li>
+                            <li><a href="/admin/photo/photorubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список фотоальбомов  </a></li>
+                            <li><a href="/admin/photo/photorubrics/create?id=0" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить фотоальбом  </a></li>
                             <li><a href="/admin/photo/photo/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список фотографий  </a></li>
+                            <li><a href="/admin/photo/photo/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить фотографию  </a></li>
                             <li><a href="/admin/photo/phototemplate" title=""><img src="/images/admin/strela2.gif" alt="" /> Шаблон фотогалереи  </a></li>
                         </ul>
                     </li>
@@ -197,8 +214,10 @@
                     <li style="<?=((SiteModuleSettings::model()->find('site_module_id = 15 AND `status`=0'))?(' display:none; '):(''));?>" class="left-menu-title"><span><img src="/images/admin/icons/ic30.png" alt="" /></span> <a href="#" title="">Банеры </a></li>
                     <li class="no">
                         <ul>
-                            <li><a href="/admin/baners/banersrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список групп банеров  </a></li>
+                            <li><a href="/admin/baners/banersrubrics/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Группы банеров  </a></li>
+                            <li><a href="/admin/baners/banersrubrics/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить группу  </a></li>
                             <li><a href="/admin/baners/baners/index" title=""><img src="/images/admin/strela2.gif" alt="" /> Список банеров  </a></li>
+                            <li><a href="/admin/baners/baners/create" title=""><img src="/images/admin/strela2.gif" alt="" /> Добавить баннер  </a></li>
                         </ul>
                     </li>
 

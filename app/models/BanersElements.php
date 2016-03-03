@@ -116,8 +116,36 @@ class BanersElements extends CActiveRecord
 	 * @param string $className active record class name.
 	 * @return BanersElements the static model class
 	 */
-	public static function model($className=__CLASS__)
-	{
+	public static function model($className=__CLASS__) {
 		return parent::model($className);
+	}
+
+
+	/**
+	 * Получаем ссылку на изображение
+	 * @param string $size
+	 * @param bool|false $backend
+	 * @return string
+	 */
+	public function getImageLink($size = 'medium', $backend = false) {
+		$url_img = '/uploads/filestorage/baners/elements/' . $size . '-'.$this->id.'.'.$this->image;
+		if ($backend) {
+			$url_img = '/..' . $url_img;
+		}
+		if (!file_exists( YiiBase::getPathOfAlias('webroot').$url_img)) {
+			$url_img = '/images/nophoto_100_100.jpg';
+		}
+		return $url_img;
+	}
+
+	/**
+	 * Получаем список элементов по ID
+	 *
+	 * @param $parent
+	 * @return CActiveRecord
+	 */
+	public static function getModelsByParent($parent) {
+		$result = self::model()->findAll('parent_id = :parent_id', array(":parent_id" => $parent));
+		return is_null($result) ? array() : $result;
 	}
 }

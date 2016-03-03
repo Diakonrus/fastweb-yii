@@ -30,52 +30,28 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 
 	'columns'=>array(
 
-
-	
-            array(
-            'header'=> $labels["id"],
-            'name'=> "id",
-        ),
-        
-
+        "id",
         array(
             'header'=> $labels["element_id"],
             'name'=> "element_id",
             'type'=>'raw',
-            'value' =>  function($data){
-                return '
-                    <a target="_blank" href="/admin/catalog/catalog/updateproduct?id='.$data->element_id.'">
-                        '.(CatalogElements::model()->findByPk((int)$data->element_id)->name).'
-                    </a>
-                ';
+            'value' =>  function($data) {
+                return !empty($data->element) ? CHtml::link($data->element->name, '/admin/catalog/catalog/updateproduct?id=' . $data->element_id) : '-';
             },
             'filter' =>'',
         ),
-        
-	
-            array(
-            'header'=> $labels["count"],
-            'name'=> "count",
-        ),
-
+        "count",
+        "values",
         array(
-            'header'=> $labels["values"],
-            'name'=> "values",
-        ),
-	
-            array(
             'header'=> $labels["type"],
             'name'=> "type",
             'value'=>'CatalogElementsDiscount::model()->getType($data->type)',
         ),
-        
-	
-            array(
+        array(
             'header'=> $labels["user_role_id"],
             'name'=> "user_role_id",
             'value'=>'$data->user_role_id==0?"Все":CatalogElementsDiscount::model()->getUserRole($data->user_role_id)',
         ),
-
         array(
             'header'=> 'Статус',
             'name'=> "status",

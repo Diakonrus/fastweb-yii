@@ -1,67 +1,41 @@
+<?php
+/**
+ * @var $this PagesController
+ * @var $form TbActiveForm
+ * @var $form TbActiveForm
+ * @var $root Pages
+ * @var $model Pages
+ * @var $categories array
+ */
 
 
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+$form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'pages-form',
 	'enableAjaxValidation'=>false,
 	'enableClientValidation'=>false,
 	'type' => 'horizontal',
     'htmlOptions'=>array('enctype'=>'multipart/form-data'),
-)); ?>
+));
+?>
 
     <!-- Fields with <span class="required">*</span> are required. -->
 	<!--<p class="help-block"><?php echo Yii::t("Bootstrap", "PHRASE.FIELDS_REQUIRED") ?></p>-->
 
 	<?php echo $form->errorSummary($model); ?>
 
-<div class="control-group">
-    <label class="control-label required" for="CatalogRubrics_name">
-        Категория
-        <span class="required">*</span>
-    </label>
-    <div class="controls">
-        <select name="Pages[parent_id]" id="Pages_parent_id" class="span5" <?=!$model->isNewRecord?'d-isabled':'';?>>
+    <?php echo $form->dropDownListRow($model,'parent_id', $categories, array('class'=>'span5', 'encode'=>false)); ?>
+    <?php echo $form->dropDownListRow($model,'type_module',Pages::model()->getTypeModule(), array('class'=>'span5')); ?>
+    <?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>150));; ?>
 
-            <?php echo '<option value="'.$root->id.'">/</option>'; ?>
-            <? if (!empty($categories)) : ?>
-                <? foreach ($categories as $category) : ?>
-                    <option value="<?=$category->id ?>"
-                        <?php
-                        if ($model->isNewRecord && isset($_GET['id']) &&  $category->id==(int)$_GET['id']){
-                            echo 'selected="selected"';
-                        }
-                        elseif ($model->parent_id == $category->id){
-                            echo 'selected="selected"';
-                        }
-                        ?>
-                        >
-                        <?=str_repeat('--', $category->level), $category->title?>
-                    </option>
-                <? endforeach; ?>
-            <? endif;?>
-
-        </select>
+    <div class="control-group">
+        <label>
+            <a style="margin-left:560px;" class="translits_href" href="#">транслит url</a>
+        </label>
     </div>
-</div>
 
-<?php
-echo $form->dropDownListRow($model,'type_module',Pages::model()->getTypeModule(),
-    array('class'=>'span5'));
-?>
-
-<?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>150));; ?>
-<div class="control-group">
-    <label>
-        <a style="margin-left:560px;" class="translits_href" href="#">транслит url</a>
-    </label>
-</div>
-<?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>250)); ?>
-
-<?php echo $form->textFieldRow($model,'header',array('class'=>'span5','maxlength'=>350));; ?>
-
-<?php
-    echo $form->dropDownListRow($model,'status',array(0=>'Отключено', 1=>'Активно'),
-        array('class'=>'span5'));
-?>
+    <?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>250)); ?>
+    <?php echo $form->textFieldRow($model,'header',array('class'=>'span5','maxlength'=>350));; ?>
+    <?php echo $form->dropDownListRow($model,'status',array(0=>'Отключено', 1=>'Активно'), array('class'=>'span5')); ?>
 
 <?php
 

@@ -11,20 +11,7 @@
 
 
 
-<select name="CatalogElements[parent_id]" id="CatalogElements_parent" class="span5">
-
-    <?php echo '<option value="0">/</option>'; ?>
-    <? if (!empty($catalog)) : ?>
-        <? foreach ($catalog as $category) : ?>
-            <option value="<?=$category['id'] ?>"
-                <?=isset($_GET['filterData']) &&  (int)$_GET['filterData']== $category['id']? 'selected="selected"' : ''?> >
-                <?=str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $category['level']), $category['name']?>
-            </option>
-        <? endforeach; ?>
-    <? endif;?>
-
-</select>
-
+<?= CHtml::activeDropDownList($model, 'parent_id', $catalog, array('class' => 'span5', 'encode'=>false)); ?>
 
 <?php
 
@@ -269,7 +256,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
     }
 
     //фильтр
-    $(document).on('change', '#CatalogElements_parent', function(){
+    $(document).on('change', '#CatalogElements_parent_id', function() {
         location.href = '/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/listelement?filterData='+$(this).val();
     });
 

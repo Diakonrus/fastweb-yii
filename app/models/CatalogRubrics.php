@@ -25,6 +25,10 @@
  */
 class CatalogRubrics extends CActiveRecord
 {
+	/**
+	 * @var $parentPage Pages
+	 */
+	public static $parentPage = null;
 
     public $imagefile;
 	/**
@@ -45,7 +49,7 @@ class CatalogRubrics extends CActiveRecord
 		return array(
 			array('parent_id, name, url', 'required'),
 			array('parent_id, left_key, level, right_key, status, execute', 'numerical', 'integerOnly'=>true),
-			array('name, title, meta_title, fkey', 'length', 'max'=>250),
+			array('name, title, meta_title, meta_keywords, meta_description, fkey', 'length', 'max'=>250),
 			array('url', 'length', 'max'=>220),
 
             array('url','unique',
@@ -80,7 +84,7 @@ class CatalogRubrics extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'parent_id' => 'Parent',
+			'parent_id' => 'Категория',
 			'left_key' => 'Left Key',
 			'level' => 'Level',
 			'right_key' => 'Right Key',
@@ -172,10 +176,17 @@ class CatalogRubrics extends CActiveRecord
         );
     }
 
-    public static function getRoot(CatalogRubrics $model){
+	/**
+	 * @param CatalogRubrics|null $model
+	 * @return CatalogRubrics
+	 */
+    public static function getRoot(CatalogRubrics $model = null) {
+		if (is_null($model)) {
+			$model = new self;
+		}
         $root = $model->roots()->find();
-        if (! $root){
-            $model->name = 'Каталог Корневое Дерево';
+        if (!$root) {
+            $model->name = '/';
             $model->url = 'RootTreeCatalogs';
             $model->level = 1;
             //$model->image = 'jpeg';
@@ -247,19 +258,61 @@ class CatalogRubrics extends CActiveRecord
 		parent::afterDelete();
 	}
 
-	public function getHTitle() {
+
+	public function getRubricTitle() {
 		$title = !empty($this->title) ? $this->title : $this->name;
 
 		//если это корень, то нужно найти оригинальное название через pages
 		if ((int) $this->parent_id < 1 || $this->level == 1) {
-			/** @var $page Pages */
-			$page = Pages::getModelByUrl();
-			if (!empty($page)) {
-				$title = !empty($page->header) ? $page->header : $page->title;
+			if (is_null(self::$parentPage)) {
+				self::$parentPage = Pages::getModelByUrl();
+			}
+
+			if (!is_null(self::$parentPage)) {
+				$title = !empty(self::$parentPage->header) ? self::$parentPage->header : self::$parentPage->title;
 			}
 		}
 
 		return $title;
 	}
 
+
+	public function getRubricDescription() {
+		$title = $this->description;
+
+		//если это корень, то нужно найти оригинальное название через pages
+		if ((int) $this->parent_id < 1 || $this->level == 1) {
+			if (is_null(self::$parentPage)) {
+				self::$parentPage = Pages::getModelByUrl();
+			}
+
+			if (!is_null(self::$parentPage)) {
+				$title = !empty(self::$parentPage->content) ? self::$parentPage->content : $title;
+			}
+		}
+
+		return $title;
+	}
+
+
+	public function getRubricDescriptionShort() {
+		$title = $this->description_short;
+		return $title;
+	}
+
+
+	/**
+	 * Получаем отформатированных потомков
+	 *
+	 * @param $rootId
+	 * @return array
+	 */
+	public function getFormattedDescendants($rootId) {
+		$result = array();
+		$models = $this->descendants()->findAll($rootId);
+		foreach ($models as $model) {
+			$result[$model->id] = str_repeat('&nbsp;&nbsp;', ($model->level - 1) * 4) . $model->title;
+		}
+		return $result;
+	}
 }

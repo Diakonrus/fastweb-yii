@@ -24,29 +24,9 @@
 </div>
 
 <div id="main_block" style="margin-top: 10px; padding: 10px;">
-    <div class="control-group">
-        <label class="control-label required" for="CatalogElements_name">
-            Категория
-            <span class="required">*</span>
-        </label>
-        <div class="controls">
-            <select name="CatalogElements[parent_id]" id="CatalogElements_parent_id" class="span5">
 
-                <?php echo '<option value="'.$root->id.'">/</option>'; ?>
-                <? if (!empty($catalog)) : ?>
-                    <? foreach ($catalog as $category) : ?>
-                        <option value="<?=$category->id ?>"
-                            <?=!$model->isNewRecord && $model->parent_id == $category['id']? 'selected="selected"' : ''?>>
-                            <?=str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $category->level), $category->name?>
-                        </option>
-                    <? endforeach; ?>
-                <? endif;?>
 
-            </select>
-
-        </div>
-    </div>
-
+    <?php echo $form->dropDownListRow($model,'parent_id', $catalog, array('class'=>'span5', 'encode'=>false)); ?>
 
     <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>150));; ?>
     <?php //echo $form->textFieldRow($model,'page_name',array('class'=>'span5','maxlength'=>150));; ?>

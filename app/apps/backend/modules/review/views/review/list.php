@@ -97,7 +97,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 )); ?>
 
 <div class="buttons">
-    <a class="btn btn-primary" href="/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/create" style="margin-top:14px; float:left; margin-left:15px"> Добавить новый вопрос</a>
+    <a class="btn btn-primary" href="/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/create" style="margin-top:14px; float:left; margin-left:15px"> Добавить новый отзыв</a>
 </div>
 
 <script>

@@ -41,35 +41,21 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 
 	'columns'=>array(
 
-
-	
-            array(
-            'header'=> $labels["id"],
-            'name'=> "id",
-        ),
-
+        'id',
 
         array(
             'header'=> 'Картинка',
             'name'=> "image",
             'type'=>'raw',
-            'value' => function($dataProvider){
-                $url_img = '/images/nophoto_100_100.jpg';
-                if (file_exists( YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/baners/elements/admin-'.$dataProvider->id.'.'.$dataProvider->image )) {
-                    $url_img = '/../uploads/filestorage/baners/elements/admin-'.$dataProvider->id.'.'.$dataProvider->image;
-                }
-                return '<img src="'.$url_img.'" style="width:80px" />';
+            'value' => function($dataProvider) {
+                return '<img src="'.$dataProvider->getImageLink('admin', true).'" style="width:80px" />';
             },
             'filter' =>'',
         ),
 
-        array(
-            'header'=> $labels["name"],
-            'name'=> "name",
-        ),
+        'name',
 
         array(
-            'header'=> $labels["parent_id"],
             'name'=> "parent_id",
             'value'=>'$data->parent->name',
         ),

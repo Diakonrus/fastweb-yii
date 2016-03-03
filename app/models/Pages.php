@@ -11,6 +11,7 @@
  * @property integer $right_key
  * @property string $url
  * @property string $title
+ * @property string $header
  * @property string $image
  * @property integer $access_lvl
  * @property string $main_template
@@ -190,7 +191,15 @@ class Pages extends CActiveRecord
 		);
 	}
 
-	public static function getRoot(Pages $model){
+
+	/**
+	 * @param Pages|null $model
+	 * @return Pages
+	 */
+	public static function getRoot(Pages $model = null){
+		if (is_null($model)) {
+			$model = new self;
+		}
 		$root = $model->roots()->find();
 		if (! $root){
 			$model->title = '/';
@@ -382,6 +391,22 @@ class Pages extends CActiveRecord
 			$result = self::model()->find('url = :url', array(":url" => $currentMask));
 		}
 
+		return $result;
+	}
+
+
+	/**
+	 * Получаем отформатированных потомков
+	 *
+	 * @param $rootId
+	 * @return array
+	 */
+	public function getFormattedDescendants($rootId) {
+		$result = array();
+		$models = $this->descendants()->findAll($rootId);
+		foreach ($models as $model) {
+			$result[$model->id] = str_repeat('&nbsp;&nbsp;', ($model->level - 1) * 4) . $model->title;
+		}
 		return $result;
 	}
 }
