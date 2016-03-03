@@ -1,11 +1,12 @@
 <?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
+<?php $this->widget('application.extensions.Breadcrumbs.Breadcrumbs', array('params'=>array('model'=>$model))); ?>
 
-<h1 class="lined nopaddingtop" style="margin-top: 10px;">Каталог продукции</h1>
+<h1 class="lined nopaddingtop" style="margin-top: 10px;"><?php echo $model->getHTitle(); ?></h1>
 
 <div class="menu_inside">
 	<?php foreach ($catalogs as $data) { ?>
 		<div class="menuinside item">
-			<a  href="<?=$base_url;?>/<?=$data['url']?>"><?=$data['name'];?></a>
+			<a href="<?=$base_url;?>/<?=$data['url']?>"><?=$data['name'];?></a>
 		</div>
 	<?php } ?>
 	<div class="clear"></div>

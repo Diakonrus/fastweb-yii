@@ -33,8 +33,6 @@ class Breadcrumbs extends CBreadcrumbs {
             if (!empty($page)) {
                 if (count($currentMaskArray) > 1) {
                     $this->addLink(array($page->title => Yii::app()->urlManager->createUrl('/' . $currentMask)));
-                } else {
-                    $this->addLink($page->title);
                 }
             }
         }
@@ -51,13 +49,6 @@ class Breadcrumbs extends CBreadcrumbs {
                 $this->parentLinks = array_reverse($this->parentLinks);
                 foreach($this->parentLinks as $parentLink) {
                     $this->addLink($parentLink);
-                }
-            }
-
-            //Добавляем крошку переданной модели
-            if (!empty($this->params['model']->name)) {
-                if (!isset($this->params['model']->parent_id) || $this->params['model']->parent_id > 0) {
-                    $this->addLink($this->params['model']->name);
                 }
             }
         }

@@ -70,6 +70,7 @@ class Pages extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'module' => array(self::BELONGS_TO, 'SiteModule', 'type_module'),
 		);
 	}
 
@@ -358,5 +359,29 @@ class Pages extends CActiveRecord
 		}
 		if (empty($base_url)){ $base_url = Pages::model()->find('type_module = '.$module_id.' AND `status` = 1')->url; }
 		return $base_url;
+	}
+
+
+	public static function getModelByUrl() {
+		$result = null;
+
+		//Определение правила по URL
+		$currentRule = Yii::app()->urlManager->parseUrl(Yii::app()->request);
+		$currentMask = null; //Маска URL (ключ в Rules)
+		foreach(Yii::app()->urlManager->rules as $ruleParam => $ruleRow) {
+			if ($currentRule == trim($ruleRow, '/')) {
+				$currentMask = $ruleParam;
+				break;
+			}
+		}
+
+		if (!empty($currentMask)) {
+			//Если маска найдена, то формируем крошку для корня через модель Pages
+			$currentMask = explode('/<', $currentMask);
+			$currentMask = trim($currentMask[0], '/');
+			$result = self::model()->find('url = :url', array(":url" => $currentMask));
+		}
+
+		return $result;
 	}
 }

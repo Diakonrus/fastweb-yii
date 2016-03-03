@@ -247,4 +247,19 @@ class CatalogRubrics extends CActiveRecord
 		parent::afterDelete();
 	}
 
+	public function getHTitle() {
+		$title = !empty($this->title) ? $this->title : $this->name;
+
+		//если это корень, то нужно найти оригинальное название через pages
+		if ((int) $this->parent_id < 1 || $this->level == 1) {
+			/** @var $page Pages */
+			$page = Pages::getModelByUrl();
+			if (!empty($page)) {
+				$title = !empty($page->header) ? $page->header : $page->title;
+			}
+		}
+
+		return $title;
+	}
+
 }
