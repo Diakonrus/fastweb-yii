@@ -139,6 +139,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
         array(
             'name' => 'user_id',
             'type'=>'raw',
+            'filter' => User::getUsersArray(),
             'value' => function($data){
                 $model = User::model()->findByPk($data->user_id);
                 $html = '';

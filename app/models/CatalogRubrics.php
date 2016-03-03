@@ -10,6 +10,9 @@
  * @property integer $level
  * @property integer $right_key
  * @property string $name
+ * @property string $title
+ * @property string $description
+ * @property string $description_short
  * @property string $url
  * @property integer $status
  * @property string $meta_title
@@ -42,18 +45,18 @@ class CatalogRubrics extends CActiveRecord
 		return array(
 			array('parent_id, name, url', 'required'),
 			array('parent_id, left_key, level, right_key, status, execute', 'numerical', 'integerOnly'=>true),
-			array('name, meta_title, fkey', 'length', 'max'=>250),
+			array('name, title, meta_title, fkey', 'length', 'max'=>250),
 			array('url', 'length', 'max'=>220),
 
             array('url','unique',
                 'caseSensitive'=>true,
                 'allowEmpty'=>false,
             ),
-
+			array('description, description_short', 'safe'),
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, left_key, level, right_key, name, url, status, meta_title, meta_keywords, meta_description, fkey, execute,
+			array('id, parent_id, left_key, level, right_key, name, description, description_short, title, url, status, meta_title, meta_keywords, meta_description, fkey, execute,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -82,6 +85,9 @@ class CatalogRubrics extends CActiveRecord
 			'level' => 'Level',
 			'right_key' => 'Right Key',
 			'name' => 'Наименование',
+			'title' => 'Заголовок',
+			'description' => 'Описание',
+			'description_short' => 'Короткое описание',
 			'url' => 'Url',
 			'status' => 'Статус',
 			'meta_title' => 'Meta Title',
@@ -115,6 +121,9 @@ class CatalogRubrics extends CActiveRecord
 		$criteria->compare('level',$this->level);
 		$criteria->compare('right_key',$this->right_key);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('title',$this->title,true);
+		$criteria->compare('description',$this->description,true);
+		$criteria->compare('description_short',$this->description_short,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('meta_title',$this->meta_title,true);
@@ -236,6 +245,21 @@ class CatalogRubrics extends CActiveRecord
 		//Удаляем связанные с категорией товары (1 запрос)
 		CatalogElements::model()->deleteAll('parent_id = :parent_id', array(':parent_id' => $this->id));
 		parent::afterDelete();
+	}
+
+	public function getHTitle() {
+		$title = !empty($this->title) ? $this->title : $this->name;
+
+		//если это корень, то нужно найти оригинальное название через pages
+		if ((int) $this->parent_id < 1 || $this->level == 1) {
+			/** @var $page Pages */
+			$page = Pages::getModelByUrl();
+			if (!empty($page)) {
+				$title = !empty($page->header) ? $page->header : $page->title;
+			}
+		}
+
+		return $title;
 	}
 
 }

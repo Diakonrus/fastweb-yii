@@ -12,7 +12,9 @@
  * @property string $url
  * @property string $image
  * @property string $name
+ * @property string $title
  * @property string $description
+ * @property string $description_short
  * @property integer $status
  * @property string $meta_title
  * @property string $meta_keywords
@@ -43,14 +45,14 @@ class ArticleRubrics extends CActiveRecord
 		return array(
 			array('name, parent_id, url', 'required'),
 			array('parent_id, left_key, right_key, level, status', 'numerical', 'integerOnly'=>true),
-			array('url, meta_title', 'length', 'max'=>250),
+			array('url, meta_title, title', 'length', 'max'=>250),
 			array('image', 'length', 'max'=>50),
 			array('name', 'length', 'max'=>450),
-			array('description, meta_keywords, meta_description', 'safe'),
+			array('description, description_short, meta_keywords, meta_description', 'safe'),
 			array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, left_key, right_key, level, url, image, name, description, status, meta_title, meta_keywords, meta_description, created_at, created_at_start, created_at_end,
+			array('id, parent_id, left_key, right_key, level, url, image, name, title, description, description_short, status, meta_title, meta_keywords, meta_description, created_at, created_at_start, created_at_end,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -81,7 +83,9 @@ class ArticleRubrics extends CActiveRecord
 			'url' => 'Url вдрес',
 			'image' => 'Изображение',
 			'name' => 'Название',
+			'title' => 'Заголовок',
 			'description' => 'Описание',
+			'description_short' => 'Короткое описание',
 			'status' => 'Статус',
 			'meta_title' => 'Meta Title',
 			'meta_keywords' => 'Meta Keywords',
@@ -116,7 +120,9 @@ class ArticleRubrics extends CActiveRecord
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('image',$this->image,true);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('title',$this->title,true);
 		$criteria->compare('description',$this->description,true);
+		$criteria->compare('description_short',$this->description_short,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('meta_title',$this->meta_title,true);
 		$criteria->compare('meta_keywords',$this->meta_keywords,true);

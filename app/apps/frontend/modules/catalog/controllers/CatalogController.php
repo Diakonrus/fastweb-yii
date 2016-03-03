@@ -223,4 +223,14 @@ class CatalogController extends Controller
 	}
 
 
+	/**
+	 * Получение кода для 3D картинок товара
+	 * @param $id
+	 */
+	public function actionGetcodethreed($id) {
+		$model = CatalogElements::model()->findByPk((int) $id);
+		header('Content-Type: application/json');
+		echo CJSON::encode(!empty($model) ? $model->code_3d : '');
+		Yii::app()->end();
+	}
 }

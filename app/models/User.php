@@ -408,5 +408,11 @@ class User extends CActiveRecord {
         return $email;
     }
 
-
+    /**
+     * Список пользователей
+     * @return array
+     */
+    public static function getUsersArray() {
+        return CHtml::listData(self::model()->findAll(), 'id', 'email');
+    }
 }

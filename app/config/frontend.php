@@ -25,6 +25,7 @@ $url = array(
     '/catalog' => '/catalog/catalog/index',
     '/catalogfastorder/<id>' => '/catalog/catalog/ajaxfastorder',
     '/catalog/<param:.+>' => '/catalog/catalog/list',
+    '/getcodethreed/<id:.+>' => '/catalog/catalog/getcodethreed',
 
 
     //Профиль
