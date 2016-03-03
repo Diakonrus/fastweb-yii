@@ -396,7 +396,7 @@ class SiteModuleSettings extends CActiveRecord
 		switch ($site_module_id) {
 			case 1:
 				//Новости
-				return (($type==1)?('{{news_group}}'):('{{news}}'));
+				return (($type==1)?('{{news_rubrics}}'):('{{news_elements}}'));
 				break;
 			case 2:
 				//Карта сайта
