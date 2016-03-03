@@ -581,7 +581,7 @@ class CatalogController extends Controller {
 
         //echo $param; die();
         $data['sort'] = array(
-            'defaultOrder'=>'id DESC',
+            'defaultOrder'=>'order_id DESC',
         );
 
         $data['Pagination'] = array(
@@ -940,7 +940,7 @@ class CatalogController extends Controller {
 
         $this->breadcrumbs = array(
             (($type_parent==1)?'Каталоги':'Товары')=>array('/catalog/catalog/listgroup'),
-            'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$id),
+            'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$id.'&type_parent='.$type_parent),
         );
 
         $model=new CatalogChars('search');
@@ -1006,7 +1006,7 @@ class CatalogController extends Controller {
 
         $this->breadcrumbs = array(
             'Каталоги'=>array('/catalog/catalog/listgroup'),
-            'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$id),
+            'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$id.'&type_parent='.((isset($_GET['type_parent']))?($_GET['type_parent']):(2))),
             'Новая запись'
         );
 
@@ -1034,7 +1034,7 @@ class CatalogController extends Controller {
     public function actionUpdatechars($id){
 
 
-				
+
 
         $model = $this->loadModelChars($id);
         if(isset($_POST['CatalogChars'])){
@@ -1149,7 +1149,7 @@ class CatalogController extends Controller {
 
         $this->breadcrumbs = array(
             'Каталоги'=>array('/catalog/catalog/listgroup'),
-            'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$model->parent_id),
+            'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$model->parent_id.'&type_parent='.((isset($_GET['type_parent']))?($_GET['type_parent']):(2))),
             'Редактирование'
         );
 
@@ -1168,12 +1168,16 @@ class CatalogController extends Controller {
 		$model->save();
 
 
-        $type_parent = intval($_GET['type_parent']);
-        if ($type_parent)
+        if (isset($_GET['type_parent']))
         {
+			$type_parent = intval($_GET['type_parent']);
 	        $this->redirect('listchars?id='.$model->parent_id.'&type_parent='.$type_parent);
         }
-    }
+		else {
+			$this->redirect('/admin/catalog/catalog/listelement');
+		}
+	}
+
 
 
     public function actionSharechars($type_parent = 3){
@@ -1214,6 +1218,7 @@ class CatalogController extends Controller {
 
         $param = null;
         $param[] = 'type_parent = '.$type_parent;
+		$param[] = 'is_deleted = 0';
         $data['sort'] = array(
             'defaultOrder'=>'id DESC',
         );

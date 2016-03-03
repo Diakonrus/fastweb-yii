@@ -392,11 +392,15 @@ class SiteModuleSettings extends CActiveRecord
 	 * @param int $type
 	 * Возвращает имя таблицы по id модуля (таблица tbl_site_module_settings), тип указывает тип таблицы (1-рубрика, 2-элемент)
 	 */
-	public function getModelById($site_module_id, $type=1){
+	public function getModelById($site_module_id, $type=1, $return_tabel = 1){
 		switch ($site_module_id) {
 			case 1:
 				//Новости
-				return (($type==1)?('{{news_rubrics}}'):('{{news_elements}}'));
+				$return_data = (($type==1)?(new NewsRubrics()):(new NewsElements()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{news_rubrics}}'):('{{news_elements}}'));
+				}
+				return $return_data;
 				break;
 			case 2:
 				//Карта сайта
@@ -408,19 +412,35 @@ class SiteModuleSettings extends CActiveRecord
 				break;
 			case 4:
 				//Каталог
-				return (($type==1)?('{{catalog_rubrics}}'):('{{catalog_elements}}'));
+				$return_data = (($type==1)?(new CatalogRubrics()):(new CatalogElements()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{catalog_rubrics}}'):('{{catalog_elements}}'));
+				}
+				return $return_data;
 				break;
 			case 5:
 				//Корзина
-				return (($type==1)?('{{basket_order}}'):('{{basket_items}}'));
+				$return_data = (($type==1)?(new BasketOrder()):(new BasketItems()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{basket_order}}'):('{{basket_items}}'));
+				}
+				return $return_data;
 				break;
 			case 6:
 				//Статьи
-				return (($type==1)?('{{stock_group}}'):('{{stock}}'));
+				$return_data = (($type==1)?(new StockGroup()):(new Stock()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{stock_group}}'):('{{stock}}'));
+				}
+				return $return_data;
 				break;
 			case 7:
 				//Вопросы-ответы
-				return (($type==1)?('{{faq_rubrics}}'):('{{faq_elements}}'));
+				$return_data = (($type==1)?(new FaqRubrics()):(new FaqElements()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{faq_rubrics}}'):('{{faq_elements}}'));
+				}
+				return $return_data;
 				break;
 			case 8:
 				//URL ссылка (пишите адрес ссылки в Url адрес )
@@ -428,31 +448,59 @@ class SiteModuleSettings extends CActiveRecord
 				break;
 			case 9:
 				//Акции
-				return (($type==1)?('{{sale_group}}'):('{{sale}}'));
+				$return_data = (($type==1)?(new SaleGroup()):(new Sale()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{sale_group}}'):('{{sale}}'));
+				}
+				return $return_data;
 				break;
 			case 10:
 				//Врачи
-				return (($type==1)?('{{doctor_rubrics}}'):('{{doctor_elements}}'));
+				$return_data = (($type==1)?(new DoctorRubrics()):(new DoctorElements()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{doctor_rubrics}}'):('{{doctor_elements}}'));
+				}
+				return $return_data;
 				break;
 			case 11:
 				//Фотогалерея
-				return (($type==1)?('{{photo_rubrics}}'):('{{photo_elements}}'));
+				$return_data = (($type==1)?(new PhotoRubrics()):(new PhotoElements()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{photo_rubrics}}'):('{{photo_elements}}'));
+				}
+				return $return_data;
 				break;
 			case 12:
 				//До и После
-				return (($type==1)?('{{before_after_rubrics}}'):('{{before_after_elements}}'));
+				$return_data = (($type==1)?(new BeforeAfterRubrics()):(new BeforeAfterElements()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{before_after_rubrics}}'):('{{before_after_elements}}'));
+				}
+				return $return_data;
 				break;
 			case 13:
 				//Таблицы
-				return (($type==1)?('{{main_tabel}}'):('{{main_tabel}}'));
+				$return_data = (($type==1)?(new MainTabel()):(new MainTabel()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{main_tabel}}'):('{{main_tabel}}'));
+				}
+				return $return_data;
 				break;
 			case 14:
 				//Пресса
-				return (($type==1)?('{{press_group}}'):('{{press}}'));
+				$return_data = (($type==1)?(new PressGroup()):(new Press()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{press_group}}'):('{{press}}'));
+				}
+				return $return_data;
 				break;
 			case 15:
 				//Банеры
-				return (($type==1)?('{{baners_rubrics}}'):('{{baners_elements}}'));
+				$return_data = (($type==1)?(new BanersRubrics()):(new BanersElements()));
+				if ($return_tabel == 1){
+					$return_data = (($type==1)?('{{baners_rubrics}}'):('{{baners_elements}}'));
+				}
+				return $return_data;
 				break;
 		}
 		return false;

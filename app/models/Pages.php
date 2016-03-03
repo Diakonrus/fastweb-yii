@@ -322,7 +322,7 @@ class Pages extends CActiveRecord
 						->from($tabel_name)
 						->where('url LIKE "'.end($urlArr).'"')
 						->queryRow();
-					$model = SiteModuleSettings::model()->getClassById($modelPages->type_module, 1);
+					$model = SiteModuleSettings::model()->getModelById($modelPages->type_module, 1, 0);
 					$category = $model::model()->findByPk((int)$modelCatalog['id']);
 					if ( $category = $category->ancestors()->findAll() ){
 						foreach ( $category as $data){

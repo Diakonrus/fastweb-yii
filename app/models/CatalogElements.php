@@ -349,6 +349,25 @@ class CatalogElements extends CActiveRecord
 
 
 
+	protected function beforeSave()
+	{
+		if(parent::beforeSave())
+		{
+			if ($this->isNewRecord || $this->order_id == 0){
+
+				//Увеличиваем order_id
+				$model = new CatalogElements();
+				$criteria = new CDbCriteria;
+				$criteria->select='MAX(order_id) AS order_id';
+				$criteria->condition = 'parent_id = '.(int)$this->parent_id;
+				$order_id = 0;
+				if( $order_id = $model->model()->find($criteria) ) { $order_id = $order_id['order_id'] + 1;  }
+				$this->order_id = $order_id;
+
+			}
+		}
+		return true;
+	}
 
     /**
      * Получить количество элементов в узле

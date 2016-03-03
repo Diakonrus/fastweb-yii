@@ -133,7 +133,7 @@ class CatalogChars extends CActiveRecord
     public function getTypeScale($id = null){
         $scaleArray = array(
             1 => 'Текстовое значение (например, вес)',
-            2 => 'Групповой выдор (например, размеры)',
+            2 => 'Групповой выбор (например, размеры)',
             3 => 'Цвета',
         );
         return (!empty($id))?($scaleArray[$id]):($scaleArray);
