@@ -854,16 +854,25 @@ class CatalogController extends Controller {
                             }
                         }
                     }
-                    foreach ($_POST['order'] as $order){
-                        $orderArr = explode("|", $order);
-                        if ( count($orderArr)!=0 ){
-                            $model = $this->loadModelProduct((int)$orderArr[0]);
-                            if ($model){
-                                $model->order_id = $orderArr[1];
-                                $model->save();
-                            }
-                        }
-                    }
+					foreach ($_POST['order'] as $order){
+						$orderArr = explode("|", $order);
+						if ( count($orderArr)!=0 ){
+							$model = $this->loadModelProduct((int)$orderArr[0]);
+							if ($model){
+								$model->order_id = $orderArr[1];
+								if( $model->save() ){
+									//Выполняю пересчет в рамках раздела
+									foreach (CatalogElements::model()->findAll('parent_id = '.(int)$model->parent_id.' AND id!='.(int)$model->id.' ORDER BY order_id') as $data){
+										if ($data->order_id == $model->order_id || $data->order_id > $model->order_id){
+											$data->order_id = $data->order_id + 1;
+											$data->update();
+										}
+									}
+								}
+
+							}
+						}
+					}
                     echo CJavaScript::jsonEncode('ok');
                     break;
                 case 6:

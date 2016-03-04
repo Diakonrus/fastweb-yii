@@ -1,7 +1,10 @@
+<?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
+<?php $this->widget('application.extensions.Breadcrumbs.Breadcrumbs', array('params'=>array('model'=>$model))); ?>
+
 <section>
     <main role="main" class="all">
         <div class="container video-caption">
-            <h1>ПРЕССА О НАС</h1>
+            <h1><?=Pages::getTitle()?></h1>
         </div>
     </main>
     <div class="news-block">

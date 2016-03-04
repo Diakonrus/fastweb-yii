@@ -181,6 +181,12 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
 
 
 <script>
+    //Ставим чекбоксы на те, с которыми работаем
+    $(document).on('change','.price, .order', function(){
+        $(this).parent().parent().find('.selectProduct').prop('checked', true);
+    });
+
+
     //Меняем статус
     $(document).on('click', '.on-off-product', function(){
         $.ajax({
@@ -229,14 +235,15 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
     //Сохраняет данные со страницы списка
     function saveForm(){
         var arrPrice = [];  //Цены
-        $('.price').each(function(){
-            var val = $(this).data('id')+'|'+$(this).val();
-            arrPrice.push( val );
-        });
         var arrOrder = [];  //Порядок
-        $('.order').each(function(){
-            var val = $(this).data('id')+'|'+$(this).val();
-            arrOrder.push( val );
+
+        $('table tbody td.checkbox-column input:checkbox:checked').each(function() {
+
+            var valPrice = $(this).parent().parent().find('.price').data('id')+'|'+$(this).parent().parent().find('.price').val();
+            var valOrder = $(this).parent().parent().find('.price').data('id')+'|'+$(this).parent().parent().find('.order').val();
+
+            arrPrice.push(valPrice);
+            arrOrder.push(valOrder);
         });
 
         $('#ajax_loader').show();

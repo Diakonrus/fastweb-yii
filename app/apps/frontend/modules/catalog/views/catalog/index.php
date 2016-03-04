@@ -1,22 +1,12 @@
-<?php
-/**
- * @var $model CatalogRubrics
- */
-?>
-
 <?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
 <?php $this->widget('application.extensions.Breadcrumbs.Breadcrumbs', array('params'=>array('model'=>$model))); ?>
 
-<div class="description_short">
-	<?= $model->getRubricDescriptionShort(); ?>
-</div>
-
-<h1 class="lined nopaddingtop" style="margin-top: 10px;"><?php echo $model->getRubricTitle(); ?></h1>
+<h1 class="lined nopaddingtop" style="margin-top: 10px;"><?=Pages::getTitle()?></h1>
 
 <div class="menu_inside">
 	<?php foreach ($catalogs as $data) { ?>
 		<div class="menuinside item">
-			<a href="<?=$base_url;?>/<?=$data['url']?>"><?=$data['name'];?></a>
+			<a  href="<?=$base_url;?>/<?=$data['url']?>"><?=$data['name'];?></a>
 		</div>
 	<?php } ?>
 	<div class="clear"></div>
@@ -102,12 +92,6 @@
   </div>
 </div>
 
-
-<?php if(!empty($model->description)): ?>
-	<div class="description">
-		<?= $model->description; ?>
-	</div>
-<?php endif; ?>
 <?/*
 <?=$filters?>
 */?>

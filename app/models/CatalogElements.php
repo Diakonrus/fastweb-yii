@@ -353,7 +353,7 @@ class CatalogElements extends CActiveRecord
 	{
 		if(parent::beforeSave())
 		{
-			if ($this->isNewRecord || $this->order_id == 0){
+			if ($this->isNewRecord){
 
 				//Увеличиваем order_id
 				$model = new CatalogElements();

@@ -1,12 +1,16 @@
 <!-- Товар -->
 <div class="catalog-item-detail catalog-item-detail2">
 	<?php $this->widget('application.extensions.Breadcrumbs.Breadcrumbs', array('params'=>array('model'=>$model))); ?>
+	<h1 class="lined nopaddingtop" style="margin-top: 10px;"><?=Pages::getTitle()?></h1>
 
 	<div class="clear"></div>
     <div class="row item-detail-parts">
 		<?php
 			//Проверяю существование файла
-			$url_img = '/images/nophoto_100_100.jpg';
+			$url_img_small = '/images/nophoto_100_100.jpg';
+			$url_img_medium = $url_img_small;
+			$url_img_small = $url_img_small;
+			$url_img = $url_img_small;
 			$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/'.$model->id.'.'.$model->image;
 			if (file_exists($filename)){ $url_img = '/uploads/filestorage/catalog/elements/'.$model->id.'.'.$model->image; }
 			if (file_exists($filename)){ $url_img_small = '/uploads/filestorage/catalog/elements/small-'.$model->id.'.'.$model->image; }
@@ -34,7 +38,7 @@
 					?>
 
 					<li>
-						<a class="fancy_slide" href="<?=$url_imgs?>" data-slide-index="1" data-lightbox="example-1" rel="gallery-2">
+						<a class="fancy_slide" href="<?=$url_imgs?>" data-slide-index="1"  data-lightbox="example-1" rel="gallery-2">
 							<img src="<?=$url_imgs_small?>" alt=""/>
 						</a>
 					</li>
@@ -44,7 +48,7 @@
 				<?php if(!empty($model->code_3d)): ?>
 				<li>
 					<a href="<?php echo Yii::app()->urlManager->createUrl('/catalog/catalog/getcodethreed', array('id' => $model->id)); ?>" class="act-get-code-3d">
-						<img src="/images/3d-small.jpg"  alt=""/>
+						<img src="/images/3ds.png"  alt=""/>
 					</a>
 				</li>
 				<?php endif; ?>
