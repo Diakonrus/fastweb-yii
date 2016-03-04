@@ -1165,15 +1165,7 @@ class CatalogController extends Controller {
         $model->is_deleted = 1;
 		$model->save();
 
-
-        if (isset($_GET['type_parent']))
-        {
-			$type_parent = intval($_GET['type_parent']);
-	        $this->redirect('listchars?id='.$model->parent_id.'&type_parent='.$type_parent);
-        }
-		else {
-			$this->redirect('/admin/catalog/catalog/listelement');
-		}
+		Yii::app()->request->redirect($_SERVER['HTTP_REFERER']);
 	}
 
 
