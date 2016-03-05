@@ -270,7 +270,13 @@ class Pages extends CActiveRecord
 		if (!empty($id_page) && $model = Pages::model()->findByPk((int)$id_page)){
 			return ((!empty($model->header))?($model->header):($model->title));
 		}
-		foreach (explode("/", (Yii::app()->request->requestUri.'/')) as $url){
+		$url = Yii::app()->request->requestUri;
+		//ToDo кастыль из-за стандартной пагинации. Убрать после того как сделаем свой виджет пагинации
+		preg_match_all('/\?id=(\d+)&page=(\d+)/', $url, $matches);
+		if (isset($matches[0]) && !empty($matches[0])){
+			$url = str_replace($matches[0], "/", $url);
+		}
+		foreach (explode("/", ($url.'/')) as $url){
 			if ($model = Pages::model()->find('url LIKE "'.(trim($url)).'"')){
 				return ((!empty($model->header))?($model->header):($model->title));
 			}

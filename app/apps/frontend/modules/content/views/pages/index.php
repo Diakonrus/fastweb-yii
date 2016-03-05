@@ -18,7 +18,7 @@
     <?php foreach ($modelCatalog as $data) { ?>
 
         <div class="items-block-item">
-            <a href="/katalog-shub/<?=$data->id;?>" class="items-block-item-img">
+            <a href="/<?=Pages::model()->find('type_module = 4')->url;?>/<?=$data->id;?>" class="items-block-item-img">
                 <div class="rollover">
                     <?php if ($data->shares==1){ ?>
                         <div class="shares"></div>

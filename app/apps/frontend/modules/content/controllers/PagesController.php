@@ -38,7 +38,6 @@ class PagesController extends Controller
 
         //Получаем вкладки если есть;
         $modelTabs = PagesTabs::model()->getTabsContent($id);
-
         $this->render('index', array('model'=>$model, 'modelTabs'=>$modelTabs, 'modelCatalog'=>$modelCatalog, 'modelNews'=>$modelNews));
     }
 

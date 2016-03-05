@@ -136,6 +136,7 @@ class CatalogController extends Controller
 
 		if (SiteModuleSettings::model()->find('site_module_id = 4 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
 
+
 		$data = array();
 		$filters='';
 
@@ -145,10 +146,7 @@ class CatalogController extends Controller
 		if (empty($model))$model = CatalogRubrics::getRoot(new CatalogRubrics());
 
 		//Титл и SEO
-		$this->pageTitle =  'Каталог продукции - ' . $this->pageTitle;
-		foreach ( explode("/", ( parse_url(Yii::app()->request->requestUri, PHP_URL_PATH ))) as $url  ){
-			$this->setSEO($url);
-		}
+		$this->setSEO(Yii::app()->request->requestUri, 'Каталог продукции', (($model->level>1)?($model):(null)));
 
 
 		$data['catalogs'] = $this->getChaildCategory($model);
@@ -162,6 +160,8 @@ class CatalogController extends Controller
 			'limit' => 12,
 		));
 		//
+
+
 
 
 		/* Пагинация */
@@ -215,13 +215,12 @@ class CatalogController extends Controller
 
 	private function getChaildCategory($model){
 		$menu_top = array();
-		foreach ( CatalogRubrics::getCatalogList($model,1) as $data ){
+		foreach ( CatalogRubrics::getCatalogList($model) as $data ){
 			$menu_top[$data->id]['name'] = $data->name;
 			$menu_top[$data->id]['url'] = $data->url;
 		}
 		return $menu_top;
 	}
-
 
 	/**
 	 * Получение кода для 3D картинок товара
