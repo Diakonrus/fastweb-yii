@@ -14,6 +14,7 @@ return array(
     'import'=>array(
         'application.models.*',
         'application.components.*',
+        'application.commands.*',
     ),
 
 	// application components
@@ -47,4 +48,12 @@ return array(
 			),
 		),
 	),
+
+	'commandMap'=>array(
+	    'migrate'=>array(
+		    'class'=>'system.cli.commands.MigrateCommand',
+			'templateFile'=>'application.migrations.template.template',
+			'interactive' => false,
+		),
+    ),
 );

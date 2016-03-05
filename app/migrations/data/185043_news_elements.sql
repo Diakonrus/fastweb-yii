@@ -1,0 +1,1 @@
+INSERT INTO `tbl_news_elements` VALUES (1, 1, 1, 'Новость 1', '<p style=\"margin-left: 20px;\">анонс<br></p>', '<p style=\"margin-left: 20px;\">Описание</p>', '', '2016-2-21 00:00:00', NULL, 1, '', '', '', '2016-2-21 10:47:10');

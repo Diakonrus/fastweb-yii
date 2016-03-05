@@ -1,0 +1,17 @@
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (51, 13, 49967, 1);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (52, 12, 50468, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (53, 12, 50479, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (54, 12, 49967, 2);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (55, 14, 49967, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (56, 14, 50479, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (57, 14, 50467, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (58, 14, 50468, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (59, 14, 50469, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (60, 14, 50470, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (61, 14, 50471, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (62, 14, 50472, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (63, 14, 50473, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (64, 14, 50474, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (65, 14, 50475, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (66, 14, 50476, 0);
+INSERT INTO `tbl_catalog_filters_in_category` VALUES (67, 14, 50477, 0);
