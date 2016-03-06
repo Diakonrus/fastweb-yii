@@ -41,7 +41,7 @@
                 </a>
             </td>
             <td nowrap="" style="text-align: center; font-weight: bold;">
-                <a href="/admin/catalog/catalog/listgroup?id=<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;"><?=CatalogRubrics::getCountTree($root_category->left_key,$root_category->right_key);?></a>
+                <a href="/admin/catalog/catalog/listelement?filterData=<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;"><?= CatalogElements::getTotalCountElement($root_category);?></a>
             </td>
             <td nowrap="" style="text-align: center;">
                 <a href="#" class="on-off-category" data-id="<?=$root_category->id;?>" data-status="<?=$root_category->status;?>">
@@ -68,9 +68,11 @@
                     <i class="icon-arrow-down"></i>
                 </a>
 
+                <?php if($root_category->level > 1): ?>
                 <a class="delete" href="/admin/catalog/catalog/delete?id=<?=$root_category->id;?>" data-toggle="tooltip" title="" data-original-title="Удалить">
                     <i class="icon-trash"></i>
                 </a>
+                <?php endif; ?>
 
                 <!--
                 <a title="Удалить" href="/adm/catalogTransmission/rubrics/edit/86/">

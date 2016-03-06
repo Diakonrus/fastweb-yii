@@ -204,18 +204,27 @@ class CatalogRubrics extends CActiveRecord
         return $root;
     }
 
-    /**
-     * Получить корень дерева (верхний уровень) по level иди parent_id
-     * по lvl= 2
-     */
+	/**
+	 * Получить корень дерева (верхний уровень) по level иди parent_id
+	 * по lvl= 2
+	 *
+	 * @param int $type
+	 *
+	 * @return CatalogRubrics[]
+	 */
     public static function getRootTree($type = 1){
         $param = (($type==1)?('level = 2'):('parent_id = 0'));
         return $model = CatalogRubrics::model()->findAll($param.' ORDER BY left_key');
     }
 
-    /**
-     * Получить количество элементов в узле
-     */
+	/**
+	 * Получить количество элементов в узле
+	 *
+	 * @param $left_key
+	 * @param $right_key
+	 *
+	 * @return mixed
+	 */
     public static function getCountTree($left_key, $right_key){
         $model = Yii::app()->db->createCommand()
             ->select('count(id) as count')
@@ -311,8 +320,20 @@ class CatalogRubrics extends CActiveRecord
 		$result = array();
 		$models = $this->descendants()->findAll($rootId);
 		foreach ($models as $model) {
-			$result[$model->id] = str_repeat('&nbsp;&nbsp;', ($model->level - 1) * 4) . $model->title;
+			$result[$model->id] = str_repeat('&nbsp;&nbsp;', ($model->level - 1) * 4) . $model->name;
 		}
 		return $result;
+	}
+
+	/**
+	 * Получаем целую ветку с родителями по ключам
+	 *
+	 * @param $leftKey
+	 * @param $rightKey
+	 *
+	 * @return CatalogRubrics[]
+	 */
+	public static function getBranch($leftKey, $rightKey) {
+		return self::model()->findAll('left_key >= :left_key AND right_key <= :right_key', array(':left_key' => $leftKey, ':right_key'=>$rightKey));
 	}
 }

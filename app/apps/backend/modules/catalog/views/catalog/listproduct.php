@@ -11,7 +11,7 @@
 
 
 
-<?= CHtml::activeDropDownList($model, 'parent_id', $catalog, array('class' => 'span5', 'encode'=>false)); ?>
+<?= CHtml::activeDropDownList($model, 'filterData', $catalog, array('class' => 'span5', 'encode'=>false)); ?>
 
 <?php
 
@@ -263,7 +263,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
     }
 
     //фильтр
-    $(document).on('change', '#CatalogElements_parent_id', function() {
+    $(document).on('change', '#CatalogElements_filterData', function() {
         location.href = '/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/listelement?filterData='+$(this).val();
     });
 

@@ -386,7 +386,7 @@ class CatalogController extends Controller {
     public function actionListgroup($id=null) {
 
         $this->breadcrumbs = array(
-            'Каталоги'=>array('/catalog/catalog/listgroup'),
+            'Группы товаров'=>array('/catalog/catalog/listgroup'),
         );
 
         set_time_limit(0);
@@ -413,12 +413,14 @@ class CatalogController extends Controller {
 
         if (!empty($id)) {
             $category = CatalogRubrics::model()->findByPk((int)$id); //Получаем нужный узел
-            $descendants = $category->descendants(1)->findAll();
-        }
-        else {
+			$descendants = $category->descendants(1)->findAll();
+        } else {
             $categoryRoot = CatalogRubrics::getRoot();
             $category = CatalogRubrics::model()->findByPk($categoryRoot->id);
-            $descendants = $category->descendants(1)->findAll();
+			$descendants = CMap::mergeArray(
+				CatalogRubrics::model()->findAll("parent_id = 0"),
+				$category->descendants(1)->findAll()
+			);
         }
 
         $this->render('listgroup',array(
@@ -430,7 +432,7 @@ class CatalogController extends Controller {
 
     public function actionCreate($id = null) {
         $this->breadcrumbs = array(
-            'Каталоги'=>array('/catalog/catalog/listgroup'),
+            'Группы товаров'=>array('/catalog/catalog/listgroup'),
             'Новая запись'
         );
 
@@ -440,7 +442,6 @@ class CatalogController extends Controller {
 			array($root->id => $root->name),
 			$root->getFormattedDescendants($root->id)
 		);
-
 
         if (isset($_POST['CatalogRubrics'])) {
 
@@ -491,7 +492,7 @@ class CatalogController extends Controller {
     public function actionUpdate($id) {
 
         $this->breadcrumbs = array(
-            'Каталоги'=>array('/catalog/catalog/listgroup'),
+            'Группы товаров'=>array('/catalog/catalog/listgroup'),
             'Редактирование'
         );
 
@@ -548,10 +549,10 @@ class CatalogController extends Controller {
 	 * Товары: Список товаров
 	 * @param null $filterData
 	 */
-    public function actionListelement($filterData = null){
+    public function actionListelement($filterData = null) {
 
         $this->breadcrumbs = array(
-            'Товары'=>array('/catalog/catalog/listelement'),
+            'Список товаров'=>array('/catalog/catalog/listelement'),
         );
 
         $model=new CatalogElements('search');
@@ -566,8 +567,8 @@ class CatalogController extends Controller {
             $param = 'name LIKE ("%'.$model->serch_name_code.'%") OR code LIKE ("'.(trim($model->serch_name_code)).'")';
         }
 
-        if (!empty($filterData) && (int)$filterData>0){
-            $param = ((!empty($param))?$param.' AND ':'').' parent_id in ('.(int)$filterData.') ';
+        if (!empty($filterData) && (int)$filterData > 0) {
+			$model->filterData = $filterData;
         }
 
         //echo $param; die();
@@ -607,7 +608,7 @@ class CatalogController extends Controller {
     /** Товары: Создание нового товара */
     public function actionCreateproduct() {
         $this->breadcrumbs = array(
-            'Товары'=>array('/catalog/catalog/listelement'),
+            'Список товаров'=>array('/catalog/catalog/listelement'),
             'Новая запись'
         );
 
@@ -666,7 +667,7 @@ class CatalogController extends Controller {
     public function actionUpdateproduct($id)
     {
         $this->breadcrumbs = array(
-            'Товары'=>array('/catalog/catalog/listelement'),
+            'Список товаров'=>array('/catalog/catalog/listelement'),
             'Редактирование'
         );
 
@@ -745,8 +746,12 @@ class CatalogController extends Controller {
 
 
     
-    public function actionDelete($id){
-        $this->loadModel($id)->deleteNode();
+    public function actionDelete($id) {
+        $model = $this->loadModel($id);
+		//Корневую директорию удалить нельзя
+		if ($model->level > 1) {
+			$model->deleteNode();
+		}
         $this->redirect('listgroup');
     }
 
@@ -811,11 +816,12 @@ class CatalogController extends Controller {
                     break;
                 case 2:
                     //Удаление
-                    foreach ($_POST['id'] as $id){
+                    foreach ($_POST['id'] as $id) {
 						if ((int) $id > 0) {
 							/** @var $model CatalogRubrics */
 							$model = CatalogRubrics::model()->findByPk((int) $id);
-							if (!empty($model)) {
+							//Корень удалить нельзя. У корня level = 1
+							if (!empty($model) && $model->level > 1) {
 								$model->deleteNode();
 							}
 						}
@@ -946,7 +952,7 @@ class CatalogController extends Controller {
     public function actionListchars($id = null, $type_parent = 1){
 
         $this->breadcrumbs = array(
-            (($type_parent==1)?'Каталоги':'Товары')=>array('/catalog/catalog/listgroup'),
+            (($type_parent==1)?'Группы товаров':'Список товаров')=>array('/catalog/catalog/listgroup'),
             'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$id.'&type_parent='.$type_parent),
         );
 
@@ -1012,7 +1018,7 @@ class CatalogController extends Controller {
     public function actionCreatechars($id){
 
         $this->breadcrumbs = array(
-            'Каталоги'=>array('/catalog/catalog/listgroup'),
+            'Группы товаров'=>array('/catalog/catalog/listgroup'),
             'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$id.'&type_parent='.((isset($_GET['type_parent']))?($_GET['type_parent']):(2))),
             'Новая запись'
         );
@@ -1155,7 +1161,7 @@ class CatalogController extends Controller {
 
 
         $this->breadcrumbs = array(
-            'Каталоги'=>array('/catalog/catalog/listgroup'),
+            'Группы товаров'=>array('/catalog/catalog/listgroup'),
             'Свойства '=>array('/catalog/catalog/listchars?id='.(int)$model->parent_id.'&type_parent='.((isset($_GET['type_parent']))?($_GET['type_parent']):(2))),
             'Редактирование'
         );
@@ -1182,7 +1188,7 @@ class CatalogController extends Controller {
     public function actionSharechars($type_parent = 3){
 
         $this->breadcrumbs = array(
-            'Каталоги'=>array('/catalog/catalog/listgroup'),
+            'Группы товаров'=>array('/catalog/catalog/listgroup'),
             'Настройки'=>array('/catalog/catalog/settings'),
             'Список предопределенных характеристик'=>array('/catalog/catalog/sharechars'),
         );

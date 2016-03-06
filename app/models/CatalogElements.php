@@ -17,14 +17,19 @@
  * @property string $description
  * @property string $fkey
  * @property string $code
+ * @property integer $shares
+ * @property integer $primary
  * @property double $price
+ * @property double $price_old
  * @property double $price_entering
+ * @property integer $qty
  * @property double $code_3d
  */
 class CatalogElements extends CActiveRecord
 {
 
     public $serch_name_code;
+	public $filterData; //ID родительской категории рубрик
     public $imagefile;
 	public $imagefiles;
 
@@ -46,7 +51,7 @@ class CatalogElements extends CActiveRecord
 		return array(
 			array('parent_id, name,', 'required'),
 			array('parent_id, order_id, status, ansvtype, hit, qty, shares, primary', 'numerical', 'integerOnly'=>true),
-			array('price, price_old, price_entering', 'numerical'),
+			array('price, price_old, price_entering, filterData', 'numerical'),
 			array('name, page_name, fkey', 'length', 'max'=>250),
 			array('image', 'length', 'max'=>5),
 			array('code', 'length', 'max'=>100),
@@ -58,8 +63,7 @@ class CatalogElements extends CActiveRecord
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, order_id, name, brieftext, code_3d, status, ansvtype, qty, shares, primary, hit, image, page_name, description, fkey, code, serch_name_code, price, price_old, price_entering,
-                   ', 'safe', 'on'=>'search'),
+			array('id, parent_id, order_id, name, brieftext, code_3d, status, ansvtype, qty, shares, primary, hit, image, page_name, description, fkey, code, serch_name_code, price, price_old, price_entering, filterData', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -106,21 +110,12 @@ class CatalogElements extends CActiveRecord
 	}
 
 	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
+	 * @param null $param
 	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
+	 * @return CDbCriteria
 	 */
-	public function search($param = null)
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	public function search($param = null) {
 		$criteria=new CDbCriteria;
 
         if (!empty($param)){
@@ -147,6 +142,21 @@ class CatalogElements extends CActiveRecord
         $criteria->compare('qty',$this->qty);
 		$criteria->compare('price_entering',$this->price_entering);
 		$criteria->compare('code_3d',$this->code_3d, true);
+
+		//Если задан ID родительской категории, то нужно так же показывать товары дочерних категорий
+		if (!empty($this->filterData)) {
+			/** @var $catalog CatalogRubrics */
+			$catalog = CatalogRubrics::model()->findByPk((int) $this->filterData);
+			if (!empty($catalog)) {
+				$branch = CatalogRubrics::getBranch($catalog->left_key, $catalog->right_key);
+				foreach($branch as $branchRow) {
+					$ids[] = $branchRow->id;
+				}
+				if (!empty($ids)) {
+					$criteria->addInCondition('parent_id', $ids);
+				}
+			}
+		}
 
         return $criteria;
 
@@ -344,16 +354,14 @@ class CatalogElements extends CActiveRecord
 		$data = str_replace("\r", "\\r", $data);
 		$data = str_replace("\n", "\\n", $data);
 		return($data); 
- }  
+    }
 //******************************************************************************
 
 
 
-	protected function beforeSave()
-	{
-		if(parent::beforeSave())
-		{
-			if ($this->isNewRecord){
+	protected function beforeSave() {
+		if (parent::beforeSave()) {
+			if ($this->isNewRecord) {
 
 				//Увеличиваем order_id
 				$model = new CatalogElements();
@@ -372,7 +380,7 @@ class CatalogElements extends CActiveRecord
     /**
      * Получить количество элементов в узле
      */
-    public static function getCount_by_rubric($id_category){
+    public static function getCount_by_rubric($id_category) {
         $model = Yii::app()->db->createCommand()
             ->select('count(id) as count')
             ->from('{{catalog_elements}}')
@@ -382,5 +390,34 @@ class CatalogElements extends CActiveRecord
         return $result;
     }
 
+	/**
+	 * Получение количества записей в категории
+	 *
+	 * @param $category
+	 * @return int|mixed
+	 */
+	public static function getTotalCountElement($category) {
+		$total = 0;
+		if (is_int($category)) {
+			$category = CatalogRubrics::model()->findByPk($category);
+		}
 
+		if (!empty($category)) {
+			$branch = CatalogRubrics::getBranch($category->left_key, $category->right_key);
+
+			foreach($branch as $branchRow) {
+				$ids[] = $branchRow->id;
+			}
+
+			if (!empty($ids)) {
+				$total = Yii::app()->db->createCommand()
+							->select('COUNT(*)')
+							->from(CatalogElements::model()->tableName())
+							->where(array('in', 'parent_id', $ids))
+							->queryScalar();
+			}
+		}
+
+		return $total;
+	}
 }
