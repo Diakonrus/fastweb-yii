@@ -12,7 +12,6 @@ class NewsController extends Controller
 
         $modelElements = NewsElements::model()->findAll('parent_id = '.$root->id.' AND `status` != 0');
 
-
         $this->setSEO(Yii::app()->request->requestUri, 'Новости');
 
         $this->render('index', array('model'=>$model, 'modelElements'=>$modelElements));

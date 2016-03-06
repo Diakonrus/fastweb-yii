@@ -148,4 +148,22 @@ class NewsElements extends CActiveRecord
 	public function getCountElements($parent_id){
 		return (int)NewsElements::model()->count("parent_id=:field AND `status`=1", array("field" => $parent_id));
 	}
+
+
+	/**
+	 * Получаем ссылку на изображение
+	 * @param string $size
+	 * @param bool|false $backend
+	 * @return string
+	 */
+	public function getImageLink($size = 'small', $backend = false) {
+		$url_img = '/uploads/filestorage/press/elements/' . $size . '-'.$this->id.'.'.$this->image;
+		if ($backend) {
+			$url_img = '/..' . $url_img;
+		}
+		if (!file_exists( YiiBase::getPathOfAlias('webroot').$url_img)) {
+			$url_img = '/images/nophoto_100_100.jpg';
+		}
+		return $url_img;
+	}
 }
