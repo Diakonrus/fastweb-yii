@@ -1,13 +1,12 @@
 <?
-
-$this->pageTitle = 'Поиск на сайте '.$_SERVER['HTTP_HOST'];
+$this->pageTitle = CHtml::encode('Результаты поиска по запросу "' . $_GET['s'] . '"');
 ?>
 
 
 <section>
     <main role="main" class="all">
         <div class="container video-caption">
-            <h1>РЕЗУЛЬТАТЫ ПОИСКА</h1>
+            <h1><?= $this->pageTitle; ?></h1>
         </div>
     </main>
 </section>
