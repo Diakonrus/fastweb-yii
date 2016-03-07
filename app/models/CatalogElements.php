@@ -184,6 +184,7 @@ class CatalogElements extends CActiveRecord
 			do {
 				$model = CatalogRubrics::model()->findByPk((int)$i);
 				if(isset($model->id))$array[] = $model->id;
+				$i = $model->parent_id;
 			} while ($model->level!=1);
 
 			$array = array_reverse($array);

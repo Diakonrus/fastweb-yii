@@ -336,52 +336,19 @@ class CatalogController extends Controller {
 	}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	private function getUrlCatalog($model){
+		$i = (int)$model->id;
+		$array = array();
+		do {
+			$model = CatalogRubrics::model()->findByPk((int)$i);
+			if(isset($model->id))$array[] = $model->id;
+			$i = (int)$model->parent_id;
+		} while ($model->level!=1);
+		$array = array_reverse($array);
+		//Убираем level=1 раздел
+		unset($array[0]);
+		return $array;
+	}
 
     public function actionListgroup($id=null) {
 
@@ -395,19 +362,9 @@ class CatalogController extends Controller {
         if ( !empty($id) ){
             $model = CatalogRubrics::model()->findByPk((int)$id);
             if ($model){
-                $i = (int)$id;
-                $array = array();
-                do {
-                    $model = CatalogRubrics::model()->findByPk((int)$i);
-                    if(isset($model->id))$array[] = $model->id;
-                    $i = (int)$model->parent_id;
-                } while ($i != 0);
-                $array = array_reverse($array);
-                //Убираем level=1 раздел
-                unset($array[0]);
-                foreach ($array as $value){
-                    $base_patch .= '/'.(CatalogRubrics::model()->findByPk((int)$value)->url);
-                }
+				foreach ($this->getUrlCatalog($model) as $value){
+					$base_patch .= '/'.(CatalogRubrics::model()->findByPk((int)$value)->url);
+				}
             }
         }
 
@@ -778,6 +735,34 @@ class CatalogController extends Controller {
         $this->redirect($_SERVER['HTTP_REFERER']);
 
     }
+
+	/** Подгружает каталоги */
+	public function actionAjaxuploadcatalog(){
+		if (isset($_POST)){
+			$return_data = array();
+			$base_patch = SITE_NAME_FULL.'/'.(($model=Pages::model()->find('type_module=4'))?($model->url):('catalog'));
+			foreach(CatalogRubrics::model()->findAll('parent_id = '.(int)$_POST['id']) as $data){
+
+				$url = array();
+				foreach( $descendants=$data->ancestors()->findAll() as $data_parent){
+					if ($data_parent->level==1)continue;
+					$url[] = $data_parent->url;
+				}
+				if (!empty($url)) $url = $base_patch.'/'.implode("/", $url).'/'.$data->url;
+				else $url = $base_patch.'/'.(($data->level==1)?(''):($data->url));
+
+
+				$i = $data->id;
+				$return_data[$i]['name'] = $data->name;
+				$return_data[$i]['url'] = $url;
+				$return_data[$i]['count_poz'] = CatalogElements::getTotalCountElement($data);
+				$return_data[$i]['status'] = $data->status;
+				$return_data[$i]['level'] = $data->level;
+			}
+			echo CJavaScript::jsonEncode( array('data'=>$return_data, 'total'=>count($return_data)) );
+		}
+		Yii::app()->end();
+	}
 
 
     public function actionAjax() {

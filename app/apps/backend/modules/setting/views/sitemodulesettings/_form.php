@@ -32,6 +32,8 @@
 		}
 	?>
 
+	<?php echo $form->dropDownListRow($model, 'type_list', SiteModuleSettings::model()->getTypeList(), array('class'=>'span5')); ?>
+
 </div>
 
 

@@ -25,6 +25,7 @@
  * @property string $watermark_color
  * @property integer $watermask_font
  * @property string $watermask_fontsize
+ * @property integer $type_list
  * @property integer $status
  * @property string $created_at
  */
@@ -51,7 +52,7 @@ class SiteModuleSettings extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('site_module_id, r_cover_quality, r_cover_small_crop, r_cover_medium_crop, r_cover_large_crop, e_cover_quality, e_cover_small_crop, e_cover_medium_crop, e_cover_large_crop', 'required'),
-			array('site_module_id, r_cover_quality, e_cover_quality, elements_page_admin, watermark_pos, watermark_type, watermark_transp, watermask_font, status, url_form', 'numerical', 'integerOnly'=>true),
+			array('site_module_id, r_cover_quality, e_cover_quality, elements_page_admin, watermark_pos, watermark_type, watermark_transp, watermask_font, status, url_form, type_list', 'numerical', 'integerOnly'=>true),
 			array('version, r_small_color, r_medium_color, r_large_color, e_small_color, e_medium_color, e_large_color', 'length', 'max'=>10),
 			array('r_cover_small, r_cover_medium, r_cover_large, e_cover_small, e_cover_medium, e_cover_large', 'length', 'max'=>50),
 			array('r_cover_small_crop, r_cover_medium_crop, r_cover_large_crop, e_cover_small_crop, e_cover_medium_crop, e_cover_large_crop', 'length', 'max'=>12),
@@ -61,7 +62,7 @@ class SiteModuleSettings extends CActiveRecord
 			array('image_watermark', 'file', 'types'=>'png', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, email, site_module_id, version, r_cover_small, r_cover_small_crop, r_cover_medium, r_cover_medium_crop, r_cover_large, r_cover_large_crop, r_cover_quality, r_small_color, r_medium_color, r_large_color, e_cover_small, e_cover_small_crop, e_cover_medium, e_cover_medium_crop, e_cover_large, e_cover_large_crop, e_cover_quality, e_small_color, e_medium_color, e_large_color, elements_page_admin, watermark, watermark_pos, watermark_type, watermark_transp, watermark_color, watermask_font, watermask_fontsize, status, created_at, created_at_start, created_at_end, url_form,
+			array('id, email, site_module_id, version, r_cover_small, r_cover_small_crop, r_cover_medium, r_cover_medium_crop, r_cover_large, r_cover_large_crop, r_cover_quality, r_small_color, r_medium_color, r_large_color, e_cover_small, e_cover_small_crop, e_cover_medium, e_cover_medium_crop, e_cover_large, e_cover_large_crop, e_cover_quality, e_small_color, e_medium_color, e_large_color, elements_page_admin, watermark, watermark_pos, watermark_type, watermark_transp, watermark_color, watermask_font, watermask_fontsize, type_list, status, created_at, created_at_start, created_at_end, url_form,
                    ', 'safe', 'on'=>'search'),
 		);
 	}
@@ -118,6 +119,7 @@ class SiteModuleSettings extends CActiveRecord
 			'status' => 'Статус',
 			'created_at' => 'Created At',
 			'email' => 'Email',
+			'type_list' => 'Вид списка',
 			'url_form' => 'Формирование URL',
 		);
 	}
@@ -172,6 +174,7 @@ class SiteModuleSettings extends CActiveRecord
 		$criteria->compare('watermark_color',$this->watermark_color,true);
 		$criteria->compare('watermask_font',$this->watermask_font);
 		$criteria->compare('watermask_fontsize',$this->watermask_fontsize,true);
+		$criteria->compare('type_list',$this->type_list);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('url_form',$this->url_form);
 		$this->compareDate($criteria, 'created_at');
@@ -360,6 +363,15 @@ class SiteModuleSettings extends CActiveRecord
 			1 => 'Страница подключения, модуль, каталог, название элемента (http://site.ru/catalog/name_category/name_element)',
 			2 => 'Страница подключения, каталог, ID элемента (http://site.ru/name_category/1100/)',
 			3 => 'Страница подключения, каталог, название элемента (http://site.ru/name_category/name_element)',
+		);
+		if (!empty($id)) $returnArray = $returnArray[$id];
+		return $returnArray;
+	}
+
+	public function getTypeList($id = null){
+		$returnArray = array(
+			1 => 'Разворачивать весь список автоматически',
+			2 => 'Разворачивать список вручную',
 		);
 		if (!empty($id)) $returnArray = $returnArray[$id];
 		return $returnArray;
