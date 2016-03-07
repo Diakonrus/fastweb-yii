@@ -1,7 +1,6 @@
-<table class="moduletable" cellpadding="0" cellspacing="0">
-<tr>
-	<td>
-		<?=$ret?>
-	</td>
-</tr>
-</table>
+<?php
+/**
+ * @var $tree string
+ */
+
+echo $tree;

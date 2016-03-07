@@ -91,7 +91,7 @@ class CatalogRubrics extends CActiveRecord
 			'name' => 'Наименование',
 			'title' => 'Заголовок',
 			'description' => 'Полное описание',
-			'description_short' => 'Краткое описание',
+				'description_short' => 'Краткое описание',
 			'url' => 'Url',
 			'status' => 'Статус',
 			'meta_title' => 'Meta Title',
@@ -242,8 +242,9 @@ class CatalogRubrics extends CActiveRecord
 	 * Уровень вложенности
 	 */
 	public static function getCatalogList($model = null, $level = null){
-		$return_data = array();
-		if (empty($model)){ $model = CatalogRubrics::getRoot(new CatalogRubrics); }
+		if (empty($model)){
+			$model = CatalogRubrics::getRoot();
+		}
 		return $model->descendants($level,1)->findAll($model->id);
 	}
 

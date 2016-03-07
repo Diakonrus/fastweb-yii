@@ -1,33 +1,45 @@
 <?
 
 class Categories extends CWidget {
+
 	public $params = array();
 
-	public function run() 
-	{
-		$root = CatalogRubrics::model()->roots()->find();
-		$all = CatalogRubrics::model()->findByPk($root->id)->findAll();
-		$ret = '';
-		if (count($this->params)) {
-			$pid = $this->params[0];
-		} else {
-			$pid = 4890;
-		}
-		foreach ($all as $item)
-		{
-			$item_attributes = $item->getAttributes();
-			if ($item_attributes['parent_id']==$pid)
-			{
-				if (strpos($_SERVER['REQUEST_URI'],"/catalog/".$item_attributes['url'])!==false)
-					$ret.='<div class="menuinside3"><span style="color: #e9c865;"><a href="/catalog/'.$item_attributes['url'].'">'.$item_attributes['name'].'</a></span></div>';
-				else
-					$ret.='<div class="menuinside3"><a href="/catalog/'.$item_attributes['url'].'">'.$item_attributes['name'].'</a></div>';
+	public function run() {
+		$moduleModel = SiteModule::model()->findByPk(4);
+
+		if (!empty($moduleModel)) {
+			$root = CatalogRubrics::getRoot();
+			$categories = $root->descendants()->findAll($root->id);
+			$tree = '';
+			$level=0;
+
+			foreach ($categories as $n=>$category) {
+
+				if ($category->status == 1) {
+					if ($category->level == $level) {
+						$tree .= CHtml::closeTag('li')."\r\n";
+					} else if($category->level > $level) {
+						$tree .= CHtml::openTag('ul')."\r\n";
+					} else {
+						$tree .= CHtml::closeTag('li')."\r\n";
+						for($i=$level-$category->level; $i; $i--) {
+							$tree .= CHtml::closeTag('ul')."\r\n";
+							$tree .= CHtml::closeTag('li')."\r\n";
+						}
+					}
+
+					$tree .= CHtml::openTag('li');
+					$tree .= CHtml::link($category->name, Yii::app()->urlManager->createUrl($moduleModel->url_to_controller . '/element', array('param' => $category->url)));
+					$level = $category->level;
+				}
 			}
+
+			$tree .= CHtml::closeTag('li')."\r\n";
+			$tree .= CHtml::closeTag('ul')."\r\n";
+
+			$data['tree'] = $tree;
+			$this->render('view_Categories', $data);
 		}
-		$data['ret'] = $ret;
-		$this->render('view_Categories', $data);
 	}
+
 }
-
-?>
-

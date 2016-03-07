@@ -143,13 +143,13 @@ class CatalogController extends Controller
 
 		$data['base_url'] = Pages::getBaseUrl(4);
 
-		if (empty($model))$model = CatalogRubrics::getRoot(new CatalogRubrics());
+		if (empty($model))$model = CatalogRubrics::getRoot();
 
 		//Титл и SEO
 		$this->setSEO(Yii::app()->request->requestUri, 'Каталог продукции', (($model->level>1)?($model):(null)));
 
 
-		$data['catalogs'] = $this->getChaildCategory($model);
+		$data['catalogs'] = $this->getChaildCategory($model, 1);
 		$data['model'] = $model;
 
 		$start = ((isset($_GET['page']))?intval($_GET['page']):0);
@@ -212,9 +212,9 @@ class CatalogController extends Controller
 	}
 
 
-	private function getChaildCategory($model){
+	private function getChaildCategory($model, $level = null) {
 		$menu_top = array();
-		foreach ( CatalogRubrics::getCatalogList($model) as $data ){
+		foreach ( CatalogRubrics::getCatalogList($model, $level) as $data ) {
 			$menu_top[$data->id]['name'] = $data->name;
 			$menu_top[$data->id]['url'] = $data->url;
 		}
