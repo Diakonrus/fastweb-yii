@@ -88,8 +88,8 @@ class PhotoRubrics extends CActiveRecord
 			'title' => 'Заголовок',
 			'url' => 'Url адрес',
             'parent_id' => 'Категория',
-			'description' => 'Описание',
-			'description_short' => 'Короткое описание',
+			'description' => 'Полное описание',
+			'description_short' => 'Краткое описание',
 			'status' => 'Статус',
 			'created_at' => 'Created At',
 		);
