@@ -1,4 +1,4 @@
-<?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
+<?= $this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
 <?php $this->widget('application.extensions.Breadcrumbs.Breadcrumbs', array('params'=>array('model'=>$model)));  ?>
 
 	<div class="menu_inside">

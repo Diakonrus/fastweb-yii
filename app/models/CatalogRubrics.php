@@ -88,7 +88,7 @@ class CatalogRubrics extends CActiveRecord
 			'left_key' => 'Left Key',
 			'level' => 'Level',
 			'right_key' => 'Right Key',
-			'name' => 'Наименование',
+			'name' => 'Название',
 			'title' => 'Заголовок',
 			'description' => 'Полное описание',
 				'description_short' => 'Краткое описание',
