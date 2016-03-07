@@ -29,9 +29,12 @@ class ContentService extends CApplicationComponent {
                 $modelModule = SiteModule::model()->findByPk((int)$data->type_module);
                 if ($modelModule){
 
-                    $content .= "'".(mb_strtolower($data->url))."' => '".$modelModule->url_to_controller."', ";
-                    //Ссылка с ID записи в Page
-                    $content .= "'".(mb_strtolower($data->url))."' => '".$modelModule->url_to_controller."/index/id/".$data->id."', ";
+                    if ($data->type_module==0){
+                        //Ссылка с ID записи в Page
+                        $content .= "'".(mb_strtolower($data->url))."' => '".$modelModule->url_to_controller."/index/id/".$data->id."', ";
+                    } else {
+                        $content .= "'".(mb_strtolower($data->url))."' => '".$modelModule->url_to_controller."', ";
+                    }
 
                     //Добавляем ссылки на элемент
                     $content .= "'".(mb_strtolower($data->url))."/<param:.+>' => '".$modelModule->url_to_controller."/element', ";

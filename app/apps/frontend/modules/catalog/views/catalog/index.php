@@ -1,6 +1,12 @@
 <?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
 <?php $this->widget('application.extensions.Breadcrumbs.Breadcrumbs', array('params'=>array('model'=>$model))); ?>
 
+
+<?php
+
+	//var_dump(Yii::app()->urlManager->createUrl('/catalog/catalog'));die();
+?>
+
 <h1 class="lined nopaddingtop" style="margin-top: 10px;"><?=Pages::getTitle()?></h1>
 
 <div class="menu_inside">
