@@ -372,12 +372,16 @@ class CatalogController extends Controller {
             $category = CatalogRubrics::model()->findByPk((int)$id); //Получаем нужный узел
 			$descendants = $category->descendants(1)->findAll();
         } else {
+			$categoryRoot = CatalogRubrics::getRoot();
+			$descendants = CatalogRubrics::model()->findAll('id='.$categoryRoot->id);
+			/*
             $categoryRoot = CatalogRubrics::getRoot();
             $category = CatalogRubrics::model()->findByPk($categoryRoot->id);
 			$descendants = CMap::mergeArray(
 				CatalogRubrics::model()->findAll("parent_id = 0"),
 				$category->descendants(1)->findAll()
 			);
+			*/
         }
 
         $this->render('listgroup',array(
@@ -405,6 +409,11 @@ class CatalogController extends Controller {
             $parent_id = (int)$_POST['CatalogRubrics']['parent_id'];
             $root = CatalogRubrics::model()->findByPk($parent_id);
             $model->attributes = $_POST['CatalogRubrics'];
+			if ($root->level==1){
+				$model->parent_id = 0;
+				$parent_id = $model->parent_id;
+			}
+
 
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
             if (isset($model->imagefile)) {
@@ -467,6 +476,10 @@ class CatalogController extends Controller {
             $parent_id = (int)$_POST['CatalogRubrics']['parent_id'];
             $root = CatalogRubrics::model()->findByPk($parent_id);
             $model->attributes = $_POST['CatalogRubrics'];
+			if ($root->level==1){
+				$model->parent_id = 0;
+				$parent_id = $model->parent_id;
+			}
 
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
             if (isset($model->imagefile)) {
