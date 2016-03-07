@@ -100,8 +100,8 @@ class Pages extends CActiveRecord
 			'meta_keywords' => 'Meta Keywords',
 			'meta_description' => 'Meta Description',
 			'created_at' => 'Created At',
-			'in_footer' => 'Нижнее меню',
-			'in_header' => 'Верхнее меню',
+			'in_footer' => 'Подвал',
+			'in_header' => 'Меню',
 		);
 	}
 
@@ -239,9 +239,11 @@ class Pages extends CActiveRecord
 
 	public function getPagesArray($type){
 		$root = Pages::getRoot(new Pages);
-		$pagesArray = $root->descendants(null,1)->findAll($root->id);
+		$pagesArray = $root->descendants(null,1)->findAll(array('order'=>'main_page DESC, left_key ASC'));  //main_page DESC, left_key ASC
 		$cats = array();
 		foreach ( $pagesArray as $data ){
+			//if ($data->status!=1){ continue; }
+			//if (($type == 2 && $data->in_header != 1 && $data->main_page==1) || ($type == 3 && $data->in_footer != 1 && $data->main_page==1) ){ continue; }
 			if (($type == 2 && $data->in_header != 1) || ($type == 3 && $data->in_footer != 1) ){ continue; }
 			$cats_ID[$data->id][] = $data;
 			$cats[$data->parent_id][$data->id] =  $data;

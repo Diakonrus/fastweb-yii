@@ -59,11 +59,25 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             'name'=> "title",
         ),
         */
-        
-	
-            array(
+
+
+        array(
             'header'=> $labels["url"],
             'name'=> "url",
+            'type'=>'raw',
+            'value' =>  function($data){
+                return '<a href="http://'.(($data->main_page==1)?($_SERVER['HTTP_HOST']):($_SERVER['HTTP_HOST'].'/'.$data->url)).'" target="_blank">http://'.(($data->main_page==1)?($_SERVER['HTTP_HOST']):($_SERVER['HTTP_HOST'].'/'.$data->url)).'</a>';
+            },
+        ),
+
+
+        array(
+            'header'=> 'Модуль',
+            'type'=>'raw',
+            'value' =>  function($data){
+                if ($data->type_module==0)return '';
+                return $data->module->url_to_controller;
+            },
         ),
 
 
@@ -80,9 +94,6 @@ $this->widget('bootstrap.widgets.TbExtendedGridView',array(
             },
             'filter' => array('1' => 'Активно', '0' => 'Не активно'),
         ),
-
-
-
 
 
 

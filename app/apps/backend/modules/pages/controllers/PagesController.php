@@ -130,11 +130,12 @@ class PagesController extends Controller
         $modelTabs = PagesTabs::model()->findAll('pages_id = '.$model->id.' ORDER BY order_id ASC');
 
         if (isset($_POST['Pages'])) {
+            $old_parent = $model->parent_id;
             $model->attributes = $_POST['Pages'];
             $parent_id = (int)$model->parent_id;
             $root = Pages::model()->findByPk($parent_id);
 
-            $model->moveAsLast($root);
+            if($old_parent != $model->parent_id)$model->moveAsLast($root);
 
             $model->url = mb_strtolower($model->url);
 

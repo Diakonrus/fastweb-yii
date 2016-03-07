@@ -32,7 +32,7 @@
             </td>
             <td style="padding-left: 25px;vertical-align:middle;" class="level_<?=$level;?>">
                 <span class="name" style="font-weight:bold;" >
-                    <a href="#" class="link_sub_catalog" data-id="<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;">
+                    <a href="#" class="link_sub_catalog" data-status="1" data-id="<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;">
                         <span><img src="/images/admin/icons/plus.gif" ; style="width:15px;"></span>
                         <?=(($root_category->level==1)?('/'):($root_category->name));?></a>
                 </span>
@@ -153,78 +153,93 @@
     $(document).on('click','.link_sub_catalog',function(){
         var parent_id = $(this).data('id');
 
-        $(this).parent().parent().find('img').attr('src','/images/admin/icons/minus.gif');
+        $(this).data('status', (($(this).data('status')==1)?(0):(1)));
 
-        $(this).removeClass('link_sub_catalog');
-        $.ajax({
-            type: 'POST',
-            url: '/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/ajaxuploadcatalog',
-            dataType: "json",
-            data: {id:parent_id},
-            success: function(dataResult) {
-                //console.log(dataResult);
-                var html = '';
-                var num_row = 0;
-                $.each( dataResult['data'], function( id, data ) {
-                    //console.log(data['url']);
-                    html += '<tr class="elemets_row_'+id+'">';
-                    html += '<td class="n1"> ' +
-                        '<input class="selectCategory" type="checkbox" style="margin-left:5px;" data-id="'+id+'"> ' +
-                        '</td>';
-                    var shift = '';
-                    for (var i = 0; i < data['level']; i++) {
-                        shift += '&nbsp;&nbsp;';
-                    }
-                    html += '<td class="level_2" style="padding-left: 25px;vertical-align:middle;"> ' +
-                        '<span class="name" style="font-weight:bold;"> ' +
-                        ''+shift+'<a class="link_sub_catalog" style="color:#000000; text-decoration:underline;" data-id="'+id+'" href="#">' +
-                        '<span>' +
-                        '<img style="width:15px;" ;="" src="/images/admin/icons/plus.gif">' +
-                        '</span>'+data['name']+'</a> ' +
-                        '</span> ' +
-                        '<br> ' +
-                        '<a class="page_url" target="_preview" href="'+data['url']+'"> ' +
-                        '<span class="tree"></span>' +
-                        '<p>'+shift+''+data['url']+'</p>'+
-                        '</a></td>' +
-                        '<td nowrap="" style="text-align: center; font-weight: bold;">' +
-                        '<a href="/admin/catalog/catalog/listelement?filterData='+id+'" style="color:#000000; text-decoration:underline;">'+data['count_poz']+'</a>' +
-                        '</td>' +
-                        '<td style="text-align: center;">' +
-                        '<a class="on-off-category" data-status="'+data['status']+'" data-id="'+id+'" href="#"><div style="margin-left:20px; width: 13px; height: 13px; border-radius: 3px; background:'+((data['status']==1)?('green'):('red'))+';"></div></a>' +
-                        '</td>' +
-                        '<td>' +
-                        '<a data-original-title="Добавить подкатегорию" title="" data-toggle="tooltip" href="/admin/catalog/catalog/create?id='+id+'"> ' +
-                        '<i class="icon-file"></i> ' +
-                        '</a>' +
-                        '<a data-original-title="Редактировать категорию" title="" data-toggle="tooltip" href="/admin/catalog/catalog/update?id='+id+'">' +
-                        '<i class="icon-pencil"></i> ' +
-                        '</a>'+
-                        '<a data-original-title="Редактировать свойства" title="" data-toggle="tooltip" href="/admin/catalog/catalog/listchars?id='+id+'">' +
-                        '<i class="icon-cog"></i> ' +
-                        '</a>'+
-                        '<a href="/admin/catalog/catalog/move?id='+id+'&move=1" data-original-title="Переместить выше" title="" style="'+((num_row==0)?('display:none;'):(''))+'" data-toggle="tooltip">' +
-                        '<i class="icon-arrow-up"></i> ' +
-                        '</a>'+
-                        '<a href="/admin/catalog/catalog/move?id='+id+'&move=2" data-original-title="Переместить вниз" title="" style="'+((num_row==(dataResult['total']-1))?('display:none;'):(''))+'" data-toggle="tooltip">' +
-                        '<i class="icon-arrow-down"></i> ' +
-                        '</a>'+
-                        '<a class="delete" data-original-title="Удалить" title="" data-toggle="tooltip" href="/admin/catalog/catalog/delete?id='+id+'">' +
-                        '<i class="icon-trash"></i> ' +
-                        '</a>'+
-                        '</td>';
+        if ($(this).data('status') == 1){
+            $(this).parent().parent().find('img').attr('src','/images/admin/icons/plus.gif');
+        }
+        else {             $(this).parent().parent().find('img').attr('src','/images/admin/icons/minus.gif'); }
+
+        if($(this).data('status') == 1){
+            $('.delete_row_'+parent_id).remove();
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '/admin/<?=Yii::app()->controller->module->id;?>/<?=Yii::app()->controller->id;?>/ajaxuploadcatalog',
+                dataType: "json",
+                data: {id:parent_id},
+                success: function(dataResult) {
+                    //console.log(dataResult);
+                    var html = '';
+                    var num_row = 0;
+                    $.each( dataResult['data'], function( id, data ) {
+                        console.log(data['url']);
+                        var delete_class = '';
+                        $.each( data['parent_id'], function( parent_id, parent_data ) {
+                            delete_class += ' delete_row_'+parent_data;
+                        });
+
+                        html += '<tr class="elemets_row_'+id+' '+delete_class+'">';
+                        html += '<td class="n1"> ' +
+                            '<input class="selectCategory" type="checkbox" style="margin-left:5px;" data-id="'+id+'"> ' +
+                            '</td>';
+                        var shift = '';
+                        for (var i = 0; i < data['level']; i++) {
+                            shift += '&nbsp;&nbsp;';
+                        }
+                        html += '<td class="level_2" style="padding-left: 25px;vertical-align:middle;"> ' +
+                            '<span class="name" style="font-weight:bold;"> ' +
+                            ''+shift+'<a class="link_sub_catalog" style="color:#000000; text-decoration:underline;" data-status="1" data-id="'+id+'" href="#">' +
+                            '<span>' +
+                            '<img style="width:15px;" ;="" src="/images/admin/icons/plus.gif">' +
+                            '</span>'+data['name']+'</a> ' +
+                            '</span> ' +
+                            '<br> ' +
+                            '<a class="page_url" target="_preview" href="'+data['url']+'"> ' +
+                            '<span class="tree"></span>' +
+                            '<p>'+shift+''+data['url']+'</p>'+
+                            '</a></td>' +
+                            '<td nowrap="" style="text-align: center; font-weight: bold;">' +
+                            '<a href="/admin/catalog/catalog/listelement?filterData='+id+'" style="color:#000000; text-decoration:underline;">'+data['count_poz']+'</a>' +
+                            '</td>' +
+                            '<td style="text-align: center;">' +
+                            '<a class="on-off-category" data-status="'+data['status']+'" data-id="'+id+'" href="#"><div style="margin-left:20px; width: 13px; height: 13px; border-radius: 3px; background:'+((data['status']==1)?('green'):('red'))+';"></div></a>' +
+                            '</td>' +
+                            '<td>' +
+                            '<a data-original-title="Добавить подкатегорию" title="" data-toggle="tooltip" href="/admin/catalog/catalog/create?id='+id+'"> ' +
+                            '<i class="icon-file"></i> ' +
+                            '</a>' +
+                            '<a data-original-title="Редактировать категорию" title="" data-toggle="tooltip" href="/admin/catalog/catalog/update?id='+id+'">' +
+                            '<i class="icon-pencil"></i> ' +
+                            '</a>'+
+                            '<a data-original-title="Редактировать свойства" title="" data-toggle="tooltip" href="/admin/catalog/catalog/listchars?id='+id+'">' +
+                            '<i class="icon-cog"></i> ' +
+                            '</a>'+
+                            '<a href="/admin/catalog/catalog/move?id='+id+'&move=1" data-original-title="Переместить выше" title="" style="'+((num_row==0)?('display:none;'):(''))+'" data-toggle="tooltip">' +
+                            '<i class="icon-arrow-up"></i> ' +
+                            '</a>'+
+                            '<a href="/admin/catalog/catalog/move?id='+id+'&move=2" data-original-title="Переместить вниз" title="" style="'+((num_row==(dataResult['total']-1))?('display:none;'):(''))+'" data-toggle="tooltip">' +
+                            '<i class="icon-arrow-down"></i> ' +
+                            '</a>'+
+                            '<a class="delete" data-original-title="Удалить" title="" data-toggle="tooltip" href="/admin/catalog/catalog/delete?id='+id+'">' +
+                            '<i class="icon-trash"></i> ' +
+                            '</a>'+
+                            '</td>';
 
 
 
-                    html += '</tr>';
+                        html += '</tr>';
 
-                    ++num_row;
-                });
-                $('.elemets_row_'+parent_id).eq(0).after(html);
+                        ++num_row;
+                    });
+                    $('.elemets_row_'+parent_id).eq(0).after(html);
 
-                <?php if ( !empty($moduleSettings->type_list) && $moduleSettings->type_list == 1   ){ ?>  $('.link_sub_catalog').click(); <?php } ?>
-            }
-        });
+                    <?php if ( !empty($moduleSettings->type_list) && $moduleSettings->type_list == 1   ){ ?>  $('.link_sub_catalog').click(); <?php } ?>
+                }
+            });
+        }
+
+
         return false;
     });
 

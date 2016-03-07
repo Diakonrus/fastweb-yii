@@ -35,7 +35,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 
     <?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>250)); ?>
     <?php echo $form->textFieldRow($model,'header',array('class'=>'span5','maxlength'=>350));; ?>
-    <?php echo $form->dropDownListRow($model,'status',array(0=>'Отключено', 1=>'Активно'), array('class'=>'span5')); ?>
+
 
 <?php
 
@@ -91,25 +91,6 @@ $this->widget('ImperaviRedactorWidget', array(
 
 ?>
 
-
-<div class="control-group">
-    <label class="control-label" for="CatalogRubrics_status">Картинка</label>
-    <div class="controls">
-        <?php
-        $base_url_img = '/../uploads/filestorage/menu/elements/';
-        ?>
-        <?php if ($model->isNewRecord) { ?><img src="/images/nophoto_100_100.jpg"><?php } else {
-            //Проверяем файл, если нет картинки - ставим заглушку
-            $url_img = "/images/nophoto_100_100.jpg";
-            if (file_exists( YiiBase::getPathOfAlias('webroot').$base_url_img.$model->id.'.'.$model->image )) {
-                $url_img = $base_url_img.'menu-'.$model->id.'.'.$model->image;
-            }
-            echo '<a href="'.$base_url_img.$model->id.'.'.$model->image.'" target="_blank"><img src="'.$url_img.'"></a>';
-        } ?>
-        <br>
-        <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
-    </div>
-</div>
 
 <div class="main_block_url block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
     <a href="#" data-type="plus"><span style="color: #fff; margin-left: 10px; font-weight: bold;"><img src="/images/admin/icons/plus.gif" style="padding-right: 10px;" />Вкладки</span></a>
@@ -207,13 +188,38 @@ $this->widget('ImperaviRedactorWidget', array(
 </div>
 <div style="margin-top: 10px; padding: 10px; display: none;">
     <?php
+    /*
     echo $form->dropDownListRow($model,'main_page',array(0=>'Нет', 1=>'Да'),
         array('class'=>'span5'));
+    */
     ?>
     <?php echo $form->textFieldRow($model,'main_template',array('class'=>'span5','maxlength'=>50)); ?>
-    <?php echo $form->dropDownListRow($model, 'access_lvl', UserRole::model()->getLvlAccess(), array(
+    <?php /* echo $form->dropDownListRow($model, 'access_lvl', UserRole::model()->getLvlAccess(), array(
         'class'=>'span5'
-    )); ?>
+    )); */ ?>
+    <?php echo $form->dropDownListRow($model,'status',array(0=>'Отключено', 1=>'Активно'), array('class'=>'span5')); ?>
+    <?php echo $form->dropDownListRow($model,'in_header',array(0=>'Отключено', 1=>'Активно'), array('class'=>'span5')); ?>
+    <?php echo $form->dropDownListRow($model,'in_footer',array(0=>'Отключено', 1=>'Активно'), array('class'=>'span5')); ?>
+
+    <div class="control-group">
+        <label class="control-label" for="CatalogRubrics_status">Картинка</label>
+        <div class="controls">
+            <?php
+            $base_url_img = '/../uploads/filestorage/menu/elements/';
+            ?>
+            <?php if ($model->isNewRecord) { ?><img src="/images/nophoto_100_100.jpg"><?php } else {
+                //Проверяем файл, если нет картинки - ставим заглушку
+                $url_img = "/images/nophoto_100_100.jpg";
+                if (file_exists( YiiBase::getPathOfAlias('webroot').$base_url_img.$model->id.'.'.$model->image )) {
+                    $url_img = $base_url_img.'menu-'.$model->id.'.'.$model->image;
+                }
+                echo '<a href="'.$base_url_img.$model->id.'.'.$model->image.'" target="_blank"><img src="'.$url_img.'"></a>';
+            } ?>
+            <br>
+            <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
+        </div>
+    </div>
+
 </div>
 
 

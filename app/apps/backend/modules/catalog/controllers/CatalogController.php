@@ -757,12 +757,16 @@ class CatalogController extends Controller {
 			foreach(CatalogRubrics::model()->findAll('parent_id = '.(int)$_POST['id']) as $data){
 
 				$url = array();
+				$parens_id = array();
 				foreach( $descendants=$data->ancestors()->findAll() as $data_parent){
+					$parens_id[] = $data_parent->id;
 					if ($data_parent->level==1)continue;
 					$url[] = $data_parent->url;
 				}
 				if (!empty($url)) $url = $base_patch.'/'.implode("/", $url).'/'.$data->url;
 				else $url = $base_patch.'/'.(($data->level==1)?(''):($data->url));
+
+				if (empty($parens_id)) $parens_id[] = 1;
 
 
 				$i = $data->id;
@@ -771,6 +775,7 @@ class CatalogController extends Controller {
 				$return_data[$i]['count_poz'] = CatalogElements::getTotalCountElement($data);
 				$return_data[$i]['status'] = $data->status;
 				$return_data[$i]['level'] = $data->level;
+				$return_data[$i]['parent_id'] = $parens_id;
 			}
 			echo CJavaScript::jsonEncode( array('data'=>$return_data, 'total'=>count($return_data)) );
 		}

@@ -107,7 +107,7 @@ return array(
 
     /* LIST */
     'LIST.UserGroupRule'=>'Права для групп',
-    'LIST.Pages'=>'Страницы сайта',
+    'LIST.Pages'=>'Структура сайта',
     'UPDATE.Pages'=>'Редактировать страницу',
     'LIST.Contract'=>'Справочник договоров',
     'UPDATE.Contract'=>'Редактировать справочник договоров',
