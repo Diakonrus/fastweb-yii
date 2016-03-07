@@ -188,7 +188,7 @@ class SiteserchController extends Controller
 
 			
 			$count = count($data['model_elements'])-12;
-			
+
 			$criteria = new CDbCriteria();
 			$pages=new CPagination($count);
 			$pages->pageSize=12;

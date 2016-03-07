@@ -26,7 +26,7 @@ $this->pageTitle = 'Поиск на сайте '.$_SERVER['HTTP_HOST'];
 <div class="tovar_container">
 <?php 
 $i=0;
-foreach ($model_elements as $data){ 
+foreach ($model_elements as $data){
 	$i++;
 	//echo 'i = '.$i.'<br>';
 	if (($i<=$page*12)||($i>($page+1)*12))
@@ -34,17 +34,14 @@ foreach ($model_elements as $data){
 		//echo 'continue<br>';
 		continue;
 	}
-$element = CatalogElements::model()->getProductUrl($data->id);
-if (isset($element['url']))
-{
-	$url = '/catalog'.$element['url'].'/'.$data->id;
-}
-	
+
+	$url = Yii::app()->urlManager->createUrl('/catalog/catalog').CatalogElements::model()->getProductUrl($data);
+
 		$url_img = '/images/nophoto_100_100.jpg';
 		$filename = YiiBase::getPathOfAlias('webroot').'/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image;
 		if (file_exists($filename))
-		{ 
-			$url_img = '/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image; 
+		{
+			$url_img = '/uploads/filestorage/catalog/elements/'.$data->id.'.'.$data->image;
 		}
 
 
@@ -75,7 +72,7 @@ $name_noqoutes = str_replace('&#039;','',$name_noqoutes);
 			<a href="javascript:void(0)" class="fastorder" idx="<?=$data->id;?>">Заказать в 1 клик</a>
 		</div>
 	</div>
-<?php 
+<?php
 
 
 } ?>

@@ -184,9 +184,7 @@ class CatalogElements extends CActiveRecord
 			do {
 				$model = CatalogRubrics::model()->findByPk((int)$i);
 				if(isset($model->id))$array[] = $model->id;
-				$i = (int)$model->parent_id;
-
-			} while ($i != 0);
+			} while ($model->level!=1);
 
 			$array = array_reverse($array);
 			unset($array[0]);
@@ -198,8 +196,6 @@ class CatalogElements extends CActiveRecord
 		}
 		return $url.'/'.$modelElements->id;
     }
-
-
 
 	public static function fn__get_filters($data,$id_category)
 	{

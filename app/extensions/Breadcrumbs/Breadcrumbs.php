@@ -53,6 +53,7 @@ class Breadcrumbs extends CBreadcrumbs {
             }
         }
 
+
         parent::run();
     }
 

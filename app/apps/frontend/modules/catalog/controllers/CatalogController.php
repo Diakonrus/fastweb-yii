@@ -163,7 +163,6 @@ class CatalogController extends Controller
 
 
 
-
 		/* Пагинация */
 		// 1- Получаем число элементов в разделе всего
 		$count = CatalogElements::model()->count("parent_id=".$model->id);
