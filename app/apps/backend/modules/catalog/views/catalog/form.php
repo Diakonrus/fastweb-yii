@@ -25,7 +25,7 @@
 <div id="main_block" style="margin-top: 10px; padding: 10px;">
 
 
-    <?php echo $form->dropDownListRow($model,'parent_id', $categories, array('class'=>'span5', 'encode'=>false, 'disabled'=>(($model->level==1)?(true):(false)) )); ?>
+    <?php echo $form->dropDownListRow($model,'parent_id', $categories, array('class'=>'span5', 'encode'=>false, 'options' => array('1'=>array('selected'=>true)), 'disabled'=>(($model->level==1)?(true):(false)) )); ?>
     <?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>150)); ?>
     <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>150)); ?>
     <div class="control-group">

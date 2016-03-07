@@ -409,7 +409,7 @@ class CatalogController extends Controller {
             $parent_id = (int)$_POST['CatalogRubrics']['parent_id'];
             $root = CatalogRubrics::model()->findByPk($parent_id);
             $model->attributes = $_POST['CatalogRubrics'];
-			if ($root->level==1){
+			if ($model->level==1){
 				$model->parent_id = 0;
 				$parent_id = $model->parent_id;
 			}
@@ -476,7 +476,7 @@ class CatalogController extends Controller {
             $parent_id = (int)$_POST['CatalogRubrics']['parent_id'];
             $root = CatalogRubrics::model()->findByPk($parent_id);
             $model->attributes = $_POST['CatalogRubrics'];
-			if ($root->level==1){
+			if ($model->level==1){
 				$model->parent_id = 0;
 				$parent_id = $model->parent_id;
 			}
