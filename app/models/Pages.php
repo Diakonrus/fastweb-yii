@@ -220,19 +220,20 @@ class Pages extends CActiveRecord
 	private function build_tree($cats,$parent_id){
 		if(is_array($cats) and isset($cats[$parent_id])){
 			$tree = array();
-			foreach($cats[$parent_id] as $cat){
-				$tree [$cat['id']]['title'] = $cat['title'];
-				$tree [$cat['id']]['url'] = (($cat['main_page'] == 1)?('/'):($cat['url']));
-				$tree [$cat['id']]['access_lvl'] = $cat['access_lvl'];
-				$tree [$cat['id']]['image'] = $cat['image'];
-				$tree [$cat['id']]['in_header'] = $cat['in_header'];
-				$tree [$cat['id']]['in_footer'] = $cat['in_footer'];
+			foreach($cats[$parent_id] as $cat) {
+				$tree[$cat['id']]['title'] = $cat['title'];
+				$tree[$cat['id']]['url'] = $cat->getPageUrl();
+				$tree[$cat['id']]['access_lvl'] = $cat['access_lvl'];
+				$tree[$cat['id']]['image'] = $cat['image'];
+				$tree[$cat['id']]['in_header'] = $cat['in_header'];
+				$tree[$cat['id']]['in_footer'] = $cat['in_footer'];
 				if ( $children =  $this->build_tree($cats,$cat['id']) ){
 					$tree [$cat['id']]['children'] =  $children;
 				}
 			}
+		} else {
+			return null;
 		}
-		else return null;
 		return $tree;
 	}
 
@@ -414,5 +415,22 @@ class Pages extends CActiveRecord
 			$result[$model->id] = str_repeat('&nbsp;&nbsp;', ($model->level - 1) * 4) . $model->title;
 		}
 		return $result;
+	}
+
+
+	/**
+	 * Получаем ссылку на текущую страницу
+	 *
+	 * @return string
+	 */
+	public function getPageUrl() {
+		if ($this->main_page == 1) {
+			$url = '/';
+		} elseif (!empty($this->module)) {
+			$url = Yii::app()->urlManager->createUrl($this->module->url_to_controller);
+		} else {
+			$url = Yii::app()->urlManager->createUrl('/content/pages/index/id/'.$this->id); //ID не очень правильно передается, но пока так
+		}
+		return $url;
 	}
 }

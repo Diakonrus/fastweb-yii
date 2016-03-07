@@ -173,29 +173,41 @@ class CatalogElements extends CActiveRecord
 		return parent::model($className);
 	}
 
-    public function getProductUrl($modelElements){
+	/**
+	 * Формирование SEO ссылки на товар
+	 *
+	 * @param $modelElements
+	 *
+	 * @return string
+	 */
+    public function getProductUrl($modelElements) {
 
 		$url = '';
-		//Ссылка на товар
-		$modelRubrics = CatalogRubrics::model()->findByPk($modelElements->parent_id);
-		if ($modelRubrics){
-			$i = $modelRubrics->id;
-			$array = array();
-			do {
-				$model = CatalogRubrics::model()->findByPk((int)$i);
-				if(isset($model->id))$array[] = $model->id;
-				$i = $model->parent_id;
-			} while ($model->level!=1);
+		$category = CatalogRubrics::model()->findByPk($modelElements->parent_id);
 
-			$array = array_reverse($array);
-			unset($array[0]);
-			$base_patch = "";
-			foreach ($array as $value){
-				$base_patch .= '/'.(CatalogRubrics::model()->findByPk((int)$value)->url);
+		if (!empty($category)){
+			$descendants = $category->ancestors()->findAll();
+
+			$descendants = array_reverse($descendants);
+			foreach ($descendants as $descendant) {
+				if ($descendant->level > 1) {
+					if (empty($url)) {
+						$url = Yii::app()->urlManager->createUrl('/catalog/catalog/element', array('param' => $descendant->url));
+					} else {
+						$url .= '/' . $descendant->url;
+					}
+				}
 			}
-			$url = $base_patch;
+
+			if (empty($url)) {
+				$url = Yii::app()->urlManager->createUrl('/catalog/catalog/element', array('param' => $category->url));
+			} else {
+				$url .= '/' . $category->url;
+			}
+
 		}
-		return $url.'/'.$modelElements->id;
+
+		return $url . '/' . $modelElements->id;
     }
 
 	public static function fn__get_filters($data,$id_category)
@@ -416,5 +428,26 @@ class CatalogElements extends CActiveRecord
 		}
 
 		return $total;
+	}
+
+
+	/**
+	 * Получаем ссылку на изображение
+	 *
+	 * @param string $size
+	 * @param bool|false $backend
+	 * @param null $defaultPhoto
+	 *
+	 * @return null|string
+	 */
+	public function getImageLink($size = 'medium', $backend = false, $defaultPhoto = null) {
+		$url_img = '/uploads/filestorage/catalog/elements/' . $size . '-'.$this->id.'.'.$this->image;
+		if ($backend) {
+			$url_img = '/..' . $url_img;
+		}
+		if (!file_exists( YiiBase::getPathOfAlias('webroot').$url_img)) {
+			$url_img = !empty($defaultPhoto) ? $defaultPhoto : '/images/nophoto_100_100.jpg';
+		}
+		return $url_img;
 	}
 }

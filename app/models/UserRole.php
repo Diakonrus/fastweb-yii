@@ -9,8 +9,7 @@
  * @property string $description
  * @property string $access_level
  */
-class UserRole extends CActiveRecord
-{
+class UserRole extends CActiveRecord {
         
 	/**
 	 * @return string the associated database table name

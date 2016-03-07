@@ -132,53 +132,43 @@ class CatalogController extends Controller
 		}
 	}
 
-	public function actionIndex($model = null){
+	public function actionIndex($model = null) {
 
-		if (SiteModuleSettings::model()->find('site_module_id = 4 AND `status`=0')){throw new CHttpException(404,'The page can not be found.');}
-
+		if (SiteModuleSettings::model()->find('site_module_id = 4 AND `status`=0')){
+			throw new CHttpException(404,'The page can not be found.');
+		}
 
 		$data = array();
 		$filters='';
 
-
 		$data['base_url'] = Pages::getBaseUrl(4);
 
-		if (empty($model))$model = CatalogRubrics::getRoot(new CatalogRubrics());
+		if (empty($model)) {
+			$model = CatalogRubrics::getRoot();
+		}
 
 		//Титл и SEO
 		$this->setSEO(Yii::app()->request->requestUri, 'Каталог продукции', (($model->level>1)?($model):(null)));
 
 
-		$data['catalogs'] = $this->getChaildCategory($model);
-		$data['model'] = $model;
-
-		$start = ((isset($_GET['page']))?intval($_GET['page']):0);
-		$data['elements'] = CatalogElements::model()->findAll(array(
-			'condition' => 'parent_id='.$model->id.' AND `status`=1',
-			'order' => 'order_id',
-			'offset' => (($start>0)?(($start-1)*12):(0)),
-			'limit' => 12,
-		));
-		//
-
-
-
-		/* Пагинация */
-		// 1- Получаем число элементов в разделе всего
-		$count = CatalogElements::model()->count("parent_id=".$model->id);
-		// 2-
 		$criteria = new CDbCriteria();
-		$pages=new CPagination($count);
-		// элементов на страницу
+		$criteria->condition = "parent_id = :parent_id AND status = 1";
+		$criteria->params = array(":parent_id"=>$model->id);
+		$criteria->order = "order_id, id";
+
+		$count = CatalogElements::model()->count($criteria);
+
+		$pages = new CPagination($count);
 		$pages->pageSize = 12;
 		$pages->applyLimit($criteria);
-		$data['pages']=$pages;
 
+		$data['elements'] = CatalogElements::model()->findAll($criteria);
+		$data['pages']=$pages;
+		$data['catalogs'] = $this->getChaildCategory($model, 1);
+		$data['model'] = $model;
 
 
 		$this->render('index', $data);
-
-
 	}
 
 
@@ -212,9 +202,9 @@ class CatalogController extends Controller
 	}
 
 
-	private function getChaildCategory($model){
+	private function getChaildCategory($model, $level = null) {
 		$menu_top = array();
-		foreach ( CatalogRubrics::getCatalogList($model) as $data ){
+		foreach ( CatalogRubrics::getCatalogList($model, $level) as $data ) {
 			$menu_top[$data->id]['name'] = $data->name;
 			$menu_top[$data->id]['url'] = $data->url;
 		}

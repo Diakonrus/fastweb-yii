@@ -23,7 +23,7 @@ class ContentService extends CApplicationComponent {
 
             if ($data->type_module==0){
                 //обычная текстовая страница
-                $content .= "'".(mb_strtolower($data->url))."' => 'content/pages/index/id/".$data->id."', ";
+                $content .= "'".(mb_strtolower($data->url))."' => '/content/pages/index/id/".$data->id."', ";
             } else {
                 //Модуль - проставляем УРЛ на модуль
                 $modelModule = SiteModule::model()->findByPk((int)$data->type_module);

@@ -122,18 +122,21 @@ class BanersElements extends CActiveRecord
 
 
 	/**
-	 * Получаем ссылку на изображение
+	 *  Получаем ссылку на изображение
+	 *
 	 * @param string $size
 	 * @param bool|false $backend
+	 * @param null $defaultPhoto
+	 *
 	 * @return string
 	 */
-	public function getImageLink($size = 'medium', $backend = false) {
+	public function getImageLink($size = 'medium', $backend = false, $defaultPhoto = null) {
 		$url_img = '/uploads/filestorage/baners/elements/' . $size . '-'.$this->id.'.'.$this->image;
 		if ($backend) {
 			$url_img = '/..' . $url_img;
 		}
 		if (!file_exists( YiiBase::getPathOfAlias('webroot').$url_img)) {
-			$url_img = '/images/nophoto_100_100.jpg';
+			$url_img = !empty($defaultPhoto) ? $defaultPhoto : '/images/nophoto_100_100.jpg';
 		}
 		return $url_img;
 	}
