@@ -32,7 +32,7 @@
             </td>
             <td style="padding-left: 25px;vertical-align:middle;" class="level_<?=$level;?>">
                 <span class="name" style="font-weight:bold;" >
-                    <a href="#" class="link_sub_catalog" data-status="1" data-id="<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;">
+                    <a href="#" class="link_sub_catalog_<?=$root_category->id;?>" data-status="1" data-id="<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;">
                         <span><img src="/images/admin/icons/plus.gif" ; style="width:15px;"></span>
                         <?=(($root_category->level==1)?('/'):($root_category->name));?></a>
                 </span>
@@ -150,7 +150,9 @@
 
 
     //Подгружаем подкатегориии
-    $(document).on('click','.link_sub_catalog',function(){
+    var type_list = <?=((!empty($moduleSettings->type_list) && $moduleSettings->type_list == 1)?(1):(2));?>;
+
+    $(document).on('click','[class^=link_sub_catalog_]',function(){
         var parent_id = $(this).data('id');
 
         $(this).data('status', (($(this).data('status')==1)?(0):(1)));
@@ -173,7 +175,7 @@
                     var html = '';
                     var num_row = 0;
                     $.each( dataResult['data'], function( id, data ) {
-                        console.log(data['url']);
+                        //console.log(data['url']);
                         var delete_class = '';
                         $.each( data['parent_id'], function( parent_id, parent_data ) {
                             delete_class += ' delete_row_'+parent_data;
@@ -189,7 +191,7 @@
                         }
                         html += '<td class="level_2" style="padding-left: 25px;vertical-align:middle;"> ' +
                             '<span class="name" style="font-weight:bold;"> ' +
-                            ''+shift+'<a class="link_sub_catalog" style="color:#000000; text-decoration:underline;" data-status="1" data-id="'+id+'" href="#">' +
+                            ''+shift+'<a class="link_sub_catalog_'+id+'" style="color:#000000; text-decoration:underline;" data-status="1" data-id="'+id+'" href="#">' +
                             '<span>' +
                             '<img style="width:15px;" ;="" src="/images/admin/icons/plus.gif">' +
                             '</span>'+data['name']+'</a> ' +
@@ -234,7 +236,10 @@
                     });
                     $('.elemets_row_'+parent_id).eq(0).after(html);
 
-                    <?php if ( !empty($moduleSettings->type_list) && $moduleSettings->type_list == 1   ){ ?>  $('.link_sub_catalog').click(); <?php } ?>
+                    $.each( dataResult['data'], function( id, data ) {
+                        if(type_list==1) { $('.link_sub_catalog_'+id+'').click(); }
+                    });
+
                 }
             });
         }
@@ -245,8 +250,7 @@
 
 
 
-
-    <?php if ( !empty($moduleSettings->type_list) && $moduleSettings->type_list == 1   ){ ?>  $('.link_sub_catalog').click(); <?php } ?>
+    if(type_list==1) { $('.link_sub_catalog_1').click(); }
 
 
 
