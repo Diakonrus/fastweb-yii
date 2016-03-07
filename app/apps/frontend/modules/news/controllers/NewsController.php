@@ -1,18 +1,16 @@
 <?php
 
-class NewsController extends Controller
-{
+class NewsController extends Controller {
+
     public $layout='//layouts/main';
 
-    public function actionIndex()
-
-    {
+    public function actionIndex() {
         $root = NewsRubrics::getRoot(new NewsRubrics);
         $model = $root->descendants(1)->findAll($root->id);
 
         $modelElements = NewsElements::model()->findAll('parent_id = '.$root->id.' AND `status` != 0');
 
-        $this->setSEO(Yii::app()->request->requestUri, 'Новости');
+        $this->setSEOData();
 
         $this->render('index', array('model'=>$model, 'modelElements'=>$modelElements));
 
@@ -27,8 +25,8 @@ class NewsController extends Controller
         if (is_numeric($paramArr)){
             $modelElements = NewsElements::model()->findByPk($paramArr);
             $model = NewsRubrics::model()->findByPk($modelElements->parent_id);
-            if (!$model){ throw new CHttpException(404,'The page can not be found.'); }
-            $this->setSEO(Yii::app()->request->requestUri, 'Новости', $model);
+            if (!$modelElements){ throw new CHttpException(404,'The page can not be found.'); }
+            $this->setSEOData($modelElements);
 
             $pageArray = array();
             $i = 0;

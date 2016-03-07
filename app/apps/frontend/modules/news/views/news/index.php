@@ -19,7 +19,7 @@
                                 <article>
                                     <span><?= date("d.m.Y", strtotime($elements->maindate)); ?></span>
                                     <h1>
-                                        <a href="<?= Yii::app()->request->requestUri.'/'.$elements->id ?>"><?= $elements->name ?></a>
+                                        <a href="<?= Yii::app()->urlManager->createUrl('/news/news/element', array('param' => $elements->id )) ?>"><?= $elements->name ?></a>
                                     </h1>
                                     <?= $elements->brieftext; ?>
                                 </article>
