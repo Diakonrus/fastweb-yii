@@ -391,7 +391,7 @@ class CatalogController extends Controller {
 
         set_time_limit(0);
         //получаем URL
-        $base_patch = SITE_NAME_FULL.'/catalog';
+        $base_patch = SITE_NAME_FULL.'/'.(($model=Pages::model()->find('type_module=4'))?($model->url):('catalog'));
         if ( !empty($id) ){
             $model = CatalogRubrics::model()->findByPk((int)$id);
             if ($model){

@@ -32,12 +32,12 @@
             </td>
             <td style="padding-left: 25px;vertical-align:middle;" class="level_<?=$level;?>">
                 <span class="name" style="font-weight:bold;" >
-                    <a href="/admin/catalog/catalog/listgroup?id=<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;"><?=$root_category->name;?></a>
+                    <a href="/admin/catalog/catalog/listgroup?id=<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;"><?=(($root_category->level==1)?('/'):($root_category->name));?></a>
                 </span>
                 <br>
-                <a class="page_url"  href="<?=$base_patch;?>/<?=$root_category->url;?>/" target="_preview">
+                <a class="page_url"  href="<?=$base_patch;?>/<?=(($root_category->level==1)?(''):($root_category->url));?>" target="_preview">
                     <span class="tree"></span>
-                    <?=$base_patch;?>/<?=$root_category->url;?>/
+                    <?=$base_patch;?>/<?=(($root_category->level==1)?(''):($root_category->url));?>
                 </a>
             </td>
             <td nowrap="" style="text-align: center; font-weight: bold;">

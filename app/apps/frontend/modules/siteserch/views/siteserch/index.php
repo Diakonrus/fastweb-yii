@@ -34,7 +34,7 @@ foreach ($model_elements as $data){
 		//echo 'continue<br>';
 		continue;
 	}
-$element = CatalogElements::model()->getProduct($data->id);
+$element = CatalogElements::model()->getProductUrl($data->id);
 if (isset($element['url']))
 {
 	$url = '/catalog'.$element['url'].'/'.$data->id;
