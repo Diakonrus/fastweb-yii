@@ -1,16 +1,16 @@
 <?=$this->widget('application.apps.frontend.components.Categories',array(), TRUE)?>
 <?php $this->widget('application.extensions.Breadcrumbs.Breadcrumbs', array('params'=>array('model'=>$model)));  ?>
 
-<h1 class="lined nopaddingtop" style="margin-top: 10px;"><?=Pages::getTitle()?></h1>
+	<div class="menu_inside">
+		<?php foreach ($catalogs as $data) { ?>
+			<div class="menuinside item">
+				<a  href="<?=$base_url;?>/<?=$data['url']?>"><?=$data['name'];?></a>
+			</div>
+		<?php } ?>
+		<div class="clear"></div>
+	</div>
 
-<div class="menu_inside">
-	<?php foreach ($catalogs as $data) { ?>
-		<div class="menuinside item">
-			<a  href="<?=$base_url;?>/<?=$data['url']?>"><?=$data['name'];?></a>
-		</div>
-	<?php } ?>
-	<div class="clear"></div>
-</div>
+<h1 class="lined nopaddingtop" style="margin-top: 10px;"><?=Pages::getTitle()?></h1>
 
 
 
@@ -30,7 +30,7 @@
 				<a class="items-block-item-name" href="<?=$url_product;?>"><?=$data->name;?></a>
 				<div class="item-price-count">
 					<div class="items-block-item-price <?php if ($data->price_old > 0){ ?> old_price_active <?php } ?>"><span><?=$data->price;?> руб.</span></div>
-					<?php if ($data->price_old > 0){ ?>
+					<?php if ($data->price_old > 0) { ?>
 						<div class="old_price_product_cat">
 							<span><?=$data->price_old;?> руб.</span>
 						</div>
@@ -57,7 +57,6 @@
 					   old_price="<?=$data->price_old;?>"
 					   sales="<?php if ($data->shares==1){ ?>1<?php } ?>"
 					>
-
 						Заказать
 					</a>
 				</div>
