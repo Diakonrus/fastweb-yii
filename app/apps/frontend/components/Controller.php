@@ -53,12 +53,38 @@ class Controller extends CController
         return true;
     }
 
-    public function filters()
-    {
+
+    /**
+     * Устанавливаем СЕО данные
+     * Это новый метод, работаем только с ним
+     *
+     * @param null $model
+     */
+    public function setSEOData($model = null) {
+        $titles = array();
+
+        if (!empty($model)) {
+            $titles[] = !empty($model->meta_title) ? $model->meta_title : $model->name;
+            $this->pageDescription = !empty($model->meta_description) ? $model->meta_description : '';
+            $this->pageKeywords = !empty($model->meta_keywords) ? $model->meta_keywords : '';
+        }
+
+        /** @var $page Pages */
+        $page = Pages::getModelByUrl();
+        if (!empty($page)) {
+            $titles[] = (!empty($page->header) ? $page->header : $page->title);
+        }
+
+        $titles[] = SITE_TITLE;
+
+        $this->pageTitle = $this->pageMetaTitle = implode(' - ', $titles);
+    }
+
+    public function filters() {
         $filters = array();
 
         // Для работы кеша параметр PAGE_CACHETIME должен быть больше 0
-        if( !Yii::app()->user->id ){
+        if ( !Yii::app()->user->id ) {
 
             $filters[] = array(
                 'COutputCache',

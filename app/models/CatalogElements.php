@@ -185,8 +185,8 @@ class CatalogElements extends CActiveRecord
 		$url = '';
 		$category = CatalogRubrics::model()->findByPk($modelElements->parent_id);
 
-		if (!empty($category)){
-			$descendants = $category->ancestors()->findAll();
+		if (!empty($category)) {
+			$descendants = $category->ancestors()->findAll(array('select'=>'level, url'));
 
 			$descendants = array_reverse($descendants);
 			foreach ($descendants as $descendant) {
@@ -200,7 +200,11 @@ class CatalogElements extends CActiveRecord
 			}
 
 			if (empty($url)) {
-				$url = Yii::app()->urlManager->createUrl('/catalog/catalog/element', array('param' => $category->url));
+				if ( $category->level > 1) {
+					$url = Yii::app()->urlManager->createUrl('/catalog/catalog/element', array('param' => $category->url));
+				} else {
+					$url = Yii::app()->urlManager->createUrl('/catalog/catalog');
+				}
 			} else {
 				$url .= '/' . $category->url;
 			}

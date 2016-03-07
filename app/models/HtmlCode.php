@@ -58,7 +58,7 @@ class HtmlCode extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'name' => 'Наименование',
+			'name' => 'Название',
 			'code' => 'Код',
 			'status' => 'Статус',
 			'created_at' => 'Created At',

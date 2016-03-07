@@ -90,7 +90,7 @@ class Breadcrumbs extends CBreadcrumbs {
             }
 
             //Если нужные данные есть, добавляем крошку в очередь и ищем родителя
-            if (!empty($parent->name) && !empty($parent->url) && !empty($parent->parent_id) && $parent->parent_id != 0) {
+            if (!empty($parent->name) && !empty($parent->url) && !empty($parent->parent_id) && $parent->parent_id != 0 && !(isset($parent->level) && $parent->level <= 1)) {
                 $this->parentLinks[] = array($parent->name => Yii::app()->urlManager->createUrl($route, array('param'=>$parent->url)));
                 $this->setParentLink($parent->parent);
             }

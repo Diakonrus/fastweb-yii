@@ -66,7 +66,7 @@ class Menu extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'name' => 'Наименование',
+			'name' => 'Название',
 			'active' => 'Статус',
             'image' => 'Изображение меню',
             'parent_id' => 'Родительское меню',

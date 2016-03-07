@@ -148,7 +148,7 @@ class CatalogController extends Controller
 		}
 
 		//Титл и SEO
-		$this->setSEO(Yii::app()->request->requestUri, 'Каталог продукции', (($model->level>1)?($model):(null)));
+		$this->setSEOData($model);
 
 
 		$criteria = new CDbCriteria();
@@ -166,7 +166,6 @@ class CatalogController extends Controller
 		$data['pages']=$pages;
 		$data['catalogs'] = $this->getChaildCategory($model, 1);
 		$data['model'] = $model;
-
 
 		$this->render('index', $data);
 	}
@@ -187,7 +186,7 @@ class CatalogController extends Controller
 		//Это карточка товара
 		if ( !$model = CatalogElements::model()->find('url LIKE "'.$url.'" OR id = '.(int)$url) ){ throw new CHttpException(404,'The page can not be found.'); }
 
-		$this->setSEO(Yii::app()->request->requestUri, 'Каталог продукции', $model);
+		$this->setSEOData($model);
 		//$modelRubric = CatalogRubrics::model()->findByPk($model->parent_id);
 		if (!$model)
 		{
