@@ -360,7 +360,7 @@ class Pages extends CActiveRecord
 	 * @param $url
 	 * Возвращает true если это активная страница
 	 */
-	public static function isActive(){
+	public static function isActive() {
 		foreach (explode("/", (Yii::app()->request->requestUri.'/')) as $url){
 			if ($model = Pages::model()->find('url LIKE "'.(trim($url)).'"')){ return $model->id;}
 		}

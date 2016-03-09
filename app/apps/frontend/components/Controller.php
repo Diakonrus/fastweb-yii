@@ -21,17 +21,6 @@ class Controller extends CController
     public $registrationForm;
     public $loginForm;
 
-    public $curentPageID; //ID текущей страницы (Pages) - необходимо для определения на какой страница пользователь
-
-
-    public function init(){
-        //Получаем текущую страницу
-        if (isset($_REQUEST['id']) || isset($_REQUEST['param'])) {
-            $this->curentPageID = (($curentPageID = Pages::isActive())?($curentPageID):(null));
-        }
-    }
-
-
     public function setSEO($url_patch, $page_title =  null, $modelSEO = null){
         $url_patch = trim($url_patch);
         $this->pageTitle = ((!empty($page_title))?($page_title.' - '):('')).$this->pageTitle;
