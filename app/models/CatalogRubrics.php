@@ -19,6 +19,8 @@
  * @property string $meta_keywords
  * @property string $meta_description
  * @property integer $execute
+ * @property string $fkey
+ * @property string $image
  *
  * @method deleteNode
  * @method saveNode
@@ -51,6 +53,7 @@ class CatalogRubrics extends CActiveRecord
 			array('parent_id, left_key, level, right_key, status, execute', 'numerical', 'integerOnly'=>true),
 			array('name, title, meta_title, meta_keywords, meta_description, fkey', 'length', 'max'=>250),
 			array('url', 'length', 'max'=>220),
+			array('image', 'length', 'max'=>5),
 
             array('url','unique',
                 'caseSensitive'=>true,
@@ -60,8 +63,7 @@ class CatalogRubrics extends CActiveRecord
             array('imagefile', 'file', 'types'=>'jpg, gif, png, jpeg', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, left_key, level, right_key, name, description, description_short, title, url, status, meta_title, meta_keywords, meta_description, fkey, execute,
-                   ', 'safe', 'on'=>'search'),
+			array('id, parent_id, left_key, level, right_key, name, description, description_short, title, url, status, meta_title, meta_keywords, meta_description, fkey, execute, image', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -91,13 +93,15 @@ class CatalogRubrics extends CActiveRecord
 			'name' => 'Название',
 			'title' => 'Заголовок',
 			'description' => 'Полное описание',
-				'description_short' => 'Краткое описание',
+			'description_short' => 'Краткое описание',
 			'url' => 'Url',
 			'status' => 'Статус',
 			'meta_title' => 'Meta Title',
 			'meta_keywords' => 'Meta Keywords',
 			'meta_description' => 'Meta Description',
 			'execute' => 'Execute',
+			'image' => 'Расширение картинки',
+			'imagefile' => 'Картинка',
 		);
 	}
 
@@ -135,6 +139,7 @@ class CatalogRubrics extends CActiveRecord
 		$criteria->compare('meta_description',$this->meta_description,true);
         $criteria->compare('fkey',$this->fkey,true);
 		$criteria->compare('execute',$this->execute);
+		$criteria->compare('Картинка',$this->execute,true);
 
 		$criteria_param = array(
 			'criteria'=>$criteria,
@@ -336,5 +341,26 @@ class CatalogRubrics extends CActiveRecord
 	 */
 	public static function getBranch($leftKey, $rightKey) {
 		return self::model()->findAll('left_key >= :left_key AND right_key <= :right_key', array(':left_key' => $leftKey, ':right_key'=>$rightKey));
+	}
+
+
+	/**
+	 * Получаем ссылку на изображение
+	 *
+	 * @param string $size
+	 * @param bool|false $backend
+	 * @param null $defaultPhoto
+	 *
+	 * @return null|string
+	 */
+	public function getImageLink($size = 'medium', $backend = false, $defaultPhoto = null) {
+		$url_img = '/uploads/filestorage/catalog/rubrics/' . $size . '-'.$this->id.'.'.$this->image;
+		if ($backend) {
+			$url_img = '/..' . $url_img;
+		}
+		if (!file_exists( YiiBase::getPathOfAlias('webroot').$url_img)) {
+			$url_img = !empty($defaultPhoto) ? $defaultPhoto : '/images/nophoto_100_100.jpg';
+		}
+		return $url_img;
 	}
 }

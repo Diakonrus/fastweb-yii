@@ -5,9 +5,10 @@
 </style>
 
 <?php
-/* @var $this CategoryController */
-/* @var $model Category */
+/* @var $this CatalogController */
+/* @var $model CatalogElements */
 /* @var $form TbActiveForm */
+/* @var $catalog array */
 ?>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
     'id'=>'product-form',
@@ -29,10 +30,15 @@
     <?php echo $form->dropDownListRow($model,'parent_id', $catalog, array('class'=>'span5', 'encode'=>false)); ?>
 
     <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>150));; ?>
-    <?php //echo $form->textFieldRow($model,'page_name',array('class'=>'span5','maxlength'=>150));; ?>
-    <?php echo $form->textFieldRow($model,'code',array('class'=>'span5','maxlength'=>150));; ?>
-    <?php //echo $form->textFieldRow($model,'qty',array('class'=>'span5','maxlength'=>150));; ?>
-    <?php // echo $form->textFieldRow($model,'prod',array('class'=>'span5','maxlength'=>150));; ?>
+    <div class="control-group">
+        <label>
+            <a style="margin-left:560px;" class="translits_href" href="#">транслит url</a>
+        </label>
+    </div>
+    <?php echo $form->textFieldRow($model,'url',array('class'=>'span5', 'maxlength'=>150)); ?>
+    <?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>250)); ?>
+    <?php //echo $form->textFieldRow($model,'qty',array('class'=>'span5','maxlength'=>150)); ?>
+    <?php // echo $form->textFieldRow($model,'prod',array('class'=>'span5','maxlength'=>150)); ?>
 
 
 </div>
@@ -43,10 +49,10 @@
 </div>
 
 <div id="price_block" style="margin-top: 10px; padding: 10px;">
-    <?php echo $form->textFieldRow($model,'price',array('class'=>'span5','maxlength'=>150));; ?>
-</div>
-<div id="price_block" style="margin-top: 10px; padding: 10px;">
-    <?php echo $form->textFieldRow($model,'price_old',array('class'=>'span5','maxlength'=>150));; ?>
+    <?php echo $form->textFieldRow($model,'code',array('class'=>'span5','maxlength'=>150)); ?>
+    <?php echo $form->textFieldRow($model,'article',array('class'=>'span5','maxlength'=>100)); ?>
+    <?php echo $form->textFieldRow($model,'price',array('class'=>'span5','maxlength'=>150)); ?>
+    <?php echo $form->textFieldRow($model,'price_old',array('class'=>'span5','maxlength'=>150)); ?>
 </div>
 
 <div class="body_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
@@ -121,7 +127,7 @@
         ),
     ));
 
-    echo $form->textAreaRow($model, 'code_3d',array('class'=>'span5'));
+    //echo $form->textAreaRow($model, 'code_3d',array('class'=>'span5'));
     ?>
 </div>
 
@@ -142,16 +148,14 @@
 
 
     <div class="control-group">
-        <?php echo CHtml::activeLabel($model,'imagefile'); ?>
+        <?php echo CHtml::activeLabel($model, 'imagefile'); ?>
         <div class="controls">
-            <?php if ($model->isNewRecord) { ?><img src="/images/nophoto_100_100.jpg"><?php } else {
-                //Проверяем файл, если нет картинки - ставим заглушку
-                $url_img = "/images/nophoto_100_100.jpg";
-                if (file_exists( YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/elements/admin-'.$model->id.'.'.$model->image )) {
-                    $url_img = '/../uploads/filestorage/catalog/elements/admin-'.$model->id.'.'.$model->image;
-                }
-                echo '<a href="/../uploads/filestorage/catalog/elements/'.$model->id.'.'.$model->image.'" target="_blank"><img src="'.$url_img.'"></a>';
-            } ?>
+            <?php if ($model->isNewRecord || empty($model->image)): ?>
+                <?php echo CHtml::image($model->getImageLink('admin', true)); ?>
+            <?php else: ?>
+                <?php echo CHtml::link(CHtml::image($model->getImageLink('admin', true), $model->id.'.'.$model->image), $model->getImageLink('large', true), array('target'=>'_blank')); ?>
+                <?php echo CHtml::link('X', Yii::app()->urlManager->createUrl('/catalog/catalog/deleteimage', array('id'=>$model->id)), array('class'=>'btn-mini deleteBlock')); ?>
+            <?php endif; ?>
             <br>
             <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
         </div>
@@ -169,24 +173,18 @@
 </style>
 
     <div class="control-group">
-    <?php echo CHtml::activeLabel($model,'imagefiles'); ?>
-        <div class="controls">
-            <?php
-                if (!$model->isNewRecord){
-                    foreach (CatalogElementsImages::model()->findAll('elements_id = '.$model->id) as $data){
-                        if (!file_exists( YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/elements/admin-'.$data->image_name.'.'.$data->image )){ continue; }
-                        $url_img = '/../uploads/filestorage/catalog/elements/admin-'.$data->image_name.'.'.$data->image;
-                        echo '
-                            <div style="float:left; padding-left: 15px;">
-                             <a href="/../uploads/filestorage/catalog/elements/'.$data->image_name.'.'.$data->image.'" target="_blank"><img src="'.$url_img.'"></a>
-                            <a class="btn-mini deleteBlock"  href="/admin/catalog/catalog/deleteimages?id='.$data->id.'">X</a>
-                            </div>
-
-                        ';
-                    }
-                    echo '<div style="clear: left"></div>';
-                }
-            ?>
+        <?php echo CHtml::activeLabel($model,'imagefiles'); ?>
+        <div class="controls" style="margin-top: 15px">
+            <?php if (!$model->isNewRecord): ?>
+                <?php foreach (CatalogElementsImages::model()->findAll('elements_id = '.$model->id) as $data): ?>
+                    <div style="margin-bottom: 15px;">
+                        <?php echo CHtml::link(CHtml::image($data->getImageLink('admin', true), $data->image_name . '.' . $data->image), $data->getImageLink('', true), array('target'=>'_blank')); ?>
+                        <?php echo CHtml::link('X', Yii::app()->urlManager->createUrl('/catalog/catalog/deleteimages', array('id'=>$data->id)), array('class'=>'btn-mini deleteBlock')); ?>
+                        <span><?php echo $data->image_name . '.' . $data->image; ?></span>
+                    </div>
+                <?php endforeach; ?>
+                <div style="clear: left"></div>
+            <?php endif; ?>
             <br>
             <?php echo CHtml::activeFileField($model, "imagefiles[]", array('multiple'=>true)); ?>
         </div>

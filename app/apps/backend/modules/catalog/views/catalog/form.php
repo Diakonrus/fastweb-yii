@@ -19,26 +19,33 @@
 <?php echo $form->errorSummary($model); ?>
 
 <div class="main_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
-<a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">Основное</span></a>
+    <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">Основное</span></a>
 </div>
 
 <div id="main_block" style="margin-top: 10px; padding: 10px;">
 
 
     <?php echo $form->dropDownListRow($model,'parent_id', $categories, array('class'=>'span5', 'encode'=>false, 'options' => array('1'=>array('selected'=>true)), 'disabled'=>(($model->level==1)?(true):(false)) )); ?>
-    <?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>150)); ?>
-    <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>150)); ?>
+    <?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>150, 'disabled'=>(($model->level==1)?(true):(false)))); ?>
+    <?php if ($model->level!=1): ?>
     <div class="control-group">
         <label>
             <a style="margin-left:560px;" class="translits_href" href="#">транслит url</a>
         </label>
     </div>
-<?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>150));; ?>
+    <?php endif; ?>
+    <?php echo $form->textFieldRow($model,'url',array('class'=>'span5', 'maxlength'=>150, 'disabled'=>(($model->level==1)?(true):(false)))); ?>
+    <?php echo $form->textFieldRow($model,'title',array('class'=>'span5', 'maxlength'=>255)); ?>
+</div>
+
+<div class="content_block_url" style="width: 100%; background-color: #3689d8; margin-bottom: 5px; cursor: pointer;">
+    <a href="#"><span style="color: #fff; margin-left: 10px; font-weight: bold;">Содержание страницы</span></a>
+</div>
+
+<div id="content_block" style="margin-top: 10px; padding: 10px;">
+
     <?php
-
     Yii::import('ext.imperavi-redactor-widget-master.ImperaviRedactorWidget');
-
-
     echo $form->labelEx($model,'description_short');
 
     $this->widget('ImperaviRedactorWidget', array(
@@ -154,6 +161,29 @@
             </select>
         </div>
     </div>
+    <style>
+        .deleteBlock {
+            background: red none repeat scroll 0 0;
+            border-radius: 10px;
+            color: white;
+            margin-left: -10px;
+            margin-top: -10px;
+            position: absolute;
+        }
+    </style>
+    <div class="control-group">
+        <?php echo CHtml::activeLabel($model, 'imagefile', array('class'=>'control-label')); ?>
+        <div class="controls">
+            <?php if ($model->isNewRecord || empty($model->image)): ?>
+                <?php echo CHtml::image($model->getImageLink('admin', true)); ?>
+            <?php else: ?>
+                <?php echo CHtml::link(CHtml::image($model->getImageLink('admin', true), $model->id.'.'.$model->image), $model->getImageLink('large', true), array('target'=>'_blank')); ?>
+                <?php echo CHtml::link('X', Yii::app()->urlManager->createUrl('/catalog/catalog/deleterubricimage', array('id'=>$model->id)), array('class'=>'btn-mini deleteBlock')); ?>
+            <?php endif; ?>
+            <br>
+            <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
+        </div>
+    </div>
 
 <?php /*
     <div class="control-group">
@@ -163,24 +193,6 @@
                 <option style="color: red;" value="0" <?php if (!$model->isNewRecord && $model->menu_rubrics==0){echo 'selected';} ?> >Ожидание</option>
                 <option style="color: darkgreen;" value="1" <?php if (!$model->isNewRecord && $model->menu_rubrics==1){echo 'selected';} ?> >Активно</option>
             </select>
-        </div>
-    </div>
-
-
-    <div class="control-group">
-        <label class="control-label" for="CatalogRubrics_status">Картинка</label>
-        <div class="controls">
-            <?php if ($model->isNewRecord) { ?><img src="/images/nophoto_100_100.jpg"><?php } else {
-                //Проверяем файл, если нет картинки - ставим заглушку
-                $url_img = "/images/nophoto_100_100.jpg";
-                if (file_exists( YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/rubrics/admin-'.$model->id.'.'.$model->image )) {
-                    $url_img = '/../uploads/filestorage/catalog/rubrics/admin-'.$model->id.'.'.$model->image;
-                }
-                echo '<a href="/../uploads/filestorage/catalog/rubrics/'.$model->id.'.'.$model->image.'" target="_blank"><img src="'.$url_img.'"></a>';
-            } ?>
-
-            <br>
-            <?php echo CHtml::activeFileField($model, 'imagefile', array('style'=>'cursor: pointer;') ); ?>
         </div>
     </div>
 */ ?>
@@ -222,6 +234,10 @@
         $('#main_block').slideToggle();
         return false;
     });
+    $(document).on('click', '.content_block_url', function(){
+        $('#content_block').slideToggle();
+        return false;
+    });
     $(document).on('click', '.body_block_url', function(){
         $('#body_block').slideToggle();
         return false;
@@ -234,6 +250,4 @@
         $('#seo_block').slideToggle();
         return false;
     });
-
-
 </script>

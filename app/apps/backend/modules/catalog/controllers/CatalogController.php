@@ -411,7 +411,6 @@ class CatalogController extends Controller {
             $model->attributes = $_POST['CatalogRubrics'];
 			if ($model->level==1){
 				$model->parent_id = 0;
-				$parent_id = $model->parent_id;
 			}
 
 
@@ -421,7 +420,7 @@ class CatalogController extends Controller {
 				$model->image = $ext['extension'];
 			}
 
-            if (!$root){
+            if (!$root) {
                 //Создаю родительскую категорию
                 $result = CatalogRubrics::getRoot();
                 $model->id = (int)$result->id;
@@ -473,12 +472,11 @@ class CatalogController extends Controller {
 
         if (isset($_POST['CatalogRubrics'])) {
 
-            $parent_id = (int)$_POST['CatalogRubrics']['parent_id'];
+            $parent_id = !empty($_POST['CatalogRubrics']['parent_id']) ? (int) $_POST['CatalogRubrics']['parent_id'] : 0;
             $root = CatalogRubrics::model()->findByPk($parent_id);
             $model->attributes = $_POST['CatalogRubrics'];
-			if ($model->level==1){
+			if ($model->level==1) {
 				$model->parent_id = 0;
-				$parent_id = $model->parent_id;
 			}
 
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
@@ -591,7 +589,6 @@ class CatalogController extends Controller {
 
         if (isset($_POST['CatalogElements'])) {
             $model->attributes = $_POST['CatalogElements'];
-            $model->page_name = $model->name;
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
             if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
             if ($model->save()){
@@ -650,10 +647,9 @@ class CatalogController extends Controller {
 		);
         if(isset($_POST['CatalogElements'])) {
             $model->attributes = $_POST['CatalogElements'];
-            $model->page_name = $model->name;
             $model->imagefile = CUploadedFile::getInstance($model,'imagefile');
             if (isset($model->imagefile)){$ext=pathinfo($model->imagefile);$model->image = $ext['extension'];}
-            if ($model->save()){
+            if ($model->save()) {
 				$filepatch = '/../uploads/filestorage/catalog/elements/';
 
                 if (isset($model->imagefile) && $modelSettings = SiteModuleSettings::model()->find('site_module_id = 4')){
@@ -694,9 +690,57 @@ class CatalogController extends Controller {
     }
 
 
+	/**
+	 * Удаляет картинку для группы
+	 *
+	 * @param $id
+	 *
+	 * @throws CHttpException
+	 */
+	public function actionDeleterubricimage($id) {
+		$model = $this->loadModel((int) $id);
+
+		if(!empty($model)) {
+			foreach (array('admin','small','medium','large') as $name) {
+				$url_to_file = YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/rubrics/'.$name.'-'.$model->id.'.'.$model->image;
+				if (file_exists( $url_to_file )){
+					unlink($url_to_file);
+				}
+			}
+			$model->image = '';
+			$model->saveNode();
+		}
+		$this->redirect(array('update','id'=>$id));
+	}
+
+
+	/**
+	 * Удаляет картинку для товара
+	 *
+	 * @param $id
+	 *
+	 * @throws CHttpException
+	 */
+	public function actionDeleteimage($id) {
+		$model = $this->loadModelProduct((int) $id);
+
+		if(!empty($model)) {
+			foreach (array('admin','small','medium','large') as $name) {
+				$url_to_file = YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/elements/'.$name.'-'.$model->id.'.'.$model->image;
+				if (file_exists( $url_to_file )){
+					unlink($url_to_file);
+				}
+			}
+			$model->image = '';
+			$model->save(false, array('image'));
+		}
+		$this->redirect(array('updateproduct','id'=>$id));
+	}
+
+
 	//Удаляет изображения  загруженные группой
 	public function actionDeleteimages($id){
-		if($model = CatalogElementsImages::model()->findByPk((int)$id)){
+		if($model = CatalogElementsImages::model()->findByPk((int)$id)) {
 			$id = $model->elements_id;
 			foreach (array('admin','small','medium','large') as $name){
 				$url_to_file = YiiBase::getPathOfAlias('webroot').'/../uploads/filestorage/catalog/elements/'.$name.'-'.$model->image_name.'.'.$model->image;
@@ -754,7 +798,7 @@ class CatalogController extends Controller {
 		if (isset($_POST)){
 			$return_data = array();
 			$base_patch = SITE_NAME_FULL.'/'.(($model=Pages::model()->find('type_module=4'))?($model->url):('catalog'));
-			foreach(CatalogRubrics::model()->findAll('parent_id = '.(int)$_POST['id']) as $data){
+			foreach(CatalogRubrics::model()->findAll('parent_id = '.(int)$_POST['id']) as $data) {
 
 				$url = array();
 				$parens_id = array();
@@ -771,11 +815,12 @@ class CatalogController extends Controller {
 
 				$i = $data->id;
 				$return_data[$i]['name'] = $data->name;
-				$return_data[$i]['url'] = $url;
+				$return_data[$i]['url'] = Yii::app()->request->getHostInfo() . $url;
 				$return_data[$i]['count_poz'] = CatalogElements::getTotalCountElement($data);
 				$return_data[$i]['status'] = $data->status;
 				$return_data[$i]['level'] = $data->level;
 				$return_data[$i]['parent_id'] = $parens_id;
+				$return_data[$i]['count_children'] = $data->children()->count();
 			}
 			echo CJavaScript::jsonEncode( array('data'=>$return_data, 'total'=>count($return_data)) );
 		}
@@ -936,6 +981,12 @@ class CatalogController extends Controller {
     }
 
 
+	/**
+	 * @param $id
+	 *
+	 * @return CatalogElements
+	 * @throws CHttpException
+	 */
     public function loadModelProduct($id)
     {
         $model=CatalogElements::model()->findByPk($id);

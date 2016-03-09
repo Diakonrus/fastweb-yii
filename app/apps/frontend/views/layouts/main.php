@@ -100,7 +100,7 @@
 
 				</div><p><strong><br /></strong></p></div></div></div><div class="csc-textpic-clear"><!-- --></div></div></div>
 				
-				<?=$this->widget('application.apps.frontend.components.BottomMenu',array(), TRUE)?>
+				<?php $this->widget('application.apps.frontend.components.BottomMenu')?>
 				<div id="footer_address"><div id="c63" class="csc-default" >	
 				
 				<p>Москва, Ленинградский пр-т, 37-Б<br />Торговый центр "СТАРТ", 3-й этаж, павильон №65-Б</p>

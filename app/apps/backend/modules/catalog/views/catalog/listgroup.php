@@ -2,11 +2,25 @@
     a i {
         color:#0000ff;
     }
+    .content_table tr:nth-child(2n) {
+        background: #f2f9f8;
+    }
+
+    .content_table tr td {
+        border-bottom: 1px solid #d8e0df;
+    }
+
+    .page_url {
+        color: #04429F;
+        font-size: 10px;
+        text-decoration: none;
+        position: relative;
+    }
 </style>
 <table class="content_table hover_table" id="listgrouptable" cellspacing="0">
         <thead>
         <tr>
-            <th style="text-align:center; width:21px">
+            <th style="text-align:center; width:22px">
                 <input type="checkbox" onclick="if(this.checked) {selectall()} else {unselectall();}">
             </th>
             <th> Название раздела</th>
@@ -28,18 +42,18 @@
         <tr class="<?php echo (($i%2)?'':' d2 ');  ?> elemets_row_<?=$root_category->id;?>" >
 
             <td class="n1">
-                <input class="selectCategory" data-id="<?=$root_category->id;?>" style="margin-left:5px;" type="checkbox">
+                <input class="selectCategory" data-id="<?=$root_category->id;?>" style="margin:0 0 0 5px" type="checkbox">
             </td>
             <td style="padding-left: 25px;vertical-align:middle;" class="level_<?=$level;?>">
                 <span class="name" style="font-weight:bold;" >
                     <a href="#" class="link_sub_catalog_<?=$root_category->id;?>" data-status="1" data-id="<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;">
                         <span><img src="/images/admin/icons/plus.gif" ; style="width:15px;"></span>
-                        <?=(($root_category->level==1)?('/'):($root_category->name));?></a>
+                        <?= Yii::app()->request->getHostInfo() . (($root_category->level==1)?('/'):($root_category->name));?></a>
                 </span>
                 <br>
-                <a class="page_url"   style="margin-left:25px;" href="<?=$base_patch;?>/<?=(($root_category->level==1)?(''):($root_category->url));?>" target="_preview">
+                <a class="page_url" style="margin-left:25px;" href="<?=$base_patch;?>/<?=(($root_category->level==1)?(''):($root_category->url));?>" target="_preview">
                     <span class="tree"></span>
-                    <?=$base_patch;?>/<?=(($root_category->level==1)?(''):($root_category->url));?>
+                    <?= Yii::app()->request->getHostInfo() . $base_patch;?>/<?=(($root_category->level==1)?(''):($root_category->url));?>
                 </a>
             </td>
             <td nowrap="" style="text-align: center; font-weight: bold;">
@@ -159,8 +173,9 @@
 
         if ($(this).data('status') == 1){
             $(this).parent().parent().find('img').attr('src','/images/admin/icons/plus.gif');
+        } else {
+            $(this).parent().parent().find('img').attr('src','/images/admin/icons/minus.gif');
         }
-        else {             $(this).parent().parent().find('img').attr('src','/images/admin/icons/minus.gif'); }
 
         if($(this).data('status') == 1){
             $('.delete_row_'+parent_id).remove();
@@ -183,23 +198,20 @@
 
                         html += '<tr class="elemets_row_'+id+' '+delete_class+'">';
                         html += '<td class="n1"> ' +
-                            '<input class="selectCategory" type="checkbox" style="margin-left:5px;" data-id="'+id+'"> ' +
+                            '<input class="selectCategory" type="checkbox" style="margin:0 0 0 5px" data-id="'+id+'"> ' +
                             '</td>';
-                        var shift = '';
-                        for (var i = 0; i < data['level']; i++) {
-                            shift += '&nbsp;&nbsp;';
-                        }
-                        html += '<td class="level_2" style="padding-left: 25px;vertical-align:middle;"> ' +
+                        var shift = data['level'] * 25;
+                        html += '<td class="level_2" style="padding-left: ' + shift + 'px;vertical-align:middle;"> ' +
                             '<span class="name" style="font-weight:bold;"> ' +
-                            ''+shift+'<a class="link_sub_catalog_'+id+'" style="color:#000000; text-decoration:underline;" data-status="1" data-id="'+id+'" href="#">' +
+                            '<a class="link_sub_catalog_'+id+'" style="color:#000000; text-decoration:underline;" data-status="1" data-id="'+id+'" href="#">' +
                             '<span>' +
-                            '<img style="width:15px;" ;="" src="/images/admin/icons/plus.gif">' +
+                            (data['count_children'] > 0 ? '<img style="width:15px;" ;="" src="/images/admin/icons/plus.gif">' : '') +
                             '</span>'+data['name']+'</a> ' +
                             '</span> ' +
                             '<br> ' +
                             '<a class="page_url" target="_preview" href="'+data['url']+'"> ' +
                             '<span class="tree"></span>' +
-                            '<p>'+shift+''+data['url']+'</p>'+
+                            '<div>' + data['url']+'</div>'+
                             '</a></td>' +
                             '<td nowrap="" style="text-align: center; font-weight: bold;">' +
                             '<a href="/admin/catalog/catalog/listelement?filterData='+id+'" style="color:#000000; text-decoration:underline;">'+data['count_poz']+'</a>' +

@@ -13,7 +13,7 @@
  * @property integer $ansvtype
  * @property integer $hit
  * @property string $image
- * @property string $page_name
+ * @property string $title
  * @property string $description
  * @property string $fkey
  * @property string $code
@@ -24,6 +24,7 @@
  * @property double $price_entering
  * @property integer $qty
  * @property double $code_3d
+ * @property string $article
  */
 class CatalogElements extends CActiveRecord
 {
@@ -52,9 +53,9 @@ class CatalogElements extends CActiveRecord
 			array('parent_id, name,', 'required'),
 			array('parent_id, order_id, status, ansvtype, hit, qty, shares, primary', 'numerical', 'integerOnly'=>true),
 			array('price, price_old, price_entering, filterData', 'numerical'),
-			array('name, page_name, fkey', 'length', 'max'=>250),
+			array('name, title, fkey', 'length', 'max'=>250),
 			array('image', 'length', 'max'=>5),
-			array('code', 'length', 'max'=>100),
+			array('code, article', 'length', 'max'=>100),
 			array('description', 'length', 'min'=>50),
 			array('brieftext, code_3d', 'length', 'max'=>1000),
 
@@ -63,7 +64,7 @@ class CatalogElements extends CActiveRecord
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, parent_id, order_id, name, brieftext, code_3d, status, ansvtype, qty, shares, primary, hit, image, page_name, description, fkey, code, serch_name_code, price, price_old, price_entering, filterData', 'safe', 'on'=>'search'),
+			array('id, parent_id, order_id, name, brieftext, code_3d, status, ansvtype, qty, shares, primary, hit, image, title, description, fkey, code, serch_name_code, price, price_old, price_entering, filterData, article', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -89,23 +90,24 @@ class CatalogElements extends CActiveRecord
 			'parent_id' => 'Категория',
 			'order_id' => 'Порядок',
 			'name' => 'Название',
-			'brieftext' => 'Анонс (короткий текст)',
+			'title' => 'Заголовок',
+			'brieftext' => 'Краткое описание',
 			'status' => 'Статус',
 			'ansvtype' => 'Ansvtype',
 			'hit' => 'Hit',
 			'image' => 'Изображение',
 			'imagefile' => 'Основное (главное) изображение товара',
 			'imagefiles' => 'Дополнительные изображения товара',
-			'page_name' => 'Page Name',
-			'description' => 'Описание',
+			'description' => 'Полное описание',
 			'fkey' => 'Fkey',
-			'code' => 'Код',
+			'code' => 'Код товара',
 			'price' => 'Цена',
 			'shares' => 'Акция',
 			'primary' => 'На главную',
 			'price_old' => 'Старая цена',
 			'price_entering' => 'Price Entering',
 			'code_3d' => '3D',
+			'article' => 'Артикул',
 		);
 	}
 
@@ -131,7 +133,7 @@ class CatalogElements extends CActiveRecord
 		$criteria->compare('ansvtype',$this->ansvtype);
 		$criteria->compare('hit',$this->hit);
 		$criteria->compare('image',$this->image,true);
-		$criteria->compare('page_name',$this->page_name,true);
+		$criteria->compare('title',$this->title,true);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('fkey',$this->fkey,true);
 		$criteria->compare('code',$this->code,true);
@@ -142,6 +144,7 @@ class CatalogElements extends CActiveRecord
         $criteria->compare('qty',$this->qty);
 		$criteria->compare('price_entering',$this->price_entering);
 		$criteria->compare('code_3d',$this->code_3d, true);
+		$criteria->compare('article',$this->article, true);
 
 		//Если задан ID родительской категории, то нужно так же показывать товары дочерних категорий
 		if (!empty($this->filterData)) {
