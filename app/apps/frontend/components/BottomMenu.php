@@ -3,13 +3,9 @@
 class BottomMenu extends CWidget {
 	public $params = array();
 
-	public function run() 
-	{
-		$data['ret'] = '';
-		$data['curentPageID'] = ((!empty($this->params))?($this->params):(null));
-		$this->render('view_BottomMenu', $data);
+	public function run()  {
+		$data['pages'] = Pages::getMenu(3);
+		$data['currentPageUri'] = Yii::app()->request->getRequestUri();
+		$this->render('view_TopMenu', $data);
 	}
 }
-
-?>
-
