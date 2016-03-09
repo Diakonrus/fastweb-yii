@@ -48,7 +48,7 @@
                 <span class="name" style="font-weight:bold;" >
                     <a href="#" class="link_sub_catalog_<?=$root_category->id;?>" data-status="1" data-id="<?=$root_category->id;?>" style="color:#000000; text-decoration:underline;">
                         <span><img src="/images/admin/icons/plus.gif" ; style="width:15px;"></span>
-                        <?= Yii::app()->request->getHostInfo() . (($root_category->level==1)?('/'):($root_category->name));?></a>
+                        <?= (($root_category->level==1)?('/'):($root_category->name));?></a>
                 </span>
                 <br>
                 <a class="page_url" style="margin-left:25px;" href="<?=$base_patch;?>/<?=(($root_category->level==1)?(''):($root_category->url));?>" target="_preview">
