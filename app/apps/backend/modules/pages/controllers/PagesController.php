@@ -322,6 +322,23 @@ class PagesController extends Controller
 		}
 	}
 
+    public function actionFileUpload() {
+        $webFolder = '/uploads/pages/';
+        $directory = Yii::app()->basePath . '/../'.SITE_PUBLIC_NAME . $webFolder;
+
+        //$directory = realpath(Yii::app()->basePath.'/../images/upload/').'/';
+        $file = md5(date('YmdHis')).'.'.pathinfo(@$_FILES['file']['name'], PATHINFO_EXTENSION);
+
+        if (move_uploaded_file(@$_FILES['file']['tmp_name'], $directory.$file)) {
+            $array = array(
+                'filelink' => $webFolder.$file
+            );
+            echo CJSON::encode($array);
+        }
+
+        exit ;
+    }
+
     public function actionImageUpload() {
 
         $webFolder = '/../uploads/filestorage/photoalbum/upload/';
